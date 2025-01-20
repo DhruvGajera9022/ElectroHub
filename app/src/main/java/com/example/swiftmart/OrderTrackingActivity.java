@@ -1,5 +1,8 @@
 package com.example.swiftmart;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -7,12 +10,19 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.example.swiftmart.Model.InvoiceModel;
+import com.example.swiftmart.Utils.CustomToast;
+import com.example.swiftmart.Utils.InvoiceGenerator;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -22,9 +32,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class OrderTrackingActivity extends AppCompatActivity {
     private ImageView backBtn, productImage;
@@ -37,7 +51,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
-    private String uid, orderID, addressID, productID;
+    private String uid, orderID, addressID, productID, userEmail, orderDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +61,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
         initialization();
         getOrderProductDetails();
         handleRating();
+        getUserData();
 
     }
 
@@ -99,6 +114,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
                     trackOrderID.setText(value.getString("oid"));
                     addressID = value.getString("aid");
                     productID = value.getString("pid");
+                    orderDate = value.getString("orderDate");
 
                     getRatingData(productID);
                     getOrderAddressDetails(addressID);
@@ -116,12 +132,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
 
                     if ("Shipped".equals(value.getString("status"))){
                         invoiceCardView.setVisibility(View.VISIBLE);
-                        invoiceCardView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        });
+                        invoiceCardView.setOnClickListener(v -> generateInvoice());
                     }
 
                 }
@@ -185,6 +196,19 @@ public class OrderTrackingActivity extends AppCompatActivity {
 
     }
 
+    private void getUserData(){
+        DocumentReference reference = db.collection("Users").document(uid);
+
+        reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value != null && value.exists()){
+                    userEmail = value.getString("Email");
+                }
+            }
+        });
+    }
+
     private void handleRating() {
         trackOrderRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -240,8 +264,48 @@ public class OrderTrackingActivity extends AppCompatActivity {
     }
 
     private void generateInvoice(){
+        InvoiceModel invoice = new InvoiceModel(
+                addressFullName.getText().toString(),
+                trackOrderCompany.getText().toString(),
+                addressFullName.getText().toString(),
+                addressNumber.getText().toString(),
+                userEmail,
+                generateRandomString(),
+                (new Date()).toString(),
+                8,
+                "Bank Transfer",
+                orderDate,
+                "1234-5678-9012-3456",
+                "Thanks for shopping from our e-store.");
 
+        // Adding services
+        List<InvoiceModel.Service> services = List.of(
+                new InvoiceModel.Service(trackOrderName.getText().toString(), Integer.parseInt(trackOrderQty.getText().toString()), Double.parseDouble(productDetailsProductPrice.getText().toString()))
+        );
+
+        invoice.setServices(services);
+
+        // Generate Invoice
+        InvoiceGenerator generator = new InvoiceGenerator();
+
+        try {
+            generator.generateInvoice(invoice, "invoice_dhruv.pdf");
+            CustomToast.showToast(this, "Invoice generated successfully!");
+        } catch (Exception e) {
+            CustomToast.showToast(this, "Failed to generate invoice");
+        }
     }
 
+    public static String generateRandomString() {
+        String prefix = "SI";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+        String year = sdf.format(new Date());
+
+        Random random = new Random();
+        int randomNumber = random.nextInt(1000);
+        String formattedRandomNumber = String.format("%03d", randomNumber);
+        return prefix + year + "-" + formattedRandomNumber;
+    }
 
 }

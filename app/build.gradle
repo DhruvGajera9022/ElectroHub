@@ -41,6 +41,8 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
 
+    implementation "com.itextpdf:itext7-core:7.2.5"
+
     // Lottie Animation
     implementation "com.airbnb.android:lottie:5.0.3"
 
