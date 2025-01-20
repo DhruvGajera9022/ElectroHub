@@ -122,6 +122,16 @@ public class ConfirmAddressActivity extends AppCompatActivity {
                         else {
                             noAvailableText.setVisibility(View.VISIBLE);
                             confirmAddressLinearLayout.setVisibility(View.GONE);
+
+                            boolean shouldDisableButton = true;
+
+                            if (shouldDisableButton) {
+                                confirmAddressDeliver.setEnabled(false);
+                                confirmAddressDeliver.setAlpha(0.5f);
+                            } else {
+                                confirmAddressDeliver.setEnabled(true);
+                                confirmAddressDeliver.setAlpha(1.0f);
+                            }
                         }
                     }
                 });

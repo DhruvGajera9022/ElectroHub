@@ -117,4 +117,32 @@ public class TabFragment extends Fragment {
                 });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (getArguments() != null) {
+            int position = getArguments().getInt("tab_position", 0);
+            switch (position) {
+                case 0:
+                    emptyView.setText("No active items");
+                    getOrders("Pending");
+                    break;
+                case 1:
+                    emptyView.setText("No shipping items");
+                    getOrders("Accepted");
+                    break;
+                case 2:
+                    emptyView.setText("No shipped items");
+                    getOrders("Shipped");
+                    break;
+                case 3:
+                    emptyView.setText("No canceled items");
+                    getOrders("Canceled");
+                    break;
+            }
+        }
+    }
+
+
 }
