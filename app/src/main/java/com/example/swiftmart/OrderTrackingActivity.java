@@ -289,7 +289,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
         InvoiceGenerator generator = new InvoiceGenerator();
 
         try {
-            generator.generateInvoice(invoice, "invoice_dhruv.pdf");
+            generator.generateInvoice(invoice, "invoice_" + orderID + ".pdf");
             CustomToast.showToast(this, "Invoice generated successfully!");
         } catch (Exception e) {
             CustomToast.showToast(this, "Failed to generate invoice");
