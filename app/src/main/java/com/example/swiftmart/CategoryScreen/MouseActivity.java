@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MouseActivity extends AppCompatActivity {
-    private ImageView backmouse;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+
     private LinearLayout mouseHp, mouseDell, mouseZebronics, mouseLogitech;
     private NestedScrollView mouseScrollView;
     private HorizontalScrollView mouseHorizontalScrollView;
@@ -71,7 +74,8 @@ public class MouseActivity extends AppCompatActivity {
         getMouseCompany();
         getImageUrls();
 
-        backmouse.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Mouse");
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void initialization(){
@@ -88,7 +92,8 @@ public class MouseActivity extends AppCompatActivity {
         mouseRecyclerView = findViewById(R.id.mouseRecyclerView);
         mouseActivityProgressBar = findViewById(R.id.mouseActivityProgressBar);
 
-        backmouse = findViewById(R.id.backmouse);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         mouseHp = findViewById(R.id.mouseHp);
         mouseDell = findViewById(R.id.mouseDell);

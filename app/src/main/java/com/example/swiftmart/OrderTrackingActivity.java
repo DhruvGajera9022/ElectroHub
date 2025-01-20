@@ -25,7 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OrderTrackingActivity extends AppCompatActivity {
-    private ImageView backOrderTracking, productImage;
+    private ImageView backBtn, productImage;
+    private TextView toolBarTitle;
     private TextView trackOrderName, trackOrderCompany, trackOrderQty, productDetailsProductPrice, trackOrderID;
     private TextView addressFullName, addressText, addressState, addressNumber;
     private ScrollView trackOrderScrollView;
@@ -47,7 +48,9 @@ public class OrderTrackingActivity extends AppCompatActivity {
     }
 
     private void initialization(){
-        backOrderTracking = findViewById(R.id.backOrderTracking);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
+
         productImage = findViewById(R.id.productImage);
         trackOrderName = findViewById(R.id.trackOrderName);
         trackOrderCompany = findViewById(R.id.trackOrderCompany);
@@ -70,7 +73,8 @@ public class OrderTrackingActivity extends AppCompatActivity {
 
         trackOrderScrollView.setVerticalScrollBarEnabled(false);
 
-        backOrderTracking.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Order Details");
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void getOrderProductDetails(){

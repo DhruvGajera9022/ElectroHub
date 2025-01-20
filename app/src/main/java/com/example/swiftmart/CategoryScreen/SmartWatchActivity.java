@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SmartWatchActivity extends AppCompatActivity {
-    private ImageView backSmartwatch;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+    
     private LinearLayout applelogo, samsunglogo, noiselogo, fireboltlogo;
     private NestedScrollView smartwatchScrollView;
     private HorizontalScrollView smartwatchHorizontalScrollView;
@@ -71,7 +74,8 @@ public class SmartWatchActivity extends AppCompatActivity {
         getSmartWatchCompany();
         getImageUrls();
 
-        backSmartwatch.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Smart Watch");
+        backBtn.setOnClickListener(v -> onBackPressed());
         
     }
 
@@ -89,7 +93,8 @@ public class SmartWatchActivity extends AppCompatActivity {
         smartwatchRecyclerView = findViewById(R.id.smartwatchRecyclerView);
         smartwatchActivityProgressBar = findViewById(R.id.smartwatchActivityProgressBar);
 
-        backSmartwatch = findViewById(R.id.backSmartwatch);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         applelogo = findViewById(R.id.applelogo);
         samsunglogo = findViewById(R.id.samsunglogo);

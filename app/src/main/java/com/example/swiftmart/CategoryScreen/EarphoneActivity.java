@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,7 +47,8 @@ public class EarphoneActivity extends AppCompatActivity {
     private ViewPager2 earbudsViewPager;
     private MobileSliderAdapter earphoneSliderAdapter;
     private Handler sliderHandler = new Handler();
-    ImageView backearphone;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
     private RecyclerView earphoneRecyclerView;
     ArrayList<ProductModel> datalist = new ArrayList<>();
     private FirebaseFirestore db;
@@ -77,7 +79,10 @@ public class EarphoneActivity extends AppCompatActivity {
         onepluslogo=findViewById(R.id.onepluslogo);
         triggerlogo=findViewById(R.id.triggerlogo);
         trukelogo=findViewById(R.id.trukelogo);
-        backearphone=findViewById(R.id.backearphone);
+
+        backBtn=findViewById(R.id.backBtn);
+        toolBarTitle=findViewById(R.id.toolBarTitle);
+
         earphoneRecyclerView=findViewById(R.id.earphoneRecyclerView);
         earphoneActivityProgressBar=findViewById(R.id.earphoneActivityProgressBar);
 
@@ -87,12 +92,8 @@ public class EarphoneActivity extends AppCompatActivity {
         getEarbuds();
         getEarbudsCompany();
 
-        backearphone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolBarTitle.setText("Earbuds");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         getImageUrls();
         earbudsViewPager = findViewById(R.id.earbudsViewPager);

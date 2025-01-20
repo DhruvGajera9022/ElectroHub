@@ -1,6 +1,8 @@
 package com.example.swiftmart;
 
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -26,6 +28,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 public class AllProducts extends AppCompatActivity {
+    private ImageView backBtn;
+    private TextView toolBarTitle;
     private RecyclerView allProductsRecyclerView;
     private FirebaseFirestore db;
     private ArrayList<ProductModel> datalist = new ArrayList<>();
@@ -38,11 +42,17 @@ public class AllProducts extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
 
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
+
         allProductsRecyclerView = findViewById(R.id.allProductsRecyclerView);
 
 
 
         getAllProducts();
+
+        toolBarTitle.setText("Products");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
     }
 

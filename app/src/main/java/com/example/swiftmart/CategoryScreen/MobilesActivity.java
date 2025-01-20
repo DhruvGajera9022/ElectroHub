@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,13 +45,16 @@ public class MobilesActivity extends AppCompatActivity {
     private ViewPager2 mobileViewPager;
     private MobileSliderAdapter mobilesliderAdapter;
     private Handler sliderHandler = new Handler();
-    ImageView backmobiles;
+    
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+    
     ArrayList<ProductModel> datalist = new ArrayList<>();
     private RecyclerView mobileRecyclerView;
     private FirebaseFirestore db;
-    CategoryProductAdapter adapter;
-    NestedScrollView mobileScrollView;
-    HorizontalScrollView mobileHorizontalScrollView;
+    private CategoryProductAdapter adapter;
+    private NestedScrollView mobileScrollView;
+    private HorizontalScrollView mobileHorizontalScrollView;
     private ProgressBar mobileActivityProgressBar;
 
     private DatabaseReference databaseReference;
@@ -81,7 +85,9 @@ public class MobilesActivity extends AppCompatActivity {
         iqoo=findViewById(R.id.iqoo);
         nothing=findViewById(R.id.nothing);
 
-        backmobiles=findViewById(R.id.backmobiles);
+        backBtn=findViewById(R.id.backBtn);
+        toolBarTitle=findViewById(R.id.toolBarTitle);
+
         mobileRecyclerView=findViewById(R.id.mobileRecyclerView);
         mobileActivityProgressBar=findViewById(R.id.mobileActivityProgressBar);
 
@@ -91,13 +97,8 @@ public class MobilesActivity extends AppCompatActivity {
         getMobiles();
         getMobileCompany();
 
-        backmobiles.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                onBackPressed();
-            }
-        });
+        toolBarTitle.setText("Mobiles");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         getImageUrls();
         mobileViewPager = findViewById(R.id.mobileViewPager);

@@ -34,7 +34,8 @@ import java.util.List;
 
 public class Address_Activity extends AppCompatActivity {
 
-    private ImageView backaddress,cart2;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
     private LinearLayout addnewadr;
     private RecyclerView addressRecyclerView;
     private ArrayList<AddressModel> datalist = new ArrayList<>();
@@ -55,33 +56,21 @@ public class Address_Activity extends AppCompatActivity {
         uid = mAuth.getCurrentUser().getUid();
 
         addressRecyclerView = findViewById(R.id.addressRecyclerView);
-        backaddress = findViewById(R.id.backaddress);
-        cart2 = findViewById(R.id.cart2);
+
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
+
         addnewadr = findViewById(R.id.addnewadr);
         noAvailableText = findViewById(R.id.noAvailableText);
 
         getAllAddress();
 
-        backaddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolBarTitle.setText("Address");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
-        cart2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToCartFragment();
-            }
-        });
-
-        addnewadr.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i =new Intent(Address_Activity.this, Add_Address_Activity.class);
-                startActivity(i);
-            }
+        addnewadr.setOnClickListener(v -> {
+            Intent i =new Intent(Address_Activity.this, Add_Address_Activity.class);
+            startActivity(i);
         });
     }
 

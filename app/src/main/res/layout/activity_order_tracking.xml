@@ -10,41 +10,7 @@
     android:background="@color/white"
     tools:context=".OrderTrackingActivity">
 
-    <!-- Top Bar -->
-    <RelativeLayout
-        android:id="@+id/lytoolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
-
-        <ImageView
-            android:id="@+id/backOrderTracking"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
-            android:layout_centerVertical="true"
-            android:src="@drawable/baseline_arrow_back_24"
-            android:background="@drawable/circle_background"
-            tools:ignore="TouchTargetSizeCheck"
-            android:padding="8dp"/>
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="60dp"
-            android:gravity="center"
-            android:text="Order Details"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/poppinsbold" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E6E4E4"
-        android:elevation="1dp"/>
+    <include layout="@layout/tool_bar"/>
 
     <ScrollView
         android:id="@+id/trackOrderScrollView"

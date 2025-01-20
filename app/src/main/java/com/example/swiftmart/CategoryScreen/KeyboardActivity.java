@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,7 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KeyboardActivity extends AppCompatActivity {
-    private ImageView backkeyboard;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
     private LinearLayout keyboardHp, keyboardDell, keyboardZebronics, keyboardLogitech;
     private NestedScrollView keyboardScrollView;
     private HorizontalScrollView keyboardHorizontalScrollView;
@@ -71,7 +73,8 @@ public class KeyboardActivity extends AppCompatActivity {
         getKeyboardsCompany();
         getImageUrls();
 
-        backkeyboard.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Keyboards");
+        backBtn.setOnClickListener(v -> onBackPressed());
         
     }
 
@@ -89,7 +92,8 @@ public class KeyboardActivity extends AppCompatActivity {
         keyboardRecyclerView = findViewById(R.id.keyboardRecyclerView);
         keyboardActivityProgressBar = findViewById(R.id.keyboardActivityProgressBar);
 
-        backkeyboard = findViewById(R.id.backkeyboard);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         keyboardHp = findViewById(R.id.keyboardHp);
         keyboardDell = findViewById(R.id.keyboardDell);

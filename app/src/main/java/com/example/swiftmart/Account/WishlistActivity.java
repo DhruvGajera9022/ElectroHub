@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 public class WishlistActivity extends AppCompatActivity {
-    private ImageView backaddress, cart2;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+    
     private ProgressBar wishlistProgressBar;
     private RecyclerView wishlistRecyclerView;
     private FirebaseFirestore db;
@@ -45,8 +48,9 @@ public class WishlistActivity extends AppCompatActivity {
         uid = mAuth.getCurrentUser().getUid();
 
         // Initialize UI components
-        backaddress = findViewById(R.id.backaddress);
-        cart2 = findViewById(R.id.cart2);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
+
         wishlistProgressBar = findViewById(R.id.wishlistProgressBar);
         wishlistRecyclerView = findViewById(R.id.wishlistRecyclerView);
 
@@ -62,7 +66,8 @@ public class WishlistActivity extends AppCompatActivity {
         wishlistRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // Back button listener
-        backaddress.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Wishlist");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         // Load wishlist data
         getWishlistData();

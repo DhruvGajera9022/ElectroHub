@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,7 +51,8 @@ public class Add_Address_Activity extends AppCompatActivity {
 
     private RadioGroup rgAddressType;
     private FusedLocationProviderClient fusedLocationClient;
-    ImageView backaddnewaddress,cart3;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
     private TextInputEditText addAddressFullName, addAddressPhoneNumber, addAddressPincode, addAddressState, addAddressCity, addAddressHouseNo, addAddressRoadName;
     private AppCompatCheckBox isDefaultCheckBox;
 
@@ -82,9 +84,11 @@ public class Add_Address_Activity extends AppCompatActivity {
         addAddressHouseNo = findViewById(R.id.addAddressHouseNo);
         addAddressRoadName = findViewById(R.id.addAddressRoadName);
         rgAddressType = findViewById(R.id.rgAddressType);
-        backaddnewaddress = findViewById(R.id.backaddnewaddress);
+
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
+
         isDefaultCheckBox = findViewById(R.id.isDefaultCheckBox);
-        cart3 = findViewById(R.id.cart3);
         addressProgressBar = findViewById(R.id.addressProgressBar);
 
 
@@ -99,30 +103,19 @@ public class Add_Address_Activity extends AppCompatActivity {
         addressID = getIntent().getStringExtra("addressID");
         if (addressID != null) {
             btnSaveAddress.setText("Edit Address");
+            toolBarTitle.setText("Edit Address");
             getAddressData();
             btnSaveAddress.setOnClickListener(v -> editAddress());
         } else {
             btnSaveAddress.setText("Save Address");
+            toolBarTitle.setText("Add Address");
             btnSaveAddress.setOnClickListener(v -> {
                 if (validateInputs()) {
                     addAddress();
                 }
             });
         }
-
-        backaddnewaddress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        cart3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                navigateToCartFragment();
-            }
-        });
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void requestLocationPermission() {

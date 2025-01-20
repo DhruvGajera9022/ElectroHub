@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,17 +41,20 @@ import java.util.List;
 
 public class tv_brandActivity extends AppCompatActivity {
 
-    LinearLayout samsunglogo, lglogo, milogo, tcllogo;
-    ImageView backTVBrand;
+    private ImageView backBtn;;
+    private TextView toolBarTitle;
+
+    private LinearLayout samsunglogo, lglogo, milogo, tcllogo;
+    
     private ViewPager2 tvViewPager;
     private MobileSliderAdapter tvSliderAdapter;
     private Handler sliderHandler = new Handler();
     private RecyclerView tvRecyclerView;
-    ArrayList<ProductModel> datalist = new ArrayList<>();
+    private ArrayList<ProductModel> datalist = new ArrayList<>();
     private FirebaseFirestore db;
-    CategoryProductAdapter adapter;
-    ScrollView tvActivityScrollView;
-    ProgressBar tvActivityProgressBar;
+    private CategoryProductAdapter adapter;
+    private ScrollView tvActivityScrollView;
+    private ProgressBar tvActivityProgressBar;
 
     private DatabaseReference databaseReference;
     private List<String> imageUrls;
@@ -72,9 +76,12 @@ public class tv_brandActivity extends AppCompatActivity {
         lglogo = findViewById(R.id.lglogo);
         milogo = findViewById(R.id.milogo);
         tcllogo = findViewById(R.id.tcllogo);
-        backTVBrand = findViewById(R.id.backTVBrand);
+
         tvRecyclerView=findViewById(R.id.tvRecyclerView);
         tvActivityProgressBar=findViewById(R.id.tvActivityProgressBar);
+
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         tvActivityScrollView.setVerticalScrollBarEnabled(false);
 
@@ -84,7 +91,8 @@ public class tv_brandActivity extends AppCompatActivity {
         getImageUrls();
         tvViewPager = findViewById(R.id.tvViewPager);
 
-        backTVBrand.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("TV");
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     @Override

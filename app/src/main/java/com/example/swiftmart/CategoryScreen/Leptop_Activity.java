@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,7 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Leptop_Activity extends AppCompatActivity {
-    private ImageView backleptop;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
     private LinearLayout hplogo, delllogo, lenovologo, acerlogo, asusogo, applelogo, msilogo;
     private NestedScrollView laptopScrollView;
     private HorizontalScrollView laptopHorizontalScrollView;
@@ -68,7 +70,8 @@ public class Leptop_Activity extends AppCompatActivity {
         getLaptopCompany();
         getImageUrls();
 
-        backleptop.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Laptops");
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void initialization(){
@@ -85,7 +88,8 @@ public class Leptop_Activity extends AppCompatActivity {
         laptopRecyclerView = findViewById(R.id.laptopRecyclerView);
         laptopActivityProgressBar = findViewById(R.id.laptopActivityProgressBar);
 
-        backleptop = findViewById(R.id.backleptop);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         hplogo = findViewById(R.id.hplogo);
         delllogo = findViewById(R.id.delllogo);

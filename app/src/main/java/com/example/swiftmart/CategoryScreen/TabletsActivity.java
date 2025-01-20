@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TabletsActivity extends AppCompatActivity {
-    private ImageView backtablet;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+    
     private LinearLayout tabletRealme, tabletApple, tabletSamsung, tabletOneplus, tabletRedmi, tabletPoco;
     private NestedScrollView tabletScrollView;
     private HorizontalScrollView tabletHorizontalScrollView;
@@ -71,7 +74,8 @@ public class TabletsActivity extends AppCompatActivity {
         getTabletsCompany();
         getImageUrls();
 
-        backtablet.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Tablets");
+        backBtn.setOnClickListener(v -> onBackPressed());
         
     }
 
@@ -90,7 +94,8 @@ public class TabletsActivity extends AppCompatActivity {
         tabletRecyclerView = findViewById(R.id.tabletRecyclerView);
         tabletActivityProgressBar = findViewById(R.id.tabletActivityProgressBar);
 
-        backtablet = findViewById(R.id.backtablet);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         tabletRealme = findViewById(R.id.tabletRealme);
         tabletApple = findViewById(R.id.tabletApple);

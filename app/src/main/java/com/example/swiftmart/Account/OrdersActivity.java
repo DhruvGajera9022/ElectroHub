@@ -3,6 +3,7 @@ package com.example.swiftmart.Account;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -31,7 +32,8 @@ public class OrdersActivity extends AppCompatActivity {
     private TabLayout orderTabs;
     private ViewPager2 orderActivityViewPager;
     private TabAdapter tabAdapter;
-    private ImageView backOrders;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +42,9 @@ public class OrdersActivity extends AppCompatActivity {
 
         orderTabs = findViewById(R.id.orderTabs);
         orderActivityViewPager = findViewById(R.id.orderActivityViewPager);
-        backOrders = findViewById(R.id.backOrders);
+
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         tabAdapter = new TabAdapter(OrdersActivity.this);
         orderActivityViewPager.setAdapter(tabAdapter);
@@ -65,6 +69,7 @@ public class OrdersActivity extends AppCompatActivity {
         );
         mediator.attach();
 
-        backOrders.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Orders");
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 }

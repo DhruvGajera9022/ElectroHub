@@ -8,55 +8,8 @@
     android:orientation="vertical"
     tools:context=".Account.Add_Address_Activity">
 
-    <RelativeLayout
-        android:id="@+id/lytoolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#2C4AFB"
-        android:orientation="horizontal">
+    <include layout="@layout/tool_bar"/>
 
-        <ImageView
-            android:id="@+id/backaddnewaddress"
-            android:layout_width="25sp"
-            android:layout_height="25sp"
-            android:layout_marginStart="10sp"
-            android:layout_centerVertical="true"
-            android:background="@drawable/baseline_arrow_back_24"
-            tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Add delivery address "
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginStart="40sp"
-            />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/search"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="65sp"
-            android:src="@drawable/baseline_search_24" />
-
-
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/cart3"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="25sp"
-            android:src="@drawable/baseline_shopping_cart_24" />
-
-
-    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

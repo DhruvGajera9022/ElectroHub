@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -44,7 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CameraActivity extends AppCompatActivity {
-    private ImageView backcamera;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+
     private LinearLayout cameraNikon, cameraCanon, cameraSony, cameraFujifilm, cameraPanasonic;
     private NestedScrollView cameraScrollView;
     private HorizontalScrollView cameraHorizontalScrollView;
@@ -72,7 +75,8 @@ public class CameraActivity extends AppCompatActivity {
         getCamerasCompany();
         getImageUrls();
 
-        backcamera.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Camera");
+        backBtn.setOnClickListener(v -> onBackPressed());
         
     }
 
@@ -90,7 +94,8 @@ public class CameraActivity extends AppCompatActivity {
         cameraRecyclerView = findViewById(R.id.cameraRecyclerView);
         cameraActivityProgressBar = findViewById(R.id.cameraActivityProgressBar);
 
-        backcamera = findViewById(R.id.backcamera);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         cameraNikon = findViewById(R.id.cameraNikon);
         cameraCanon = findViewById(R.id.cameraCanon);

@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpeakersActivity extends AppCompatActivity {
-    private ImageView backSpeaker;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+    
     private LinearLayout lglogo, boatlogo, boultlogo, jbllogo;
     private NestedScrollView speakerScrollView;
     private HorizontalScrollView speakerHorizontalScrollView;
@@ -71,7 +74,8 @@ public class SpeakersActivity extends AppCompatActivity {
         getSpeakerCompany();
         getImageUrls();
 
-        backSpeaker.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Speakers");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
     }
 
@@ -89,7 +93,8 @@ public class SpeakersActivity extends AppCompatActivity {
         speakerRecyclerView = findViewById(R.id.speakerRecyclerView);
         SpeakersActivityProgressBar = findViewById(R.id.speakerActivityProgressBar);
 
-        backSpeaker = findViewById(R.id.backSpeaker);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         lglogo = findViewById(R.id.lglogo);
         boatlogo = findViewById(R.id.boatlogo);

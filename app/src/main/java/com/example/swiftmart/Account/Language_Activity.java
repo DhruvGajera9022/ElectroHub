@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 public class Language_Activity extends AppCompatActivity {
 
-    Toolbar toolbar;
     RelativeLayout done;
     RecyclerView recycle;
     LanguageAdapter languageAdapter;

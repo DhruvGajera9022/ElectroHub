@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -43,7 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HeadPhoneActivity extends AppCompatActivity {
-    private ImageView backHeadphone;
+    private ImageView backBtn;
+    private TextView toolBarTitle;
+    
     private LinearLayout boatlogo, jbllogo, sonylogo, cosmicbytelogo, sennheiserlogo, zebronicslogo;
     private NestedScrollView headphoneScrollView;
     private HorizontalScrollView headphoneHorizontalScrollView;
@@ -71,7 +74,8 @@ public class HeadPhoneActivity extends AppCompatActivity {
         getLaptopCompany();
         getImageUrls();
 
-        backHeadphone.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Headphone");
+        backBtn.setOnClickListener(v -> onBackPressed());
     }
 
     private void initialization(){
@@ -88,7 +92,8 @@ public class HeadPhoneActivity extends AppCompatActivity {
         headphoneRecyclerView = findViewById(R.id.headphoneRecyclerView);
         headphoneActivityProgressBar = findViewById(R.id.headphoneActivityProgressBar);
 
-        backHeadphone = findViewById(R.id.backHeadphone);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         boatlogo = findViewById(R.id.boatlogo);
         jbllogo = findViewById(R.id.jbllogo);

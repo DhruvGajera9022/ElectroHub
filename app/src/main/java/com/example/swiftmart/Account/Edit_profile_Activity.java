@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +42,8 @@ public class Edit_profile_Activity extends AppCompatActivity {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private TextInputEditText txtEditProfileName, txtEditProfileNumber, txtEditProfileEmail;
-    private ImageView editProfileSelectImage, userImage, cart, backediteprofile;
+    private ImageView editProfileSelectImage, userImage, cart, backBtn;
+    private TextView toolBarTitle;
     private AppCompatButton editProfileBtn;
     private Uri imgUpdateUri;
     private boolean isImageSelected = false;
@@ -65,14 +67,13 @@ public class Edit_profile_Activity extends AppCompatActivity {
         userImage = findViewById(R.id.userImage);
         editProfileProgressBar = findViewById(R.id.editProfileProgressBar);
 
-        cart = findViewById(R.id.cart);
-        backediteprofile = findViewById(R.id.backediteprofile);
+        backBtn = findViewById(R.id.backBtn);
+        toolBarTitle = findViewById(R.id.toolBarTitle);
 
         getUserData();
 
-        cart.setOnClickListener(v -> navigateToCartFragment());
-
-        backediteprofile.setOnClickListener(v -> onBackPressed());
+        toolBarTitle.setText("Edit Profile");
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         handleEditProfileSelectImageClick();
         handleEditProfileBtnClick();
