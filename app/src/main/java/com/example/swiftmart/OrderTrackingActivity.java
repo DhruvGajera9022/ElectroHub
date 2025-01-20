@@ -2,6 +2,7 @@ package com.example.swiftmart;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatRatingBar;
+import androidx.cardview.widget.CardView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -26,11 +28,12 @@ import java.util.Map;
 
 public class OrderTrackingActivity extends AppCompatActivity {
     private ImageView backBtn, productImage;
-    private TextView toolBarTitle;
+    private TextView toolBarTitle, canceledText, canceledTime;
     private TextView trackOrderName, trackOrderCompany, trackOrderQty, productDetailsProductPrice, trackOrderID;
     private TextView addressFullName, addressText, addressState, addressNumber;
     private ScrollView trackOrderScrollView;
     private AppCompatRatingBar trackOrderRating;
+    private CardView invoiceCardView;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -58,6 +61,11 @@ public class OrderTrackingActivity extends AppCompatActivity {
         productDetailsProductPrice = findViewById(R.id.productDetailsProductPrice);
         trackOrderID = findViewById(R.id.trackOrderID);
         trackOrderRating = findViewById(R.id.trackOrderRating);
+
+        canceledText = findViewById(R.id.canceledText);
+        canceledTime = findViewById(R.id.canceledTime);
+
+        invoiceCardView = findViewById(R.id.invoiceCardView);
 
         trackOrderScrollView = findViewById(R.id.trackOrderScrollView);
 
@@ -99,6 +107,23 @@ public class OrderTrackingActivity extends AppCompatActivity {
                     if (imgUrls != null && !imgUrls.isEmpty()) {
                         Picasso.get().load(imgUrls.get(0)).into(productImage);
                     }
+
+                    if ("Canceled".equals(value.getString("status"))) {
+                        canceledText.setVisibility(View.VISIBLE);
+                        canceledTime.setVisibility(View.VISIBLE);
+                        canceledTime.setText(value.getString("orderDate"));
+                    }
+
+                    if ("Shipped".equals(value.getString("status"))){
+                        invoiceCardView.setVisibility(View.VISIBLE);
+                        invoiceCardView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        });
+                    }
+
                 }
             }
         });
@@ -212,6 +237,10 @@ public class OrderTrackingActivity extends AppCompatActivity {
                         Log.e("OrderTracking", "Error querying existing rating", task.getException());
                     }
                 });
+    }
+
+    private void generateInvoice(){
+
     }
 
 

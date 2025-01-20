@@ -66,93 +66,128 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:orientation="vertical">
 
-                        <!-- Text Details -->
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1">
+                            android:orientation="horizontal"
+                            android:padding="16dp">
 
-                            <TextView
-                                android:id="@+id/trackOrderName"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Zebronics Jaguar"
-                                android:textColor="@color/black"
-                                android:textSize="18sp"
-                                android:fontFamily="@font/poppinsmedium"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:id="@+id/trackOrderCompany"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Zebronics"
-                                android:textSize="14sp"
-                                android:fontFamily="@font/poppinsmedium"
-                                android:layout_marginTop="4dp" />
-
+                            <!-- Text Details -->
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="4dp">
+                                android:orientation="vertical"
+                                android:layout_weight="1">
 
                                 <TextView
+                                    android:id="@+id/trackOrderName"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Qty: "
-                                    android:textSize="14sp"
-                                    android:fontFamily="@font/poppinsmedium" />
+                                    android:text="Zebronics Jaguar"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp"
+                                    android:fontFamily="@font/poppinsmedium"
+                                    android:textStyle="bold" />
 
                                 <TextView
-                                    android:id="@+id/trackOrderQty"
+                                    android:id="@+id/trackOrderCompany"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="1"
+                                    android:text="Zebronics"
                                     android:textSize="14sp"
-                                    android:fontFamily="@font/poppinsmedium" />
+                                    android:fontFamily="@font/poppinsmedium"
+                                    android:layout_marginTop="4dp" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="4dp">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Qty: "
+                                        android:textSize="14sp"
+                                        android:fontFamily="@font/poppinsmedium" />
+
+                                    <TextView
+                                        android:id="@+id/trackOrderQty"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="1"
+                                        android:textSize="14sp"
+                                        android:fontFamily="@font/poppinsmedium" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="8dp">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:textStyle="bold"
+                                        android:text="₹"
+                                        android:fontFamily="@font/poppinsmedium"
+                                        android:textSize="16sp"
+                                        android:textColor="#6055D8"/>
+
+                                    <TextView
+                                        android:id="@+id/productDetailsProductPrice"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="5499"
+                                        android:textStyle="bold"
+                                        android:fontFamily="@font/poppinsmedium"
+                                        android:textSize="16sp"
+                                        android:textColor="#6055D8"/>
+                                </LinearLayout>
                             </LinearLayout>
 
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="8dp">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:textStyle="bold"
-                                    android:text="₹"
-                                    android:fontFamily="@font/poppinsmedium"
-                                    android:textSize="16sp"
-                                    android:textColor="#6055D8"/>
-
-                                <TextView
-                                    android:id="@+id/productDetailsProductPrice"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="5499"
-                                    android:textStyle="bold"
-                                    android:fontFamily="@font/poppinsmedium"
-                                    android:textSize="16sp"
-                                    android:textColor="#6055D8"/>
-                            </LinearLayout>
+                            <!-- Product Image -->
+                            <ImageView
+                                android:id="@+id/productImage"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/tv"
+                                android:background="@drawable/rounded_image_background"
+                                android:layout_gravity="center" />
                         </LinearLayout>
 
-                        <!-- Product Image -->
-                        <ImageView
-                            android:id="@+id/productImage"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/tv"
-                            android:background="@drawable/rounded_image_background"
-                            android:layout_gravity="center" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:id="@+id/canceledText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Your order has been canceled on: "
+                                android:textColor="@color/red"
+                                android:fontFamily="@font/poppinsregular"
+                                android:textSize="12sp"
+                                android:visibility="gone"/>
+
+                            <TextView
+                                android:id="@+id/canceledTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/red"
+                                android:visibility="gone"
+                                android:fontFamily="@font/poppinsregular"
+                                android:textSize="12sp"/>
+
+                        </LinearLayout>
+
                     </LinearLayout>
 
                     <View
@@ -310,6 +345,47 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/invoiceCardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="5dp"
+                android:layout_marginTop="5dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/icon_download"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Download invoice"
+                        android:fontFamily="@font/poppinsregular"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:padding="10dp"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="5dp"
+                android:layout_marginTop="5dp">
 
             </androidx.cardview.widget.CardView>
 
