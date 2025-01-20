@@ -279,7 +279,6 @@ public class Add_Address_Activity extends AppCompatActivity {
                         CustomToast.showToast(Add_Address_Activity.this, "Failed to check existing addresses");
                     });
         } else {
-            // Directly save the new address if not default
             saveNewAddress(addressData);
         }
     }

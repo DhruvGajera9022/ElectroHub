@@ -124,18 +124,6 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
-
-
-        <TextView
-            android:id="@+id/tvAddAlternatePhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+ Add Alternate Phone Number"
-            android:textColor="@color/blue"
-            android:layout_marginTop="8dp"
-            android:padding="8dp"
-            android:textSize="12sp" />
-
         <TextView
             android:id="@+id/tvEnableGPS"
             android:layout_width="match_parent"
@@ -358,12 +346,27 @@
                     android:text="Work" />
             </RadioGroup>
 
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/isDefaultCheckBox"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Default"
-                android:layout_marginStart="30dp"/>
+                android:orientation="vertical"
+                android:layout_marginStart="30dp">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/isDefaultCheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Default"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please check if you add your first address"
+                    android:textSize="10sp"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/red"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
