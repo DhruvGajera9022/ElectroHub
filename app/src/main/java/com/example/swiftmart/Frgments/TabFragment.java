@@ -88,7 +88,7 @@ public class TabFragment extends Fragment {
         }
     }
 
-    private void getOrders(String status){
+    private void getOrders(String status) {
         if (uid == null || uid.isEmpty()) {
             return;
         }
@@ -104,18 +104,27 @@ public class TabFragment extends Fragment {
                             return;
                         }
 
-                        if (value != null && !value.isEmpty()) {
-                            orderList.clear();
+                        if (value != null) {
+                            orderList.clear(); // Clear the current list to avoid duplicate entries.
                             for (QueryDocumentSnapshot documentSnapshot : value) {
                                 OrderModel orderModel = documentSnapshot.toObject(OrderModel.class);
                                 orderList.add(orderModel);
                             }
                             orderAdapter.notifyDataSetChanged();
-                        }
 
+                            // Handle visibility of empty view
+                            if (orderList.isEmpty()) {
+                                emptyView.setVisibility(View.VISIBLE);
+                                ordersRecyclerView.setVisibility(View.GONE);
+                            } else {
+                                emptyView.setVisibility(View.GONE);
+                                ordersRecyclerView.setVisibility(View.VISIBLE);
+                            }
+                        }
                     }
                 });
     }
+
 
     @Override
     public void onResume() {
