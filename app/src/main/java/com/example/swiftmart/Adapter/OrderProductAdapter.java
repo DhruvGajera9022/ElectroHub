@@ -17,7 +17,9 @@ import com.example.swiftmart.Model.OrderModel;
 import com.example.swiftmart.OrderTrackingActivity;
 import com.example.swiftmart.R;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapter.ViewHolder> {
 
@@ -47,7 +49,10 @@ public class OrderProductAdapter extends RecyclerView.Adapter<OrderProductAdapte
 
         holder.productName.setText(orderModel.getName());
         holder.productCompany.setText(orderModel.getCompany());
-        holder.productPrice.setText("₹" + orderModel.getPrice());
+
+        double unitPrice = Double.parseDouble(orderModel.getPrice());
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        holder.productPrice.setText("₹" + currencyFormat.format(unitPrice));
 
         holder.trackOrderButton.setOnClickListener(v -> {
             Intent intent = new Intent(context, OrderTrackingActivity.class);

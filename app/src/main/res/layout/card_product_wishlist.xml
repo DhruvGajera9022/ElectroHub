@@ -3,141 +3,81 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_margin="5dp"
+    android:elevation="5dp">
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_height="147dp">
+
+        <!-- Product Image -->
+        <ImageView
+            android:id="@+id/cardWishlistProductImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/boatearbuds" />
+    </FrameLayout>
+
+    <!-- FrameLayout for Product Info -->
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp">
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/card_background">
 
         <!-- Main LinearLayout -->
         <LinearLayout
-            android:id="@+id/wishlistCardProductLinearLayout"
+            android:id="@+id/cardWishlistProductLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/cardProductImage"
-                android:layout_width="match_parent"
-                android:layout_height="147dp"
-                android:src="@drawable/boatearbuds" />
-
+            <!-- Product Name -->
             <TextView
-                android:id="@+id/cardProductName"
+                android:id="@+id/cardWishlistProductName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/boat"
-                android:textStyle="bold"
-                android:layout_marginHorizontal="10sp"
+                android:layout_marginHorizontal="10dp"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:fontFamily="@font/poppinssemibold"/>
+                android:textSize="14sp"
+                android:fontFamily="@font/poppinssemibold" />
 
+            <!-- Product Description -->
+            <TextView
+                android:id="@+id/cardWishlistProductDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:textSize="12sp"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/poppinsregular" />
+
+            <!-- Price Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10sp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/cardProductDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/airdopes_alpha_with_35"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/poppinsregular"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10sp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="18sp"
-                        android:layout_height="18sp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/arrows" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_71"
-                        android:layout_gravity="center"
-                        android:textColor="@color/green"
-                        android:textSize="15sp"
-                        android:fontFamily="@font/poppinsregular"/>
-
-                    <TextView
-                        android:id="@+id/cardMaxPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_3_490"
-                        android:layout_marginStart="3sp"
-                        android:textColor="@color/gray"
-                        android:textSize="15sp"
-                        android:fontFamily="@font/poppinsregular"/>
-
-                    <TextView
-                        android:id="@+id/cardProductPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_999"
-                        android:layout_marginStart="5sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:fontFamily="@font/poppinssemibold"/>
-                </LinearLayout>
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="3dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/save_extra_with_vombo_offers"
-                    android:textColor="@color/green"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/poppinsregular"/>
+                    android:text="₹"
+                    android:textColor="#6055D8"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppinssemibold" />
 
-                <ImageView
-                    android:layout_width="80sp"
-                    android:layout_height="25sp"
-                    android:src="@drawable/rating" />
-
-                <LinearLayout
+                <TextView
+                    android:id="@+id/cardWishlistProductPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="30sp"
-                        android:layout_height="30sp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/express" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/express"
-                        android:layout_marginStart="5sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"
-                        android:layout_gravity="center"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppinssemibold"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/_1_day_delivery"
-                        android:layout_marginStart="2sp"
-                        android:textColor="@color/black"
-                        android:layout_gravity="center"
-                        android:textSize="11sp"
-                        android:fontFamily="@font/poppinsregular"/>
-                </LinearLayout>
+                    android:text=""
+                    android:textColor="#6055D8"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppinssemibold" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

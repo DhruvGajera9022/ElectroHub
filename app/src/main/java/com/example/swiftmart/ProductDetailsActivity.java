@@ -38,10 +38,12 @@ import com.razorpay.Checkout;
 
 import org.json.JSONObject;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ProductDetailsActivity extends AppCompatActivity {
@@ -163,7 +165,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     private void displayProductDetails(ProductModel product) {
         productDetailsProductName.setText(product.getName());
-        productDetailsProductPrice.setText(product.getPrice());
+
+        double unitPrice = Double.parseDouble(product.getPrice());
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        productDetailsProductPrice.setText(currencyFormat.format(unitPrice));
 
         String fullDescription = product.getDescription();
 

@@ -20,7 +20,9 @@ import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.ProductDetailsActivity;
 import com.example.swiftmart.R;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder> {
     Context context;
@@ -42,29 +44,36 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
     public void onBindViewHolder(@NonNull WishlistViewHolder holder, int position) {
         ProductModel product = datalist.get(position);
 
-        Glide.with(holder.cardProductImage.getContext())
+        Glide.with(holder.cardWishlistProductImage.getContext())
                 .load(product.getImgurls().get(0))
                 .placeholder(R.drawable.img_animation)
-                .into(holder.cardProductImage);
-        holder.cardProductName.setText(product.getName());
-        holder.cardProductDescription.setText(product.getDescription());
-        holder.cardProductPrice.setText("₹" + product.getPrice());
+                .into(holder.cardWishlistProductImage);
+        holder.cardWishlistProductName.setText(product.getName());
 
-        holder.cardMaxPrice.setPaintFlags(holder.cardMaxPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        String fullDescription = product.getDescription();
+        String shortenedDescription = fullDescription.length() > 20 ? fullDescription.substring(0, 23) + "..." : fullDescription;
+        holder.cardWishlistProductDescription.setText(shortenedDescription);
+
+        // Format the price
+        double unitPrice = Double.parseDouble(product.getPrice());
+        NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.getDefault());
+        holder.cardWishlistProductPrice.setText(currencyFormat.format(unitPrice));
 
         // Set slide-in animation
         Animation animation = AnimationUtils.loadAnimation(holder.itemView.getContext(), R.anim.fade_in);
         holder.itemView.startAnimation(animation);
 
-        holder.wishlistCardProductLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ProductDetailsActivity.class);
-                intent.putExtra("productId", product.getPid());
-                context.startActivity(intent);
-            }
+        holder.cardWishlistProductLinearLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailsActivity.class);
+            intent.putExtra("productId", product.getPid());
+            context.startActivity(intent);
         });
 
+        holder.cardWishlistProductImage.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ProductDetailsActivity.class);
+            intent.putExtra("productId", product.getPid());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -73,19 +82,18 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
     }
 
     public class WishlistViewHolder extends RecyclerView.ViewHolder{
-        ImageView cardProductImage;
-        TextView cardProductName, cardProductDescription, cardProductPrice, cardMaxPrice;
-        LinearLayout wishlistCardProductLinearLayout;
+        ImageView cardWishlistProductImage;
+        TextView cardWishlistProductName, cardWishlistProductDescription, cardWishlistProductPrice, cardMaxPrice;
+        LinearLayout cardWishlistProductLinearLayout;
 
         public WishlistViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            wishlistCardProductLinearLayout = itemView.findViewById(R.id.wishlistCardProductLinearLayout);
-            cardProductImage = itemView.findViewById(R.id.cardProductImage);
-            cardProductName = itemView.findViewById(R.id.cardProductName);
-            cardProductDescription = itemView.findViewById(R.id.cardProductDescription);
-            cardProductPrice = itemView.findViewById(R.id.cardProductPrice);
-            cardMaxPrice = itemView.findViewById(R.id.cardMaxPrice);
+            cardWishlistProductLinearLayout = itemView.findViewById(R.id.cardWishlistProductLinearLayout);
+            cardWishlistProductImage = itemView.findViewById(R.id.cardWishlistProductImage);
+            cardWishlistProductName = itemView.findViewById(R.id.cardWishlistProductName);
+            cardWishlistProductDescription = itemView.findViewById(R.id.cardWishlistProductDescription);
+            cardWishlistProductPrice = itemView.findViewById(R.id.cardWishlistProductPrice);
 
         }
     }
