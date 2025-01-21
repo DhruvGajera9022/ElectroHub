@@ -2,8 +2,10 @@ package com.example.swiftmart.Account;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -64,6 +66,7 @@ public class Address_Activity extends AppCompatActivity {
         noAvailableText = findViewById(R.id.noAvailableText);
 
         getAllAddress();
+        setStatusBarColor(R.color.home);
 
         toolBarTitle.setText("Address");
         backBtn.setOnClickListener(v -> onBackPressed());
@@ -121,6 +124,13 @@ public class Address_Activity extends AppCompatActivity {
                         addressRecyclerView.setItemAnimator(new DefaultItemAnimator());
                     }
                 });
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 
 }

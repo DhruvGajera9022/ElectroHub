@@ -3,11 +3,13 @@ package com.example.swiftmart;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -111,6 +113,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         handleBuyClick();
         getUserData();
         handleOnBackArrowPress();
+
+        setStatusBarColor(R.color.home);
 
     }
 
@@ -412,6 +416,13 @@ public class ProductDetailsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 
 }

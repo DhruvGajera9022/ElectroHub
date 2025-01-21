@@ -1,7 +1,9 @@
 package com.example.swiftmart.Account;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,8 @@ public class OrdersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders);
 
+        setStatusBarColor(R.color.home);
+
         orderTabs = findViewById(R.id.orderTabs);
         orderActivityViewPager = findViewById(R.id.orderActivityViewPager);
 
@@ -71,5 +75,12 @@ public class OrdersActivity extends AppCompatActivity {
 
         toolBarTitle.setText("Orders");
         backBtn.setOnClickListener(v -> onBackPressed());
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 }

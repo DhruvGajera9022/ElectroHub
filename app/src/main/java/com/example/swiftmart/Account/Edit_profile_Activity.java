@@ -3,8 +3,10 @@ package com.example.swiftmart.Account;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -77,6 +79,8 @@ public class Edit_profile_Activity extends AppCompatActivity {
 
         handleEditProfileSelectImageClick();
         handleEditProfileBtnClick();
+
+        setStatusBarColor(R.color.home);
     }
 
     @Override
@@ -227,6 +231,13 @@ public class Edit_profile_Activity extends AppCompatActivity {
         }else {
             editProfileBtn.setVisibility(View.VISIBLE);
             editProfileProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.swiftmart;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -50,6 +52,7 @@ public class AllProducts extends AppCompatActivity {
 
 
         getAllProducts();
+        setStatusBarColor(R.color.home);
 
         toolBarTitle.setText("Products");
         backBtn.setOnClickListener(v -> onBackPressed());
@@ -86,6 +89,13 @@ public class AllProducts extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 
 }

@@ -464,11 +464,6 @@ public class HomeFragment extends Fragment {
 
 
 
-
-
-
-
-
     private void getImageUrls() {
         databaseReference.child("Home").child("imgurls").addValueEventListener(new ValueEventListener() {
             @Override

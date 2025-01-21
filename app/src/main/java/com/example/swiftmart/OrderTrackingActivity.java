@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
@@ -70,6 +71,8 @@ public class OrderTrackingActivity extends AppCompatActivity {
         handleRating();
         getUserData();
         handleCancelOrder();
+
+        setStatusBarColor(R.color.home);
     }
 
     private void initialization(){
@@ -377,6 +380,13 @@ public class OrderTrackingActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 
 }

@@ -7,8 +7,10 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -116,6 +118,8 @@ public class Add_Address_Activity extends AppCompatActivity {
             });
         }
         backBtn.setOnClickListener(v -> onBackPressed());
+
+        setStatusBarColor(R.color.home);
     }
 
     private void requestLocationPermission() {
@@ -427,6 +431,13 @@ public class Add_Address_Activity extends AppCompatActivity {
         }else {
             btnSaveAddress.setVisibility(View.VISIBLE);
             addressProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
         }
     }
 

@@ -1,10 +1,12 @@
 package com.example.swiftmart;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -41,6 +43,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         initialization();
         inputValidation();
         handleForgotPasswordButtonClick();
+
+        setStatusBarColor(R.color.home);
 
     }
 
@@ -128,6 +132,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         }else {
             forgotPasswordButton.setVisibility(View.VISIBLE);
             forgotPasswordProgressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
         }
     }
 

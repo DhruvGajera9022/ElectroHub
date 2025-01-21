@@ -1,8 +1,10 @@
 package com.example.swiftmart.Account;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.Toolbar;
 
@@ -31,6 +33,7 @@ public class Language_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_language);
 
+        setStatusBarColor(R.color.home);
 
         done = findViewById(R.id.right);
         recycle = findViewById(R.id.recycle);
@@ -72,5 +75,12 @@ public class Language_Activity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 }

@@ -1,8 +1,10 @@
 package com.example.swiftmart;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Window;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,8 @@ public class Activity_splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        setStatusBarColor(R.color.home);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -27,5 +31,12 @@ public class Activity_splash extends AppCompatActivity {
                 finish();
             }
         },2000);
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 }

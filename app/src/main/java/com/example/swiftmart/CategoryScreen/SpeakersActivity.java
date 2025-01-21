@@ -1,9 +1,11 @@
 package com.example.swiftmart.CategoryScreen;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -73,6 +75,7 @@ public class SpeakersActivity extends AppCompatActivity {
         getLaptops();
         getSpeakerCompany();
         getImageUrls();
+        setStatusBarColor(R.color.home);
 
         toolBarTitle.setText("Speakers");
         backBtn.setOnClickListener(v -> onBackPressed());
@@ -251,6 +254,13 @@ public class SpeakersActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         sliderHandler.postDelayed(slideRunnable, 3000);
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 
 
