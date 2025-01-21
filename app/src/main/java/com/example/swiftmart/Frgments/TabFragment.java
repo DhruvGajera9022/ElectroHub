@@ -105,7 +105,7 @@ public class TabFragment extends Fragment {
                         }
 
                         if (value != null) {
-                            orderList.clear(); // Clear the current list to avoid duplicate entries.
+                            orderList.clear();
                             for (QueryDocumentSnapshot documentSnapshot : value) {
                                 OrderModel orderModel = documentSnapshot.toObject(OrderModel.class);
                                 orderList.add(orderModel);

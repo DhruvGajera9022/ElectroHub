@@ -1,7 +1,9 @@
 package com.example.swiftmart.Frgments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,6 +36,7 @@ public class CartFragment extends Fragment {
     private TextView cartProductTotal, cartProductDeliveryTotal, cartProductVoucherTotal, cartProductFinalTotal;
     private double totalPrice = 0;
     private int deliveryCharges = 50;
+    private AppCompatButton cartFragmentCheckout;
 
     private Map<String, Double> itemTotals = new HashMap<>();
 
@@ -42,9 +45,11 @@ public class CartFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
+
         initialization(view);
         getCartData();
         handleOnBackPress();
+//        handleCheckoutClick();
         return view;
     }
 
@@ -52,11 +57,14 @@ public class CartFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
+
         cartRecyclerView = view.findViewById(R.id.cartRecyclerView);
         cartProductTotal = view.findViewById(R.id.cartProductTotal);
         cartProductDeliveryTotal = view.findViewById(R.id.cartProductDeliveryTotal);
         cartProductVoucherTotal = view.findViewById(R.id.cartProductVoucherTotal);
         cartProductFinalTotal = view.findViewById(R.id.cartProductFinalTotal);
+
+        cartFragmentCheckout = view.findViewById(R.id.cartFragmentCheckout);
 
         adapter = new CartAdapter(getContext(), datalist);
         cartRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -158,6 +166,25 @@ public class CartFragment extends Fragment {
             updateTotal();
         }
     }
+
+//    private void handleCheckoutClick(){
+//
+//        cartFragmentCheckout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                ArrayList<String> productIds = new ArrayList<>();
+//                for (ProductModel product : datalist) {
+//                    productIds.add(product.getPid());
+//                }
+//
+//                Intent intent = new Intent(getContext(), ConfirmAddressActivity2.class);
+//                intent.putStringArrayListExtra("productIDs", productIds);
+//                intent.putExtra("totalAmount", cartProductFinalTotal.getText().toString());
+//                startActivity(intent);
+//            }
+//        });
+//    }
 
     private void handleOnBackPress() {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {

@@ -1,16 +1,17 @@
 package com.example.swiftmart.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderModel {
 
     String pid, name, description,price, qty, company, category, oid, date, time;
-    private List<String> imgurls;
+    private ArrayList<String> imgurls;
 
     public OrderModel() {
     }
 
-    public OrderModel(String pid, String name, String description, String company, String category, String oid, String date, String time, List<String> imgurls, String qty, String price) {
+    public OrderModel(String pid, String name, String description, String company, String category, String oid, String date, String time, ArrayList<String> imgurls, String qty, String price) {
         this.pid = pid;
         this.name = name;
         this.description = description;
@@ -92,7 +93,7 @@ public class OrderModel {
         return imgurls;
     }
 
-    public void setImgurls(List<String> imgurls) {
+    public void setImgurls(ArrayList<String> imgurls) {
         this.imgurls = imgurls;
     }
 
