@@ -128,13 +128,23 @@ public class CartFragment extends Fragment {
 
                         adapter.notifyDataSetChanged();
                         updateTotal();
+                        handleCheckoutButtonState();
                     } else {
                         datalist.clear();
                         itemTotals.clear();
                         adapter.notifyDataSetChanged();
                         resetTotals();
+                        handleCheckoutButtonState();
                     }
                 });
+    }
+
+    private void handleCheckoutButtonState() {
+        if (datalist.isEmpty()) {
+            cartFragmentCheckout.setEnabled(false);
+        } else {
+            cartFragmentCheckout.setEnabled(true);
+        }
     }
 
     private void resetTotals() {
@@ -165,7 +175,6 @@ public class CartFragment extends Fragment {
     }
 
     private void handleCheckoutClick(){
-
         cartFragmentCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

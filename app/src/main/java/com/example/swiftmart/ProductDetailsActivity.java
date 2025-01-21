@@ -376,6 +376,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                         documentReference.update("oid", oid)
                                                 .addOnSuccessListener(aVoid -> {
                                                     CustomToast.showToast(ProductDetailsActivity.this, "Added to Cart");
+                                                    onBackPressed();
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     CustomToast.showToast(ProductDetailsActivity.this, "Failed to add to cart");
