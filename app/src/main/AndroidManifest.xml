@@ -29,6 +29,9 @@
             android:name=".ConfirmAddressActivity2"
             android:exported="false" />
         <activity
+            android:name=".MainActivity2"
+            android:exported="false" />
+        <activity
             android:name=".OrderTrackingActivity"
             android:exported="false" />
         <activity

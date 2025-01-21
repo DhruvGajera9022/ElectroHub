@@ -1,0 +1,180 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ConfirmAddressActivity2">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="7dp"
+            android:paddingTop="7dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Details"
+                android:textColor="#A9A9A9"
+                android:fontFamily="@font/poppinsregular"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Address"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppinsregular"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Payment"
+                android:textColor="#A9A9A9"
+                android:fontFamily="@font/poppinsregular"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Summary"
+                android:textColor="#A9A9A9"
+                android:fontFamily="@font/poppinsregular"/>
+
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#A9A9A9" />
+
+        <!-- Add New Address Button -->
+        <TextView
+            android:id="@+id/confirmAddressAddNew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="+ Add New Address"
+            android:textColor="@color/link_color"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppinsregular"/>
+
+        <!-- Delivery Address Card -->
+        <LinearLayout
+            android:id="@+id/confirmAddressLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:background="@drawable/address_background"
+            android:padding="10dp"
+            android:layout_marginTop="20dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/confirmAddressFullName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/poppinsmedium"/>
+
+                <TextView
+                    android:id="@+id/confirmAddressType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="12sp"
+                    android:layout_marginStart="10dp"
+                    android:background="#FBFBFB"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="2dp"
+                    android:fontFamily="@font/poppinsregular"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/confirmAddressText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppinsregular"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:id="@+id/confirmAddressState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:fontFamily="@font/poppinsregular"/>
+
+            <TextView
+                android:id="@+id/confirmAddressNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/poppinsmedium"/>
+
+            <TextView
+                android:id="@+id/confirmAddressEdit"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Edit"
+                android:textSize="14sp"
+                android:padding="2dp"
+                android:textColor="@color/link_color"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/noAvailableText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No address available. Please add one."
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:padding="16dp"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+        <!-- Deliver to This Address Button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/confirmAddressDeliver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Deliver to this address"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:background="@drawable/btn"
+            android:fontFamily="@font/poppinsmedium"/>
+    </LinearLayout>
+</RelativeLayout>

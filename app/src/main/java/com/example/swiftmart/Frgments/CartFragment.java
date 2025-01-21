@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.swiftmart.Adapter.CartAdapter;
+import com.example.swiftmart.ConfirmAddressActivity2;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
 import com.example.swiftmart.Utils.CustomToast;
@@ -49,7 +50,7 @@ public class CartFragment extends Fragment {
         initialization(view);
         getCartData();
         handleOnBackPress();
-//        handleCheckoutClick();
+        handleCheckoutClick();
         return view;
     }
 
@@ -95,48 +96,44 @@ public class CartFragment extends Fragment {
     }
 
     private void getCartData() {
-        db.collection("Users").document(uid).collection("Cart").get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        QuerySnapshot value = task.getResult();
-
-                        if (value != null && !value.isEmpty()) {
-                            datalist.clear();
-                            itemTotals.clear();
-                            totalPrice = 0;
-
-                            for (QueryDocumentSnapshot documentSnapshot : value) {
-                                ProductModel product = documentSnapshot.toObject(ProductModel.class);
-                                String priceString = product.getPrice();
-                                if (priceString != null) {
-                                    try {
-                                        double price = Double.parseDouble(priceString);
-                                        double itemTotal = price * product.getQty();
-                                        itemTotals.put(product.getOid(), itemTotal);
-                                        totalPrice += itemTotal;
-                                    } catch (NumberFormatException e) {
-                                        e.printStackTrace();
-                                        CustomToast.showToast(getContext(), "Invalid price format detected");
-                                    }
-                                }
-                                datalist.add(product);
-                            }
-
-                            adapter.notifyDataSetChanged();
-                            updateTotal();
-                        } else {
-                            datalist.clear();
-                            itemTotals.clear();
-                            adapter.notifyDataSetChanged();
-                            resetTotals();
-                        }
-                    } else {
-                        CustomToast.showToast(getContext(), "Error in fetching cart data");
+        db.collection("Users").document(uid).collection("Cart")
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        error.printStackTrace();
+                        CustomToast.showToast(getContext(), "Error listening for cart updates");
+                        return;
                     }
-                })
-                .addOnFailureListener(e -> {
-                    e.printStackTrace();
-                    CustomToast.showToast(getContext(), "Failed to fetch cart data");
+
+                    if (value != null && !value.isEmpty()) {
+                        datalist.clear();
+                        itemTotals.clear();
+                        totalPrice = 0;
+
+                        for (QueryDocumentSnapshot documentSnapshot : value) {
+                            ProductModel product = documentSnapshot.toObject(ProductModel.class);
+                            String priceString = product.getPrice();
+                            if (priceString != null) {
+                                try {
+                                    double price = Double.parseDouble(priceString);
+                                    double itemTotal = price * product.getQty();
+                                    itemTotals.put(product.getOid(), itemTotal);
+                                    totalPrice += itemTotal;
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                    CustomToast.showToast(getContext(), "Invalid price format detected");
+                                }
+                            }
+                            datalist.add(product);
+                        }
+
+                        adapter.notifyDataSetChanged();
+                        updateTotal();
+                    } else {
+                        datalist.clear();
+                        itemTotals.clear();
+                        adapter.notifyDataSetChanged();
+                        resetTotals();
+                    }
                 });
     }
 
@@ -167,24 +164,24 @@ public class CartFragment extends Fragment {
         }
     }
 
-//    private void handleCheckoutClick(){
-//
-//        cartFragmentCheckout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                ArrayList<String> productIds = new ArrayList<>();
-//                for (ProductModel product : datalist) {
-//                    productIds.add(product.getPid());
-//                }
-//
-//                Intent intent = new Intent(getContext(), ConfirmAddressActivity2.class);
-//                intent.putStringArrayListExtra("productIDs", productIds);
-//                intent.putExtra("totalAmount", cartProductFinalTotal.getText().toString());
-//                startActivity(intent);
-//            }
-//        });
-//    }
+    private void handleCheckoutClick(){
+
+        cartFragmentCheckout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ArrayList<String> productIds = new ArrayList<>();
+                for (ProductModel product : datalist) {
+                    productIds.add(product.getPid());
+                }
+
+                Intent intent = new Intent(getContext(), ConfirmAddressActivity2.class);
+                intent.putStringArrayListExtra("productIDs", productIds);
+                intent.putExtra("totalAmount", cartProductFinalTotal.getText().toString());
+                startActivity(intent);
+            }
+        });
+    }
 
     private void handleOnBackPress() {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
