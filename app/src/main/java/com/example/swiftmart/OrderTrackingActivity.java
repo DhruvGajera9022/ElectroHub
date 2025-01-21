@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import com.example.swiftmart.Model.InvoiceModel;
 import com.example.swiftmart.Utils.CustomToast;
 import com.example.swiftmart.Utils.InvoiceGenerator;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,12 +35,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -314,29 +317,64 @@ public class OrderTrackingActivity extends AppCompatActivity {
         return prefix + year + "-" + formattedRandomNumber;
     }
 
-    private void handleCancelOrder(){
+    private void handleCancelOrder() {
         trackOrderCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DocumentReference reference = db.collection("Orders").document(orderID);
 
-                Calendar calForDate = Calendar.getInstance();
-                SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
-                String saveCurrentDate = currentDate.format(calForDate.getTime());
+                reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot.exists()) {
+                            String orderDate = documentSnapshot.getString("orderDate");
 
-                // Update the status and add canceledDate
-                Map<String, Object> updates = new HashMap<>();
-                updates.put("status", "Canceled");
-                updates.put("canceledDate", saveCurrentDate);
+                            try {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                                Date orderDateObj = dateFormat.parse(orderDate);
 
-                reference.update(updates)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                CustomToast.showToast(getApplicationContext(), "Order canceled successfully");
-                                finish();
+                                Calendar orderCal = Calendar.getInstance();
+                                orderCal.setTime(orderDateObj);
+                                long orderTimeMillis = orderCal.getTimeInMillis();
+
+                                long cancelDeadlineMillis = orderTimeMillis + (24 * 60 * 60 * 1000);
+
+                                long currentTimeMillis = System.currentTimeMillis();
+
+                                if (currentTimeMillis <= cancelDeadlineMillis) {
+                                    Calendar calForDate = Calendar.getInstance();
+                                    SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
+                                    String saveCurrentDate = currentDate.format(calForDate.getTime());
+
+                                    Map<String, Object> updates = new HashMap<>();
+                                    updates.put("status", "Canceled");
+                                    updates.put("canceledDate", saveCurrentDate);
+
+                                    reference.update(updates)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    CustomToast.showToast(getApplicationContext(), "Order canceled successfully");
+                                                    finish();
+                                                }
+                                            });
+                                } else {
+                                    CustomToast.showToast(getApplicationContext(),"Order can only be canceled within 24 hours of placement.");
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                Log.d("CancelOrder", "Error parsing order date.");
                             }
-                        });
+                        } else {
+                            Log.d("CancelOrder","Order not found.");
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("CancelOrder", "Failed to fetch order details.");
+                    }
+                });
             }
         });
     }
