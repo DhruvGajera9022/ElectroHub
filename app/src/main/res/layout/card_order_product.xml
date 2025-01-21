@@ -2,16 +2,16 @@
 <!-- res/layout/product_card.xml -->
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:padding="16dp">
 
         <!-- Product Image -->
@@ -21,15 +21,20 @@
             android:layout_height="120dp"
             android:scaleType="fitCenter"
             android:src="@drawable/tv"
-            android:background="@drawable/rounded_image_background"/>
+            android:background="@drawable/rounded_image_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <!-- Product Details Container -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="16dp">
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toEndOf="@id/productImage"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <!-- Product Name -->
             <TextView
@@ -40,7 +45,8 @@
                 android:textSize="18sp"
                 android:textColor="#000000"
                 android:textStyle="bold"
-                android:fontFamily="@font/poppinsmedium"/>
+                android:fontFamily="@font/poppinsmedium"
+                tools:text="Watch" />
 
             <!-- Brand Name -->
             <TextView
@@ -51,7 +57,8 @@
                 android:textSize="14sp"
                 android:textColor="#9B9B9B"
                 android:layout_marginTop="4dp"
-                android:fontFamily="@font/poppinsregular"/>
+                android:fontFamily="@font/poppinsregular"
+                tools:text="Rolex" />
 
             <!-- Price and Button Container -->
             <LinearLayout
@@ -71,7 +78,8 @@
                     android:textColor="#6055D8"
                     android:textStyle="bold"
                     android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/poppinsmedium"/>
+                    android:fontFamily="@font/poppinsmedium"
+                    tools:text="$40" />
 
                 <!-- Track Order Button -->
                 <androidx.appcompat.widget.AppCompatButton
@@ -80,14 +88,12 @@
                     android:layout_height="40dp"
                     android:text="Track Order"
                     android:textAllCaps="false"
-                    android:textSize="10sp"
+                    android:textSize="8sp"
                     android:textColor="#FFFFFF"
                     android:background="@drawable/btn"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
                     android:layout_marginStart="15dp"
-                    android:fontFamily="@font/poppinsmedium"/>
+                    android:fontFamily="@font/poppinsmedium" />
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

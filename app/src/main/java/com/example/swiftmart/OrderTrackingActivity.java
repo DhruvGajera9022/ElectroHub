@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
@@ -23,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import com.example.swiftmart.Model.InvoiceModel;
 import com.example.swiftmart.Utils.CustomToast;
 import com.example.swiftmart.Utils.InvoiceGenerator;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -34,6 +36,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +51,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
     private ScrollView trackOrderScrollView;
     private AppCompatRatingBar trackOrderRating;
     private CardView invoiceCardView;
+    private AppCompatButton trackOrderCancelBtn;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -62,7 +66,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
         getOrderProductDetails();
         handleRating();
         getUserData();
-
+        handleCancelOrder();
     }
 
     private void initialization(){
@@ -81,6 +85,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
         canceledTime = findViewById(R.id.canceledTime);
 
         invoiceCardView = findViewById(R.id.invoiceCardView);
+        trackOrderCancelBtn = findViewById(R.id.trackOrderCancelBtn);
 
         trackOrderScrollView = findViewById(R.id.trackOrderScrollView);
 
@@ -127,7 +132,8 @@ public class OrderTrackingActivity extends AppCompatActivity {
                     if ("Canceled".equals(value.getString("status"))) {
                         canceledText.setVisibility(View.VISIBLE);
                         canceledTime.setVisibility(View.VISIBLE);
-                        canceledTime.setText(value.getString("orderDate"));
+                        canceledTime.setText(value.getString("canceledDate"));
+                        trackOrderCancelBtn.setVisibility(View.GONE);
                     }
 
                     if ("Shipped".equals(value.getString("status"))){
@@ -306,6 +312,33 @@ public class OrderTrackingActivity extends AppCompatActivity {
         int randomNumber = random.nextInt(1000);
         String formattedRandomNumber = String.format("%03d", randomNumber);
         return prefix + year + "-" + formattedRandomNumber;
+    }
+
+    private void handleCancelOrder(){
+        trackOrderCancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DocumentReference reference = db.collection("Orders").document(orderID);
+
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
+                String saveCurrentDate = currentDate.format(calForDate.getTime());
+
+                // Update the status and add canceledDate
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("status", "Canceled");
+                updates.put("canceledDate", saveCurrentDate);
+
+                reference.update(updates)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                CustomToast.showToast(getApplicationContext(), "Order canceled successfully");
+                                finish();
+                            }
+                        });
+            }
+        });
     }
 
 }
