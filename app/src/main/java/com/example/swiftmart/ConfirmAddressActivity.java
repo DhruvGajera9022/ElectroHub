@@ -320,6 +320,9 @@ public class ConfirmAddressActivity extends AppCompatActivity {
         orderMap.put("imgurls", currentImageUrls);
         orderMap.put("orderDate", saveCurrentDate);
         orderMap.put("orderTime", saveCurrentTime);
+        orderMap.put("shippingDate", "");
+        orderMap.put("shippedDate", "");
+        orderMap.put("canceledDate", "");
         orderMap.put("totalAmount", totalAmount.toString());
         orderMap.put("status", "Pending");
 

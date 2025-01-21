@@ -8,13 +8,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.swiftmart.Account.Add_Address_Activity;
 import com.example.swiftmart.Model.ProductModel;
@@ -23,10 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.razorpay.Checkout;
 
@@ -40,42 +33,39 @@ import java.util.List;
 import java.util.Map;
 
 public class ConfirmAddressActivity2 extends AppCompatActivity {
+
     private TextView confirmAddressAddNew, confirmAddressType, confirmAddressFullName, confirmAddressText, confirmAddressState, confirmAddressNumber, confirmAddressEdit;
     private AppCompatButton confirmAddressDeliver;
+    private LinearLayout confirmAddressLinearLayout;
+    private TextView noAvailableText;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+
     private String uid, addressID, strTotalAmount;
     private ArrayList<String> productIDs;
-
-    private String productName, productPrice, productDescription, productCompany, productCategory;
-    private Double totalAmount;
+    private ArrayList<ProductModel> cartProducts;
     private String userName, userPhone;
-    private List<String> currentImageUrls;
 
     private Checkout checkout;
-
-    private TextView noAvailableText;
-    private LinearLayout confirmAddressLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_address2);
 
-        initialization();
-        getAddress();
-        handleNewClick();
-        handleEditClick();
-        handleDeliverClick();
+        initializeViews();
+        initializeFirebase();
+        loadIntentData();
 
-        getProductData();
-        getUserData();
-        
+        fetchDefaultAddress();
+        fetchCartProducts();
+        fetchUserData();
+
+        setupClickListeners();
     }
 
-
-    private void initialization(){
+    private void initializeViews() {
         confirmAddressAddNew = findViewById(R.id.confirmAddressAddNew);
         confirmAddressType = findViewById(R.id.confirmAddressType);
         confirmAddressFullName = findViewById(R.id.confirmAddressFullName);
@@ -86,152 +76,99 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
 
         confirmAddressDeliver = findViewById(R.id.confirmAddressDeliver);
 
-        noAvailableText = findViewById(R.id.noAvailableText);
         confirmAddressLinearLayout = findViewById(R.id.confirmAddressLinearLayout);
+        noAvailableText = findViewById(R.id.noAvailableText);
 
+        cartProducts = new ArrayList<>();
+
+        checkout = new Checkout();
+        checkout.setImage(R.drawable.app_logo);
+    }
+
+    private void initializeFirebase() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
-
-        productIDs = getIntent().getStringArrayListExtra("productIDs");
-        strTotalAmount = getIntent().getStringExtra("totalAmount");
-
     }
 
-    private void getAddress() {
+    private void loadIntentData() {
+        productIDs = getIntent().getStringArrayListExtra("productIDs");
+        strTotalAmount = getIntent().getStringExtra("totalAmount");
+    }
+
+    private void fetchDefaultAddress() {
         db.collection("Users").document(uid).collection("Addresses")
                 .whereEqualTo("isDefault", true)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot snapshots, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            return;
-                        }
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null) {
+                        Log.e("Address", "Error fetching default address", error);
+                        return;
+                    }
 
-                        if (snapshots != null && !snapshots.isEmpty()) {
-                            for (QueryDocumentSnapshot document : snapshots) {
-                                confirmAddressType.setText(document.getString("addressType"));
-                                confirmAddressFullName.setText(document.getString("fullName"));
-                                confirmAddressText.setText(document.getString("houseNo") + ", " + document.getString("roadName") + ", ");
-                                confirmAddressState.setText(document.getString("city") + ", " + document.getString("state") + " - " + document.getString("pinCode"));
-                                confirmAddressNumber.setText(document.getString("phoneNumber"));
-                                addressID = document.getString("aid");
-                            }
-                            noAvailableText.setVisibility(View.GONE);
-                            confirmAddressLinearLayout.setVisibility(View.VISIBLE);
+                    if (snapshots != null && !snapshots.isEmpty()) {
+                        for (DocumentSnapshot document : snapshots) {
+                            confirmAddressType.setText(document.getString("addressType"));
+                            confirmAddressFullName.setText(document.getString("fullName"));
+                            confirmAddressText.setText(document.getString("houseNo") + ", " + document.getString("roadName") + ", ");
+                            confirmAddressState.setText(document.getString("city") + ", " + document.getString("state") + " - " + document.getString("pinCode"));
+                            confirmAddressNumber.setText(document.getString("phoneNumber"));
+                            addressID = document.getString("aid");
                         }
-                        else {
-                            noAvailableText.setVisibility(View.VISIBLE);
-                            confirmAddressLinearLayout.setVisibility(View.GONE);
-
-                            boolean shouldDisableButton = true;
-
-                            if (shouldDisableButton) {
-                                confirmAddressDeliver.setEnabled(false);
-                                confirmAddressDeliver.setAlpha(0.5f);
-                            } else {
-                                confirmAddressDeliver.setEnabled(true);
-                                confirmAddressDeliver.setAlpha(1.0f);
-                            }
-                        }
+                        noAvailableText.setVisibility(View.GONE);
+                        confirmAddressLinearLayout.setVisibility(View.VISIBLE);
+                        confirmAddressDeliver.setEnabled(true);
+                        confirmAddressDeliver.setAlpha(1.0f);
+                    } else {
+                        noAvailableText.setVisibility(View.VISIBLE);
+                        confirmAddressLinearLayout.setVisibility(View.GONE);
+                        confirmAddressDeliver.setEnabled(false);
+                        confirmAddressDeliver.setAlpha(0.5f);
                     }
                 });
     }
 
-    private void handleNewClick(){
-        confirmAddressAddNew.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ConfirmAddressActivity2.this, Add_Address_Activity.class);
-                startActivity(intent);
+    private void fetchCartProducts() {
+        db.collection("Users").document(uid).collection("Cart")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        cartProducts = new ArrayList<>(task.getResult().toObjects(ProductModel.class));
+                    } else {
+                        Log.e("Cart", "Error fetching cart products", task.getException());
+                    }
+                });
+    }
+
+    private void fetchUserData() {
+        db.collection("Users").document(uid).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                userName = documentSnapshot.getString("Username");
+                userPhone = documentSnapshot.getString("Number");
             }
         });
     }
 
-    private void handleEditClick(){
-        confirmAddressEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ConfirmAddressActivity2.this, Add_Address_Activity.class);
-                intent.putExtra("addressID", addressID);
-                startActivity(intent);
-            }
-        });
-    }
+    private void setupClickListeners() {
+        confirmAddressAddNew.setOnClickListener(v -> startActivity(new Intent(this, Add_Address_Activity.class)));
 
-    private void handleDeliverClick(){
-        confirmAddressDeliver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handlePayment();
-            }
-        });
-    }
-
-    private void getProductData() {
-        for (String productId : productIDs) {
-            db.collection("Products").document(productId)
-                    .addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                            if (error != null) {
-                                CustomToast.showToast(ConfirmAddressActivity2.this, "Error in fetching details");
-                                return;
-                            }
-
-                            if (value != null && value.exists()) {
-                                ProductModel product = value.toObject(ProductModel.class);
-                                if (product != null) {
-                                    productName = product.getName();
-                                    productPrice = product.getPrice();
-                                    productDescription = product.getDescription();
-                                    productCompany = product.getCompany();
-                                    productCategory = product.getCategory();
-                                    currentImageUrls = product.getImgurls();
-                                }
-                            }
-                        }
-                    });
-        }
-    }
-
-    private void getUserData(){
-        uid = mAuth.getCurrentUser().getUid();
-        DocumentReference reference = db.collection("Users").document(uid);
-
-        reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null && value.exists()){
-                    userName = value.getString("Username");
-                    userPhone = value.getString("Number");
-                }
-            }
+        confirmAddressEdit.setOnClickListener(v -> {
+            Intent intent = new Intent(this, Add_Address_Activity.class);
+            intent.putExtra("addressID", addressID);
+            startActivity(intent);
         });
 
+        confirmAddressDeliver.setOnClickListener(v -> initiatePayment());
     }
 
-    // Handle payment
-    private void handlePayment() {
-        checkout = new Checkout();
-        checkout.setImage(R.drawable.app_logo);
-
-        final Activity activity = this;
-
+    private void initiatePayment() {
         try {
             JSONObject options = new JSONObject();
             options.put("name", getString(R.string.app_name));
             options.put("description", "Best E-Commerce app");
-            options.put("send_sms_hash", false);
-            options.put("allow_rotation", false);
             options.put("currency", "INR");
 
-            double totalPrice = 0.0;
-            for (String productId : productIDs) {
-                totalPrice += Double.parseDouble(productPrice);
-            }
-
-            options.put("amount", totalPrice * 100);
+            strTotalAmount = strTotalAmount.replace(",", "");
+            options.put("amount", Double.parseDouble(strTotalAmount) * 100);
 
             JSONObject preFill = new JSONObject();
             preFill.put("email", userName);
@@ -239,129 +176,94 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
 
             options.put("prefill", preFill);
 
-            checkout.open(activity, options);
-        } catch (Exception exception) {
-            Log.e("Payment", "Error in payment: ", exception);
+            checkout.open(this, options);
+        } catch (Exception e) {
+            Log.e("Payment", "Error initiating payment", e);
         }
     }
 
     public void onPaymentSuccess(String razorpayPaymentID) {
-        updateQuantity();
-        createNewOrder(razorpayPaymentID);
+        updateProductQuantities();
+        createOrders(razorpayPaymentID);
         clearCart();
+        navigateToHome();
     }
 
-    void updateQuantity() {
-        for (String productId : productIDs) {
+    private void updateProductQuantities() {
+        for (ProductModel product : cartProducts) {
+            String productId = product.getPid();
+            int purchasedQty = Integer.parseInt(product.getQty());
 
             DocumentReference productRef = db.collection("Products").document(productId);
-
-            productRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()) {
-                        Object quantityObj = documentSnapshot.get("quantity");
-
-                        long currentQuantity = 0;
-                        if (quantityObj instanceof Number) {
-                            currentQuantity = ((Number) quantityObj).longValue();
-                        } else if (quantityObj instanceof String) {
-                            try {
-                                currentQuantity = Long.parseLong((String) quantityObj);
-                            } catch (NumberFormatException e) {
-                                Log.e("Payment", "Invalid quantity format", e);
-                                return;
-                            }
-                        }
-
-                        if (currentQuantity > 0) {
-                            productRef.update("quantity", String.valueOf(currentQuantity - 1))
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d("Payment", "Product quantity updated successfully for product: " + productId);
-                                        }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("Payment", "Error updating product quantity for product: " + productId, e);
-                                    });
-                        } else {
-                            CustomToast.showToast(ConfirmAddressActivity2.this, "Product out of stock");
-                        }
+            productRef.get().addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    long currentStock = Long.parseLong(documentSnapshot.getString("qty"));
+                    if (currentStock >= purchasedQty) {
+                        productRef.update("qty", String.valueOf(currentStock - purchasedQty))
+                                .addOnSuccessListener(aVoid -> Log.d("Product", "Stock updated for " + productId))
+                                .addOnFailureListener(e -> Log.e("Product", "Error updating stock", e));
                     } else {
-                        Log.e("Payment", "Product not found for productId: " + productId);
+                        CustomToast.showToast(this, "Product out of stock: " + product.getName());
                     }
                 }
             });
         }
     }
 
+    private void createOrders(String paymentID) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss a");
 
-    private void createNewOrder(String paymentID) {
-        Calendar calForDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
-        String saveCurrentDate = currentDate.format(calForDate.getTime());
-        String saveCurrentTime = currentTime.format(calForDate.getTime());
+        String orderDate = dateFormat.format(calendar.getTime());
+        String orderTime = timeFormat.format(calendar.getTime());
 
-        for (String productId : productIDs) {
-            db.collection("Products").document(productId)
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String productName = documentSnapshot.getString("name");
-                            String productPrice = documentSnapshot.getString("price");
-                            String productDescription = documentSnapshot.getString("description");
-                            String productCategory = documentSnapshot.getString("category");
-                            String productCompany = documentSnapshot.getString("company");
-                            List<String> imageUrls = (List<String>) documentSnapshot.get("imgurls");
+        for (ProductModel product : cartProducts) {
+            String oid = db.collection("Orders").document().getId();
+            double totalAmount = Double.parseDouble(product.getPrice()) * Integer.parseInt(product.getQty());
 
-                            String oid = db.collection("Orders").document().getId();
-                            double totalAmount = Double.parseDouble(productPrice);
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("uid", uid);
+            orderMap.put("pid", product.getPid());
+            orderMap.put("name", product.getName());
+            orderMap.put("price", product.getPrice());
+            orderMap.put("description", product.getDescription());
+            orderMap.put("category", product.getCategory());
+            orderMap.put("company", product.getCompany());
+            orderMap.put("paymentID", paymentID);
+            orderMap.put("oid", oid);
+            orderMap.put("aid", addressID);
+            orderMap.put("quantity", product.getQty());
+            orderMap.put("imgurls", product.getImgurls());
+            orderMap.put("orderDate", orderDate);
+            orderMap.put("orderTime", orderTime);
+            orderMap.put("shippingDate", "");
+            orderMap.put("shippedDate", "");
+            orderMap.put("canceledDate", "");
+            orderMap.put("totalAmount", String.valueOf(totalAmount));
+            orderMap.put("status", "Pending");
 
-                            Map<String, Object> orderMap = new HashMap<>();
-                            orderMap.put("uid", uid);
-                            orderMap.put("pid", productId);
-                            orderMap.put("name", productName);
-                            orderMap.put("price", productPrice);
-                            orderMap.put("description", productDescription);
-                            orderMap.put("category", productCategory);
-                            orderMap.put("company", productCompany);
-                            orderMap.put("paymentID", paymentID);
-                            orderMap.put("oid", oid);
-                            orderMap.put("aid", addressID);
-                            orderMap.put("quantity", "1");
-                            orderMap.put("imgurls", imageUrls);
-                            orderMap.put("orderDate", saveCurrentDate);
-                            orderMap.put("orderTime", saveCurrentTime);
-                            orderMap.put("totalAmount", String.valueOf(totalAmount));
-                            orderMap.put("status", "Pending");
-
-                            db.collection("Orders")
-                                    .document(oid)
-                                    .set(orderMap)
-                                    .addOnSuccessListener(aVoid -> Log.d("Order", "Order created for product: " + productName))
-                                    .addOnFailureListener(e -> Log.e("Order", "Error creating order", e));
-                        }
-                    })
-                    .addOnFailureListener(e -> Log.e("Order", "Error fetching product details", e));
+            db.collection("Orders").document(oid).set(orderMap)
+                    .addOnSuccessListener(aVoid -> Log.d("Order", "Order created: " + product.getName()))
+                    .addOnFailureListener(e -> Log.e("Order", "Error creating order", e));
         }
     }
 
     private void clearCart() {
-        db.collection("Users")
-                .document(uid)
-                .collection("Cart")
+        db.collection("Users").document(uid).collection("Cart")
                 .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                        document.getReference().delete()
-                                .addOnSuccessListener(aVoid -> Log.d("Cart", "Item removed from cart: " + document.getId()))
-                                .addOnFailureListener(e -> Log.e("Cart", "Error removing item from cart: " + document.getId(), e));
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            db.collection("Users").document(uid).collection("Cart").document(document.getId()).delete();
+                        }
                     }
-                    Log.d("Cart", "Cart cleared successfully");
-                })
-                .addOnFailureListener(e -> Log.e("Cart", "Error fetching cart items", e));
+                });
     }
 
+    private void navigateToHome(){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
 }
