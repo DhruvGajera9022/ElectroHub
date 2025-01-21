@@ -7,7 +7,7 @@ public class ProductModel {
     String pid, name, description, price, company, category, oid, totalAmount;
     private List<String> imgurls;
     private boolean isWishlisted;
-    private int qty;
+    private String qty;
     private double totalPrice;
 
     public ProductModel(){
@@ -24,7 +24,7 @@ public class ProductModel {
             List<String> imgurls,
             boolean isWishlisted,
             String oid,
-            int qty,
+            String qty,
             double totalPrice,
             String totalAmount
     ){
@@ -114,11 +114,11 @@ public class ProductModel {
         this.oid = oid;
     }
 
-    public int getQty() {
+    public String getQty() {
         return qty;
     }
 
-    public void setQty(int qty) {
+    public void setQty(String qty) {
         this.qty = qty;
     }
 

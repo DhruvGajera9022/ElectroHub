@@ -18,6 +18,7 @@ import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
 import com.example.swiftmart.Utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.NumberFormat;
@@ -75,7 +76,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.getDefault());
 
             // Set initial price and quantity
-            double totalPrice = unitPrice * product.getQty();
+            double totalPrice = unitPrice * Integer.parseInt(product.getQty());
             holder.cartProductPrice.setText(currencyFormat.format(totalPrice));
             holder.cartProductQuantity.setText(String.valueOf(product.getQty()));
 
@@ -83,10 +84,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.cartPlusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int currentQuantity = product.getQty();
+                    int currentQuantity = Integer.parseInt(product.getQty());
                     if (currentQuantity < maxQuantity) {
                         int newQuantity = currentQuantity + 1;
-                        product.setQty(newQuantity);
+                        product.setQty(String.valueOf(newQuantity));
 
                         // Update quantity display
                         holder.cartProductQuantity.setText(String.valueOf(newQuantity));
@@ -94,6 +95,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         // Recalculate the total price for this item
                         double totalPrice = unitPrice * newQuantity;
                         holder.cartProductPrice.setText(currencyFormat.format(totalPrice));
+
+                        updateQTY(product.getOid(), String.valueOf(newQuantity), holder.getAdapterPosition());
 
                         if (listener != null) {
                             listener.onItemClick(String.valueOf(totalPrice), true, holder.getAdapterPosition());
@@ -108,16 +111,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.cartMinusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int currentQuantity = product.getQty();
+                    int currentQuantity = Integer.parseInt(product.getQty());
                     if (currentQuantity > minQuantity) {
                         int newQuantity = currentQuantity - 1;
-                        product.setQty(newQuantity);
+                        product.setQty(String.valueOf(newQuantity));
 
                         // Update quantity display
                         holder.cartProductQuantity.setText(String.valueOf(newQuantity));
 
                         double totalPrice = unitPrice * newQuantity;
                         holder.cartProductPrice.setText(currencyFormat.format(totalPrice));
+
+                        updateQTY(product.getOid(), String.valueOf(newQuantity), holder.getAdapterPosition());
 
                         if (listener != null) {
                             listener.onItemClick(String.valueOf(totalPrice), false, holder.getAdapterPosition());
@@ -138,7 +143,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
                     String oid = product.getOid();
                     // Calculate total price of the item being removed
-                    double itemTotal = Double.parseDouble(product.getPrice()) * product.getQty();
+                    double itemTotal = Double.parseDouble(product.getPrice()) * Integer.parseInt(product.getQty());
 
                     db.collection("Users")
                             .document(uid)
@@ -172,6 +177,35 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     public int getItemCount() {
         return datalist.size();
     }
+
+    public void updateQTY(String oid, String qty, int position) {
+        if (db == null) {
+            db = FirebaseFirestore.getInstance();
+        }
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
+
+        uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
+        if (uid == null) {
+            Log.e("Firestore", "User is not authenticated.");
+            return;
+        }
+
+        DocumentReference productRef = db.collection("Users")
+                .document(uid)
+                .collection("Cart")
+                .document(oid);
+
+        productRef.update("qty", qty)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Quantity updated successfully for product ID: " + oid);
+                    notifyItemChanged(position); // Notify adapter about the updated item
+                })
+                .addOnFailureListener(e -> Log.e("Firestore", "Error updating quantity", e));
+    }
+
+
 
     public class CartViewHolder extends RecyclerView.ViewHolder {
         ImageView cartImage;

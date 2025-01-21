@@ -354,7 +354,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         cartMap.put("currentDate", saveCurrentDate);
         cartMap.put("currentTime", saveCurrentTime);
         cartMap.put("pid", productId);
-        cartMap.put("qty", 1);
+        cartMap.put("qty", "1");
 
         db.collection("Users")
                 .document(uid)

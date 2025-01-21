@@ -115,7 +115,7 @@ public class CartFragment extends Fragment {
                             if (priceString != null) {
                                 try {
                                     double price = Double.parseDouble(priceString);
-                                    double itemTotal = price * product.getQty();
+                                    double itemTotal = price * Integer.parseInt(product.getQty());
                                     itemTotals.put(product.getOid(), itemTotal);
                                     totalPrice += itemTotal;
                                 } catch (NumberFormatException e) {
