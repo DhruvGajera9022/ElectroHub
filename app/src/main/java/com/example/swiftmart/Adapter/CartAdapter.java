@@ -27,7 +27,7 @@ import java.util.Locale;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private Context context;
     private ArrayList<ProductModel> datalist;
-    private int maxQuantity = 10;
+    private int maxQuantity = 5;
     private int minQuantity = 1;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -36,7 +36,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(String data, boolean isPlus);
+        void onItemClick(String data, boolean isPlus, int position);
+        void onItemDeleted(String oid, double price, int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -47,6 +48,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         this.context = context;
         this.datalist = (datalist != null) ? datalist : new ArrayList<>();
     }
+
     @NonNull
     @Override
     public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -71,7 +73,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             // Format the price
             double unitPrice = Double.parseDouble(product.getPrice());
             NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.getDefault());
-            holder.cartProductPrice.setText(currencyFormat.format(unitPrice));
+
+            // Set initial price and quantity
+            double totalPrice = unitPrice * product.getQty();
+            holder.cartProductPrice.setText(currencyFormat.format(totalPrice));
+            holder.cartProductQuantity.setText(String.valueOf(product.getQty()));
 
             // Handle quantity plus
             holder.cartPlusButton.setOnClickListener(new View.OnClickListener() {
@@ -82,12 +88,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         int newQuantity = currentQuantity + 1;
                         product.setQty(newQuantity);
 
+                        // Update quantity display
+                        holder.cartProductQuantity.setText(String.valueOf(newQuantity));
+
                         // Recalculate the total price for this item
                         double totalPrice = unitPrice * newQuantity;
                         holder.cartProductPrice.setText(currencyFormat.format(totalPrice));
 
                         if (listener != null) {
-                            listener.onItemClick(String.valueOf(totalPrice), true);
+                            listener.onItemClick(String.valueOf(totalPrice), true, holder.getAdapterPosition());
                         }
                     } else {
                         CustomToast.showToast(context, "Maximum quantity is 10");
@@ -104,11 +113,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                         int newQuantity = currentQuantity - 1;
                         product.setQty(newQuantity);
 
+                        // Update quantity display
+                        holder.cartProductQuantity.setText(String.valueOf(newQuantity));
+
                         double totalPrice = unitPrice * newQuantity;
                         holder.cartProductPrice.setText(currencyFormat.format(totalPrice));
 
                         if (listener != null) {
-                            listener.onItemClick(String.valueOf(totalPrice), false);
+                            listener.onItemClick(String.valueOf(totalPrice), false, holder.getAdapterPosition());
                         }
                     } else {
                         CustomToast.showToast(context, "Minimum quantity is 1");
@@ -124,7 +136,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                     mAuth = FirebaseAuth.getInstance();
                     uid = mAuth.getCurrentUser().getUid();
 
-                    String oid = datalist.get(position).getOid();
+                    String oid = product.getOid();
+                    // Calculate total price of the item being removed
+                    double itemTotal = Double.parseDouble(product.getPrice()) * product.getQty();
 
                     db.collection("Users")
                             .document(uid)
@@ -135,8 +149,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                                 if (documentSnapshot.exists()) {
                                     documentSnapshot.getReference().delete()
                                             .addOnSuccessListener(aVoid -> {
-                                                datalist.remove(position);
-                                                notifyDataSetChanged();
+                                                int itemPosition = holder.getAdapterPosition();
+                                                if (itemPosition != RecyclerView.NO_POSITION) {
+                                                    if (listener != null) {
+                                                        listener.onItemDeleted(oid, itemTotal, itemPosition);
+                                                    }
+                                                    datalist.remove(itemPosition);
+                                                    notifyDataSetChanged();
+                                                }
                                             });
                                 } else {
                                     Log.d("Firestore", "Document does not exist.");
@@ -144,6 +164,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                             });
                 }
             });
+
         }
     }
 
@@ -170,4 +191,3 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         }
     }
 }
-

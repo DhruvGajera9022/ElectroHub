@@ -335,6 +335,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private void addToCart() {
         String productName = productDetailsProductName.getText().toString();
         String productPrice = productDetailsProductPrice.getText().toString();
+        productPrice = productPrice.replace(",", "");
         String productDescription = productDetailsProductDescription.getText().toString();
 
         Calendar calForDate = Calendar.getInstance();
