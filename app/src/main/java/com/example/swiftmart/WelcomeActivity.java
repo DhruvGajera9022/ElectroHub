@@ -1,8 +1,10 @@
 package com.example.swiftmart;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,7 @@ public class WelcomeActivity extends AppCompatActivity {
         handleEmailButton();
         handleGoogleButton();
         handleCreateAccountTextClick();
+        setStatusBarColor(R.color.home);
 
     }
 
@@ -165,6 +168,13 @@ public class WelcomeActivity extends AppCompatActivity {
                         Toast.makeText(this, "Authentication Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
     }
 
 }
