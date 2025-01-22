@@ -9,9 +9,10 @@
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <!-- Product Image -->
@@ -21,20 +22,15 @@
             android:layout_height="120dp"
             android:scaleType="fitCenter"
             android:src="@drawable/tv"
-            android:background="@drawable/rounded_image_background"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:background="@drawable/rounded_image_background" />
 
         <!-- Product Details Container -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="16dp"
-            app:layout_constraintStart_toEndOf="@id/productImage"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            android:layout_marginStart="16dp">
 
             <!-- Product Name -->
             <TextView
@@ -45,8 +41,7 @@
                 android:textSize="18sp"
                 android:textColor="#000000"
                 android:textStyle="bold"
-                android:fontFamily="@font/poppinsmedium"
-                tools:text="Watch" />
+                android:fontFamily="@font/poppinsmedium" />
 
             <!-- Brand Name -->
             <TextView
@@ -57,8 +52,7 @@
                 android:textSize="14sp"
                 android:textColor="#9B9B9B"
                 android:layout_marginTop="4dp"
-                android:fontFamily="@font/poppinsregular"
-                tools:text="Rolex" />
+                android:fontFamily="@font/poppinsregular" />
 
             <!-- Price and Button Container -->
             <LinearLayout
@@ -78,8 +72,7 @@
                     android:textColor="#6055D8"
                     android:textStyle="bold"
                     android:layout_marginEnd="16dp"
-                    android:fontFamily="@font/poppinsmedium"
-                    tools:text="$40" />
+                    android:fontFamily="@font/poppinsmedium" />
 
                 <!-- Track Order Button -->
                 <androidx.appcompat.widget.AppCompatButton
@@ -95,5 +88,5 @@
                     android:fontFamily="@font/poppinsmedium" />
             </LinearLayout>
         </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </androidx.cardview.widget.CardView>
