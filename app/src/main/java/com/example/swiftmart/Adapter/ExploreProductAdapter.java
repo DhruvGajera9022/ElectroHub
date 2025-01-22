@@ -21,15 +21,23 @@ import com.bumptech.glide.Glide;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.ProductDetailsActivity;
 import com.example.swiftmart.R;
+import com.example.swiftmart.Utils.CustomToast;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ExploreProductAdapter extends RecyclerView.Adapter<ExploreProductAdapter.ViewHolder> {
     Context context;
@@ -46,7 +54,7 @@ public class ExploreProductAdapter extends RecyclerView.Adapter<ExploreProductAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.card_explore_product, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.card_all_product, parent, false);
         return new ViewHolder(view);
     }
 
@@ -75,21 +83,21 @@ public class ExploreProductAdapter extends RecyclerView.Adapter<ExploreProductAd
 
         // Check if the product is in the wishlist using QuerySnapshot
         db.collection("Users")
-                        .document(uid)
-                                .collection("wishlist")
-                                        .whereEqualTo("pid", product.getPid())
-                                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                        if (value != null && !value.isEmpty()){
-                                                            product.setWishlisted(true);
-                                                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
-                                                        }else {
-                                                            product.setWishlisted(false);
-                                                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
-                                                        }
-                                                    }
-                                                });
+                .document(uid)
+                .collection("wishlist")
+                .whereEqualTo("pid", product.getPid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (value != null && !value.isEmpty()){
+                            product.setWishlisted(true);
+                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
+                        }else {
+                            product.setWishlisted(false);
+                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
+                        }
+                    }
+                });
 
 
         holder.cardProductLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -135,6 +143,110 @@ public class ExploreProductAdapter extends RecyclerView.Adapter<ExploreProductAd
             }
         });
 
+        db.collection("Users")
+                .document(uid)
+                .collection("Cart")
+                .whereEqualTo("pid", product.getPid())
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (value != null && !value.isEmpty()){
+                            holder.addToCartAllProducts.setVisibility(View.GONE);
+                            holder.addToCartDoneAllProducts.setVisibility(View.VISIBLE);
+                        }else {
+                            holder.addToCartAllProducts.setVisibility(View.VISIBLE);
+                            holder.addToCartDoneAllProducts.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+        holder.addToCartAllProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
+                SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+                String saveCurrentDate = currentDate.format(calForDate.getTime());
+                String saveCurrentTime = currentTime.format(calForDate.getTime());
+
+                Map<String, Object> cartMap = new HashMap<>();
+                cartMap.put("imgurls", product.getImgurls());
+                cartMap.put("name", product.getName());
+                cartMap.put("price", product.getPrice());
+                cartMap.put("category", product.getCategory());
+                cartMap.put("company", product.getCategory());
+                cartMap.put("description", product.getDescription());
+                cartMap.put("currentDate", saveCurrentDate);
+                cartMap.put("currentTime", saveCurrentTime);
+                cartMap.put("pid", product.getPid());
+                cartMap.put("qty", "1");
+
+                db.collection("Users")
+                        .document(uid)
+                        .collection("Cart")
+                        .whereEqualTo("pid", product.getPid())
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                CustomToast.showToast(context, "Item is already in your cart");
+                            } else {
+                                db.collection("Users")
+                                        .document(uid)
+                                        .collection("Cart")
+                                        .add(cartMap)
+                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                String oid = documentReference.getId();
+                                                documentReference.update("oid", oid)
+                                                        .addOnSuccessListener(aVoid -> {
+                                                            // Update UI to show done image
+                                                            holder.addToCartAllProducts.setVisibility(View.GONE);
+                                                            holder.addToCartDoneAllProducts.setVisibility(View.VISIBLE);
+                                                        });
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                CustomToast.showToast(context, "Error adding to cart");
+                                            }
+                                        });
+                            }
+                        });
+
+            }
+        });
+
+        holder.addToCartDoneAllProducts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.collection("Users")
+                        .document(uid)
+                        .collection("Cart")
+                        .whereEqualTo("pid", product.getPid())
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                String documentId = task.getResult().getDocuments().get(0).getId();
+                                db.collection("Users")
+                                        .document(uid)
+                                        .collection("Cart")
+                                        .document(documentId)
+                                        .delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            // Update UI
+                                            holder.addToCartAllProducts.setVisibility(View.VISIBLE);
+                                            holder.addToCartDoneAllProducts.setVisibility(View.GONE);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                        });
+                            }
+                        });
+            }
+        });
+
     }
 
     @Override
@@ -144,9 +256,9 @@ public class ExploreProductAdapter extends RecyclerView.Adapter<ExploreProductAd
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView cardProductImage;
-        TextView cardProductName, cardProductDescription, cardProductPrice, cardMaxPrice;
+        TextView cardProductName, cardProductPrice;
         LinearLayout cardProductLinearLayout;
-        ImageButton wishlistButton;
+        ImageView wishlistButton, addToCartAllProducts, addToCartDoneAllProducts;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -155,10 +267,10 @@ public class ExploreProductAdapter extends RecyclerView.Adapter<ExploreProductAd
             cardProductLinearLayout = itemView.findViewById(R.id.cardProductLinearLayout);
             cardProductImage = itemView.findViewById(R.id.cardProductImage);
             cardProductName = itemView.findViewById(R.id.cardProductName);
-//            cardProductDescription = itemView.findViewById(R.id.cardProductDescription);
             cardProductPrice = itemView.findViewById(R.id.cardProductPrice);
-//            cardMaxPrice = itemView.findViewById(R.id.cardMaxPrice);
             wishlistButton = itemView.findViewById(R.id.wishlistButton);
+            addToCartAllProducts = itemView.findViewById(R.id.addToCartAllProducts);
+            addToCartDoneAllProducts = itemView.findViewById(R.id.addToCartDoneAllProducts);
 
         }
     }
