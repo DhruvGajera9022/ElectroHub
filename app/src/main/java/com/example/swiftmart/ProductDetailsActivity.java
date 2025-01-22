@@ -24,6 +24,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.swiftmart.Adapter.ProductImageSliderAdapter;
 import com.example.swiftmart.Model.ProductModel;
+import com.example.swiftmart.Model.RatingModel;
 import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,6 +43,7 @@ import org.json.JSONObject;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ProductDetailsActivity extends AppCompatActivity {
-    private TextView productDetailsProductName, productDetailsProductDescription, productDetailsProductPrice, expandDescriptionButton;
+    private TextView productDetailsProductName, productDetailsProductDescription, productDetailsProductPrice, expandDescriptionButton, productDetailsRating, productDetailsRatingCount;
     private String productId, productCategory, productCompany;
     private ViewPager2 productDetailsViewPager;
     private AppCompatButton productBuyNowButton;
@@ -68,22 +70,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private ImageView productDetailsBackArrow, productDetailsWishlist, productDetailsShare;
 
     private String userName, userPhone;
-
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sliderHandler.removeCallbacks(sliderRunnable);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (sliderRunnable != null) {
-            sliderHandler.postDelayed(sliderRunnable, 3000);
-        }
-    }
 
 
     @Override
@@ -113,6 +99,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         handleBuyClick();
         getUserData();
         handleOnBackArrowPress();
+        getProductRating();
 
         setStatusBarColor(R.color.home);
 
@@ -126,6 +113,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productDetailsProductDescription = findViewById(R.id.productDetailsProductDescription);
         productDetailsProductPrice = findViewById(R.id.productDetailsProductPrice);
         productDetailsViewPager = findViewById(R.id.productDetailsViewPager);
+        productDetailsRating = findViewById(R.id.productDetailsRating);
+        productDetailsRatingCount = findViewById(R.id.productDetailsRatingCount);
 
         productAddToCartButton = findViewById(R.id.productAddToCartButton);
         productBuyNowButton = findViewById(R.id.productBuyNowButton);
@@ -418,10 +407,79 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     }
 
+
+    // get allRating
+    private void getProductRating(){
+        if (productId == null || productId.isEmpty()) {
+            Log.d("ProductDetailsRating", "Product ID is null or empty");
+            return;
+        }
+
+        db.collection("Ratings")
+                .whereEqualTo("pid", productId)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.isEmpty()) {
+                            Log.d("ProductDetailsRating", "No ratings found for the product.");
+                            return;
+                        }
+
+                        float totalRating = 0;
+                        int ratingCount = 0;
+
+                        for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                            RatingModel rating = document.toObject(RatingModel.class);
+                            if (rating != null) {
+                                try {
+                                    float ratingValue = Float.parseFloat(rating.getRating());
+                                    totalRating += ratingValue;
+                                    ratingCount++;
+                                } catch (NumberFormatException e) {
+                                    Log.e("ProductDetailsRating", "Invalid rating value: " + rating.getRating(), e);
+                                }
+                            }
+                        }
+                        if (ratingCount > 0) {
+                            float averageRating = totalRating / ratingCount;
+
+                            String averageRatingText = String.format("%.1f", averageRating);
+
+                            productDetailsRating.setText(averageRatingText);
+                            productDetailsRatingCount.setText("(" + String.valueOf(ratingCount) + " Review)"); // (20 Review)
+                        } else {
+                            Log.d("ProductDetailsRating", "No valid ratings found.");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("ProductDetailsRating", "Error fetching ratings: " + e.getMessage(), e);
+                    }
+                });
+    }
+
     private void setStatusBarColor(int colorResource) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setStatusBarColor(getResources().getColor(colorResource));
+        }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sliderHandler.removeCallbacks(sliderRunnable);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (sliderRunnable != null) {
+            sliderHandler.postDelayed(sliderRunnable, 3000);
         }
     }
 

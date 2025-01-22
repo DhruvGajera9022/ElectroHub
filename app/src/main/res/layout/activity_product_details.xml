@@ -105,16 +105,16 @@
                             android:layout_marginTop="10dp">
 
                             <ImageView
-                                android:id="@+id/eachShoeRatingIcon"
+                                android:id="@+id/eachProductRatingIcon"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:src="@drawable/rateus"
                                 app:tint="#FFC107" />
 
                             <TextView
+                                android:id="@+id/productDetailsRating"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="4.5"
                                 android:fontFamily="@font/poppinsmedium"
                                 android:textColor="@color/black"
                                 android:textSize="12sp"
@@ -123,9 +123,9 @@
                                 android:layout_marginStart="5dp"/>
 
                             <TextView
+                                android:id="@+id/productDetailsRatingCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="(20 Review)"
                                 android:fontFamily="@font/poppinsmedium"
                                 android:textColor="#7D7A7A"
                                 android:textSize="12sp"
