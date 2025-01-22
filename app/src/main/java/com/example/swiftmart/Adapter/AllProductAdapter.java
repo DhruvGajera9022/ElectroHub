@@ -174,11 +174,13 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
                 cartMap.put("imgurls", product.getImgurls());
                 cartMap.put("name", product.getName());
                 cartMap.put("price", product.getPrice());
+                cartMap.put("category", product.getCategory());
+                cartMap.put("company", product.getCategory());
                 cartMap.put("description", product.getDescription());
                 cartMap.put("currentDate", saveCurrentDate);
                 cartMap.put("currentTime", saveCurrentTime);
                 cartMap.put("pid", product.getPid());
-                cartMap.put("qty", 1);
+                cartMap.put("qty", "1");
 
                 db.collection("Users")
                         .document(uid)
