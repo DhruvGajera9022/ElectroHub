@@ -71,7 +71,7 @@
                         android:orientation="vertical">
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
-                            android:src="@drawable/logo_mi"
+                            android:src="@drawable/logo_xiaomi"
                             android:background="@drawable/round"
                             android:layout_gravity="center"
                             android:layout_height="60dp"/>

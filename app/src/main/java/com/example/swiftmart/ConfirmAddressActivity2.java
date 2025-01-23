@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.example.swiftmart.Account.Add_Address_Activity;
+import com.example.swiftmart.Model.CartModel;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,7 +47,7 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
 
     private String uid, addressID, strTotalAmount;
     private ArrayList<String> productIDs;
-    private ArrayList<ProductModel> cartProducts;
+    private ArrayList<CartModel> cartProducts;
     private String userName, userPhone;
 
     private Checkout checkout;
@@ -136,7 +137,7 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
-                        cartProducts = new ArrayList<>(task.getResult().toObjects(ProductModel.class));
+                        cartProducts = new ArrayList<>(task.getResult().toObjects(CartModel.class));
                     } else {
                         Log.e("Cart", "Error fetching cart products", task.getException());
                     }
@@ -190,18 +191,18 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
         updateProductQuantities();
         createOrders(razorpayPaymentID);
         clearCart();
-        navigateToHome();
+        finish();
     }
 
     private void updateProductQuantities() {
-        for (ProductModel product : cartProducts) {
+        for (CartModel product : cartProducts) {
             String productId = product.getPid();
             int purchasedQty = Integer.parseInt(product.getQty());
 
             DocumentReference productRef = db.collection("Products").document(productId);
             productRef.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
-                    long currentStock = Long.parseLong(documentSnapshot.getString("qty"));
+                    long currentStock = Long.parseLong(documentSnapshot.getString("quantity"));
                     if (currentStock >= purchasedQty) {
                         productRef.update("qty", String.valueOf(currentStock - purchasedQty))
                                 .addOnSuccessListener(aVoid -> Log.d("Product", "Stock updated for " + productId))
@@ -222,7 +223,7 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
         String orderDate = dateFormat.format(calendar.getTime());
         String orderTime = timeFormat.format(calendar.getTime());
 
-        for (ProductModel product : cartProducts) {
+        for (CartModel product : cartProducts) {
             String oid = db.collection("Orders").document().getId();
             double totalAmount = Double.parseDouble(product.getPrice()) * Integer.parseInt(product.getQty());
 
@@ -254,21 +255,13 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
     }
 
     private void clearCart() {
-        db.collection("Users").document(uid).collection("Cart")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (DocumentSnapshot document : task.getResult()) {
-                            db.collection("Users").document(uid).collection("Cart").document(document.getId()).delete();
-                        }
-                    }
-                });
-    }
-
-    private void navigateToHome(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        for (CartModel cartModel : cartProducts){
+            db.collection("Users")
+                    .document(uid)
+                    .collection("Cart")
+                    .document(cartModel.getOid())
+                    .delete();
+        }
     }
 
     private void setStatusBarColor(int colorResource) {

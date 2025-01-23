@@ -31,9 +31,9 @@
             android:layout_weight="1"
             android:id="@+id/exploreFilterIcon"
             android:scaleType="fitCenter"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:src="@drawable/filter"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:src="@drawable/img_filter"
             android:backgroundTint="@color/white"
             android:layout_gravity="center"/>
 

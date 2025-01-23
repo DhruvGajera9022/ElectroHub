@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.swiftmart.Adapter.CartAdapter;
 import com.example.swiftmart.ConfirmAddressActivity2;
+import com.example.swiftmart.Model.CartModel;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
 import com.example.swiftmart.Utils.CustomToast;
@@ -29,7 +30,7 @@ import java.util.Map;
 
 public class CartFragment extends Fragment {
     private RecyclerView cartRecyclerView;
-    private ArrayList<ProductModel> datalist = new ArrayList<>();
+    private ArrayList<CartModel> datalist = new ArrayList<>();
     private CartAdapter adapter;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -110,7 +111,7 @@ public class CartFragment extends Fragment {
                         totalPrice = 0;
 
                         for (QueryDocumentSnapshot documentSnapshot : value) {
-                            ProductModel product = documentSnapshot.toObject(ProductModel.class);
+                            CartModel product = documentSnapshot.toObject(CartModel.class);
                             String priceString = product.getPrice();
                             if (priceString != null) {
                                 try {
@@ -180,7 +181,7 @@ public class CartFragment extends Fragment {
             public void onClick(View v) {
 
                 ArrayList<String> productIds = new ArrayList<>();
-                for (ProductModel product : datalist) {
+                for (CartModel product : datalist) {
                     productIds.add(product.getPid());
                 }
 

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.swiftmart.Model.CartModel;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
 import com.example.swiftmart.Utils.CustomToast;
@@ -27,7 +28,7 @@ import java.util.Locale;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private Context context;
-    private ArrayList<ProductModel> datalist;
+    private ArrayList<CartModel> datalist;
     private int maxQuantity = 5;
     private int minQuantity = 1;
     private FirebaseFirestore db;
@@ -45,7 +46,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         this.listener = listener;
     }
 
-    public CartAdapter(Context context, ArrayList<ProductModel> datalist) {
+    public CartAdapter(Context context, ArrayList<CartModel> datalist) {
         this.context = context;
         this.datalist = (datalist != null) ? datalist : new ArrayList<>();
     }
@@ -60,7 +61,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
         if (datalist != null && !datalist.isEmpty()) {
-            ProductModel product = datalist.get(position);
+            CartModel product = datalist.get(position);
 
             if (product.getImgurls() != null && !product.getImgurls().isEmpty()) {
                 Glide.with(holder.cartImage.getContext())
