@@ -49,7 +49,7 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/exploreFragmentSwipeRefresh"
         android:layout_width="match_parent"
-        android:layout_height="700dp">
+        android:layout_height="wrap_content">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/exploreFragmentRecyclerView"

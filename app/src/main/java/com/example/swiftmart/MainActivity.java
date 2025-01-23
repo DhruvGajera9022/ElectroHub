@@ -101,47 +101,8 @@ public class MainActivity extends AppCompatActivity implements NetworkChangeRece
 
         if (selectedLanguage != null) {
             switch (selectedLanguage) {
-                case "Afrikaans":
-                    selectLanguage("af", item);
-                    break;
-                case "Arabic":
-                    selectLanguage("ar", item);
-                    break;
                 case "English":
                     selectLanguage("en", item);
-                    break;
-                case "French":
-                    selectLanguage("fr", item);
-                    break;
-                case "Hindi":
-                    selectLanguage("hi", item);
-                    break;
-                case "German":
-                    selectLanguage("de", item);
-                    break;
-                case "Chinese":
-                    selectLanguage("zh-rTW", item);
-                    break;
-                case "Russians":
-                    selectLanguage("ru", item);
-                    break;
-                case "Spanish":
-                    selectLanguage("sp", item);
-                    break;
-                case "Japanese":
-                    selectLanguage("ja", item);
-                    break;
-                case "Indonesian":
-                    selectLanguage("in-rID", item);
-                    break;
-                case "Italian":
-                    selectLanguage("it", item);
-                    break;
-                case "Portuguese":
-                    selectLanguage("pt", item);
-                    break;
-                case "Vietnamese":
-                    selectLanguage("vi", item);
                     break;
                 default:
                     Toast.makeText(this, "Unsupported language", Toast.LENGTH_SHORT).show();
