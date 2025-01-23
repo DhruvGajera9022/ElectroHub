@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class OrderTrackingActivity extends AppCompatActivity {
     private ImageView backBtn, productImage;
@@ -334,31 +335,35 @@ public class OrderTrackingActivity extends AppCompatActivity {
 
                             try {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+                                dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
                                 Date orderDateObj = dateFormat.parse(orderDate);
 
-                                Calendar orderCal = Calendar.getInstance();
-                                orderCal.setTime(orderDateObj);
-                                long orderTimeMillis = orderCal.getTimeInMillis();
-
+                                long orderTimeMillis = orderDateObj.getTime();
                                 long cancelDeadlineMillis = orderTimeMillis + (24 * 60 * 60 * 1000);
-
                                 long currentTimeMillis = System.currentTimeMillis();
 
                                 if (currentTimeMillis <= cancelDeadlineMillis) {
-                                    Calendar calForDate = Calendar.getInstance();
-                                    SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
-                                    String saveCurrentDate = currentDate.format(calForDate.getTime());
+                                    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd 'At' HH:mm:ss", Locale.UK);
+                                    format.setTimeZone(TimeZone.getDefault());
+                                    String timestamp = format.format(new Date());
 
                                     Map<String, Object> updates = new HashMap<>();
                                     updates.put("status", "Canceled");
-                                    updates.put("canceledDate", saveCurrentDate);
+                                    updates.put("canceledDate", timestamp);
 
                                     reference.update(updates)
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
-                                                    CustomToast.showToast(getApplicationContext(), "Order canceled successfully");
+                                                    CustomToast.showToast(getApplicationContext(), "Order canceled successfully.");
                                                     finish();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.d("CancelOrder", "Failed to update order status: " + e.getMessage());
+                                                    CustomToast.showToast(getApplicationContext(), "Failed to cancel order.");
                                                 }
                                             });
                                 } else {
