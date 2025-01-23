@@ -19,7 +19,7 @@ import com.example.swiftmart.R;
 
 import java.util.ArrayList;
 
-public class    LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.MyViewHolder> {
+public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.MyViewHolder> {
 
     private final Context context;
     private final ArrayList<LanguageModel> arrlanguage;
@@ -39,16 +39,19 @@ public class    LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.MyV
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        holder.imageView.setImageResource(arrlanguage.get(position).image);
-        holder.textview.setText(arrlanguage.get(position).name);
+//        holder.imageView.setImageResource(arrlanguage.get(position).image);
+        holder.countryTextInLanguage.setText(arrlanguage.get(position).name);
+        holder.countryTextInEnglish.setText(arrlanguage.get(position).nameInEnglish);
 
         // Update UI based on whether the item is selected
         if (position == selectedPosition) {
             holder.relativeLayout.setBackground(ContextCompat.getDrawable(context,R.drawable.lang_bg));
-            holder.textview.setTextColor(Color.BLACK);
+            holder.countryTextInLanguage.setTextColor(Color.BLACK);
+            holder.countryTextInEnglish.setTextColor(Color.BLACK);
         } else {
             holder.relativeLayout.setBackground(ContextCompat.getDrawable(context,R.drawable.langu_layout));
-            holder.textview.setTextColor(Color.GRAY);
+            holder.countryTextInLanguage.setTextColor(Color.GRAY);
+            holder.countryTextInEnglish.setTextColor(Color.GRAY);
         }
 
         // Handle item click to update selected position
@@ -68,14 +71,15 @@ public class    LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.MyV
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView textview;
+        TextView countryTextInLanguage, countryTextInEnglish;
         RelativeLayout relativeLayout;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.counteyimg);
-            textview = itemView.findViewById(R.id.counteytext);
-            relativeLayout = itemView.findViewById(R.id.language_item_layout); // ID for the outermost RelativeLayout
+//            imageView = itemView.findViewById(R.id.counteyimg);
+            countryTextInLanguage = itemView.findViewById(R.id.countryTextInLanguage);
+            countryTextInEnglish = itemView.findViewById(R.id.countryTextInEnglish);
+            relativeLayout = itemView.findViewById(R.id.language_item_layout);
         }
     }
 

@@ -11,7 +11,7 @@
         android:id="@+id/lytoolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/blue1"
+        android:background="@color/home"
         android:orientation="horizontal">
 
         <RelativeLayout

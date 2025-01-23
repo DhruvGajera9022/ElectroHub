@@ -10,6 +10,7 @@ import android.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.swiftmart.Adapter.LanguageAdapter;
@@ -37,24 +38,20 @@ public class Language_Activity extends AppCompatActivity {
 
         done = findViewById(R.id.right);
         recycle = findViewById(R.id.recycle);
-        layoutManager = new GridLayoutManager(this, 2);
 
-        recycle.setLayoutManager(new GridLayoutManager(Language_Activity.this, 2));
+        recycle.setLayoutManager(new LinearLayoutManager(Language_Activity.this));
 
-        arrlanguage.add(new LanguageModel(R.drawable.img, "Afrikaans"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_15, "Arabic"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_2, "English"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_3, "French"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_4, "Hindi"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_5, "German"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_6, "Chinese"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_7, "Russians"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_8, "Spanish"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_9, "Japanese"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_10, "Indonesian"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_11, "Italian"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_12, "Portuguese"));
-        arrlanguage.add(new LanguageModel(R.drawable.img_13, "Vietnamese"));
+        arrlanguage.add(new LanguageModel("English","English"));
+        arrlanguage.add(new LanguageModel("हिन्दी", "Hindi"));
+        arrlanguage.add(new LanguageModel("বাংলা", "Bengali"));
+        arrlanguage.add(new LanguageModel("मराठी", "Marathi"));
+        arrlanguage.add(new LanguageModel("తెలుగు", "Telugu"));
+        arrlanguage.add(new LanguageModel("தமிழ்","Tamil"));
+        arrlanguage.add(new LanguageModel("ગુજરાતી","Gujarati"));
+        arrlanguage.add(new LanguageModel("اُردُو","Urdu"));
+        arrlanguage.add(new LanguageModel("ਪੰਜਾਬੀ","Punjabi"));
+        arrlanguage.add(new LanguageModel("ಕನ್ನಡ","Kannada"));
+        arrlanguage.add(new LanguageModel("മലയാളം","Malayalam"));
 
         languageAdapter = new LanguageAdapter(Language_Activity.this, arrlanguage);
         recycle.setAdapter(languageAdapter);

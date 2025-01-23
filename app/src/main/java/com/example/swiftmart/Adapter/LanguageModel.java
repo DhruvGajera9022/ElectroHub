@@ -2,7 +2,7 @@ package com.example.swiftmart.Adapter;
 
 public class LanguageModel {
     int image;
-    String name;
+    String name, nameInEnglish;
 
     public String getName() {
         return name;
@@ -20,10 +20,16 @@ public class LanguageModel {
         this.image = image;
     }
 
+    public String getNameInEnglish() {
+        return nameInEnglish;
+    }
 
+    public void setNameInEnglish(String nameInEnglish) {
+        this.nameInEnglish = nameInEnglish;
+    }
 
-    public LanguageModel(int image, String name) {
-        this.image = image;
+    public LanguageModel(String name, String nameInEnglish) {
         this.name = name;
+        this.nameInEnglish = nameInEnglish;
     }
 }
