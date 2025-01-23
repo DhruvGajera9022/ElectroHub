@@ -447,9 +447,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             String averageRatingText = String.format("%.1f", averageRating);
 
                             productDetailsRating.setText(averageRatingText);
-                            productDetailsRatingCount.setText("(" + String.valueOf(ratingCount) + " Review)"); // (20 Review)
+                            productDetailsRatingCount.setText("(" + ratingCount + (ratingCount > 1 ? " Reviews)" : " Review)")); // Handles singular/plural
                         } else {
                             Log.d("ProductDetailsRating", "No valid ratings found.");
+                            productDetailsRating.setText("0.0"); // Default rating
+                            productDetailsRatingCount.setText("(0 Reviews)"); // Default review count
                         }
                     }
                 })
