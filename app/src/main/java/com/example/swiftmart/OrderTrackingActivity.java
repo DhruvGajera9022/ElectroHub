@@ -50,7 +50,7 @@ import java.util.TimeZone;
 
 public class OrderTrackingActivity extends AppCompatActivity {
     private ImageView backBtn, productImage;
-    private TextView toolBarTitle, canceledText, canceledTime;
+    private TextView toolBarTitle, msgText, orderDateAndTime;
     private TextView trackOrderName, trackOrderCompany, trackOrderQty, productDetailsProductPrice, trackOrderID;
     private TextView addressFullName, addressText, addressState, addressNumber;
     private ScrollView trackOrderScrollView;
@@ -88,8 +88,8 @@ public class OrderTrackingActivity extends AppCompatActivity {
         trackOrderID = findViewById(R.id.trackOrderID);
         trackOrderRating = findViewById(R.id.trackOrderRating);
 
-        canceledText = findViewById(R.id.canceledText);
-        canceledTime = findViewById(R.id.canceledTime);
+        msgText = findViewById(R.id.msgText);
+        orderDateAndTime = findViewById(R.id.orderDateAndTime);
 
         invoiceCardView = findViewById(R.id.invoiceCardView);
         trackOrderCancelBtn = findViewById(R.id.trackOrderCancelBtn);
@@ -136,18 +136,36 @@ public class OrderTrackingActivity extends AppCompatActivity {
                         Picasso.get().load(imgUrls.get(0)).into(productImage);
                     }
 
-                    if ("Canceled".equals(value.getString("status"))) {
-                        canceledText.setVisibility(View.VISIBLE);
-                        canceledTime.setVisibility(View.VISIBLE);
-                        canceledTime.setText(value.getString("canceledDate"));
-                        trackOrderCancelBtn.setVisibility(View.GONE);
+                    if ("Pending".equals(value.getString("status"))){
+                        msgText.setText("Your order has been placed on: ");
+                        orderDateAndTime.setText(value.getString("orderDate"));
+                        msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.black));
+                        orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.black));
+                    }
+
+                    if ("Accepted".equals(value.getString("status"))){
+                        msgText.setText("Your order has been accepted on: ");
+                        orderDateAndTime.setText(value.getString("shippingDate"));
+                        msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
+                        orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
                     }
 
                     if ("Shipped".equals(value.getString("status"))){
+                        msgText.setText("Your order has been shipped on: ");
+                        orderDateAndTime.setText(value.getString("shippedDate"));
+                        msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
+                        orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
                         invoiceCardView.setVisibility(View.VISIBLE);
                         invoiceCardView.setOnClickListener(v -> generateInvoice());
                     }
 
+                    if ("Canceled".equals(value.getString("status"))) {
+                        msgText.setText("Your order has been canceled on: ");
+                        orderDateAndTime.setText(value.getString("canceledDate"));
+                        msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.red));
+                        orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.red));
+                        trackOrderCancelBtn.setVisibility(View.GONE);
+                    }
                 }
             }
         });

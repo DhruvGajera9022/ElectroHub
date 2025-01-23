@@ -168,21 +168,16 @@
                             android:layout_marginStart="16dp">
 
                             <TextView
-                                android:id="@+id/canceledText"
+                                android:id="@+id/msgText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Your order has been canceled on: "
-                                android:textColor="@color/red"
                                 android:fontFamily="@font/poppinsregular"
-                                android:textSize="12sp"
-                                android:visibility="gone"/>
+                                android:textSize="12sp"/>
 
                             <TextView
-                                android:id="@+id/canceledTime"
+                                android:id="@+id/orderDateAndTime"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/red"
-                                android:visibility="gone"
                                 android:fontFamily="@font/poppinsregular"
                                 android:textSize="12sp"/>
 
