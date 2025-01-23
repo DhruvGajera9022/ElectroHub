@@ -73,6 +73,7 @@ public class HomeFragment extends Fragment {
     FirebaseFirestore db;
     RecyclerView homeFragmentFeaturedRecyclerView, homeFragmentMostPopularRecyclerView, homeFragmentNewRecyclerView;
     CircleImageView homeFragmentUserAvatar;
+    LinearLayout topPanel;
     TextView homeFragmentUserName, seeAll1, seeAll2, seeAll3;
     FirebaseAuth mAuth;
     String uid;
@@ -137,6 +138,7 @@ public class HomeFragment extends Fragment {
         homeFragmentUserAvatar = view.findViewById(R.id.homeFragmentUserAvatar);
         homeFragmentUserName = view.findViewById(R.id.homeFragmentUserName);
         homeFragmentSearchView = view.findViewById(R.id.homeFragmentSearchView);
+        topPanel = view.findViewById(R.id.topPanel);
 
         mainViewPager = view.findViewById(R.id.mainViewPager);
 
@@ -162,6 +164,7 @@ public class HomeFragment extends Fragment {
 
         getUserData();
         handleHomeFragmentUserAvtarClick();
+        handleTopPanelClick();
 //        handleSearch();
 //        getAllProducts();
         getTrendingData();
@@ -221,6 +224,16 @@ public class HomeFragment extends Fragment {
                         startActivity(intent);
                     }
                 });
+            }
+        });
+    }
+
+    private void handleTopPanelClick(){
+        topPanel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
+                startActivity(intent);
             }
         });
     }

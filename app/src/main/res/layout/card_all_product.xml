@@ -27,7 +27,6 @@
             android:layout_height="24dp"
             android:layout_gravity="top|end"
             android:layout_margin="8dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_heart_outline" />
     </FrameLayout>
 

@@ -10,7 +10,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="680sp">
+        android:layout_above="@+id/bottomproduct"
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -90,7 +91,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textStyle="bold"
-                            android:textSize="20sp"
+                            android:textSize="18sp"
                             android:text="OnePlus Buds 3"
                             android:layout_marginStart="5sp"
                             android:textColor="@color/black"
@@ -162,7 +163,7 @@
                             android:text="5499"
                             android:fontFamily="@font/poppinsmedium"
                             android:textColor="#6055D8"
-                            android:textSize="16sp"/>
+                            android:textSize="15sp"/>
 
                     </LinearLayout>
 
@@ -222,6 +223,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:id="@+id/bottomproduct"
         android:layout_alignParentBottom="true"
         android:orientation="vertical">
 

@@ -143,10 +143,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        ImageView cardProductImage;
+        ImageView cardProductImage, wishlistButton;
         TextView cardProductName, cardProductDescription, cardProductPrice, cardMaxPrice;
         LinearLayout cardProductLinearLayout;
-        ImageButton wishlistButton;
 
 
         public ViewHolder(@NonNull View itemView) {
