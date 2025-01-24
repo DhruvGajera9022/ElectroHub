@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -34,8 +35,14 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +56,9 @@ import java.util.Random;
 import java.util.TimeZone;
 
 public class OrderTrackingActivity extends AppCompatActivity {
+
+    private final static int STORAGE_PERMISSION_CODE = 100;
+
     private ImageView backBtn, productImage;
     private TextView toolBarTitle, msgText, orderDateAndTime;
     private TextView trackOrderName, trackOrderCompany, trackOrderQty, productDetailsProductPrice, trackOrderID;
@@ -294,31 +304,37 @@ public class OrderTrackingActivity extends AppCompatActivity {
                 });
     }
 
-    private void generateInvoice(){
+    private void generateInvoice() {
+        // Adding services first
+        List<InvoiceModel.Service> services = new ArrayList<>();
+        services.add(new InvoiceModel.Service(
+                trackOrderName.getText().toString(),
+                Integer.parseInt(trackOrderQty.getText().toString()),
+                Double.parseDouble(productDetailsProductPrice.getText().toString())
+        ));
+
+        // Now creating the InvoiceModel object
         InvoiceModel invoice = new InvoiceModel(
-                addressFullName.getText().toString(),
-                trackOrderCompany.getText().toString(),
-                addressFullName.getText().toString(),
-                addressNumber.getText().toString(),
-                userEmail,
-                generateRandomString(),
-                (new Date()).toString(),
-                8,
-                "Bank Transfer",
-                orderDate,
-                "1234-5678-9012-3456",
-                "Thanks for shopping from our e-store.");
-
-        // Adding services
-        List<InvoiceModel.Service> services = List.of(
-                new InvoiceModel.Service(trackOrderName.getText().toString(), Integer.parseInt(trackOrderQty.getText().toString()), Double.parseDouble(productDetailsProductPrice.getText().toString()))
+                addressFullName.getText().toString(), // Client Name
+                trackOrderCompany.getText().toString(), // Company Name
+                addressFullName.getText().toString(), // Billing Address
+                addressNumber.getText().toString(), // Phone
+                userEmail, // Email
+                orderID, // Invoice Number
+                orderDate, // Invoice Date
+                8, // Tax rate
+                "Bank Transfer", // Payment Method
+                (new Date()).toString(), // Due Date
+                "1234-5678-9012-3456", // Bank Account
+                "Thanks for shopping from our e-store.", // Additional Notes
+                generateRandomString(), // Invoice ID
+                orderID, // Order ID
+                orderDate, // Order Date
+                services // Set the services here
         );
-
-        invoice.setServices(services);
 
         // Generate Invoice
         InvoiceGenerator generator = new InvoiceGenerator();
-
         try {
             generator.generateInvoice(invoice, "invoice_" + orderID + ".pdf");
             CustomToast.showToast(this, "Invoice generated successfully!");

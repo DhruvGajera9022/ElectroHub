@@ -16,8 +16,26 @@ public class InvoiceModel {
     private String dueDate;
     private String bankAccount;
     private String additionalNotes;
+    private String invoiceId;
+    private String orderId;
+    private String orderDate;
 
-    public InvoiceModel(String clientName, String companyName, String billingAddress, String phone, String email, String invoiceNumber, String invoiceDate, double taxRate, String paymentMethod, String dueDate, String bankAccount, String additionalNotes) {
+    public InvoiceModel(String clientName,
+                        String companyName,
+                        String billingAddress,
+                        String phone,
+                        String email,
+                        String invoiceNumber,
+                        String invoiceDate,
+                        double taxRate,
+                        String paymentMethod,
+                        String dueDate,
+                        String bankAccount,
+                        String additionalNotes,
+                        String invoiceId,
+                        String orderId,
+                        String orderDate,
+                        List<Service> services) {
         this.clientName = clientName;
         this.companyName = companyName;
         this.billingAddress = billingAddress;
@@ -30,8 +48,13 @@ public class InvoiceModel {
         this.dueDate = dueDate;
         this.bankAccount = bankAccount;
         this.additionalNotes = additionalNotes;
+        this.invoiceId = invoiceId;
+        this.orderId = orderId;
+        this.orderDate = orderDate;
+        this.services = services; // Initialize services list here
     }
 
+    // Getter methods
     public String getClientName() {
         return clientName;
     }
@@ -84,6 +107,18 @@ public class InvoiceModel {
         return additionalNotes;
     }
 
+    public String getInvoiceId() {
+        return invoiceId;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getOrderDate() {
+        return orderDate;
+    }
+
     public void setServices(List<Service> services) {
         this.services = services;
     }
@@ -112,4 +147,3 @@ public class InvoiceModel {
         }
     }
 }
-

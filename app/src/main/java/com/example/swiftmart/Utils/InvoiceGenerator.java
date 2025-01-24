@@ -7,13 +7,11 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.borders.Border;
-import com.itextpdf.layout.element.Cell;
-
 import android.os.Environment;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,59 +23,42 @@ public class InvoiceGenerator {
         File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(downloadsDir, fileName);
 
-        if (!downloadsDir.exists()) {
-            boolean isCreated = downloadsDir.mkdirs();
-            if (!isCreated) {
-                throw new IOException("Failed to create the Downloads directory.");
-            }
+        if (!downloadsDir.exists() && !downloadsDir.mkdirs()) {
+            throw new IOException("Failed to create the Downloads directory.");
         }
 
-        // Initialize PDF writer and document
         PdfWriter writer = new PdfWriter(new FileOutputStream(file));
         PdfDocument pdf = new PdfDocument(writer);
         Document document = new Document(pdf);
 
-        // Header
-        // Table headerTable = new Table(UnitValue.createPercentArray(new float[]{1, 1}));
-        // headerTable.setWidth(UnitValue.createPercentValue(100));
-
-        Paragraph header = new Paragraph("Electro Hub invoice")
-                .setFontSize(34)
+        document.add(new Paragraph("Invoice")
+                .setFontSize(30)
                 .setBold()
-                .setMarginBottom(20);
-        document.add(header);
-        // headerTable.addCell(new Cell().add(header).setBorder(Border.NO_BORDER));
+                .setTextAlignment(TextAlignment.CENTER)
+                .setMarginBottom(15)
+                .setFontColor(WebColors.getRGBColor("#F7C650")));
 
-        // Paragraph headerCompanyName = new Paragraph("INVOICE")
-        //         .setFontSize(24)
-        //         .setBold()
-        //         .setMarginBottom(20);
-        // // document.add(headerCompanyName);
-        // headerTable.addCell(new Cell().add(headerCompanyName).setBorder(Border.NO_BORDER));
-        // document.add(headerTable);
+        Table mainTable = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+        mainTable.addCell(createSectionTable("Bill To", new String[][]{
+                {"Client Name:", invoice.getClientName()},
+                {"Company Name:", invoice.getCompanyName()},
+                {"Billing Address:", invoice.getBillingAddress()},
+                {"Phone:", invoice.getPhone()},
+                {"Email:", invoice.getEmail()}
+        }));
 
-        document.add(new Paragraph("Bill To:").setFontSize(20).setBold());
+        mainTable.addCell(createSectionTable("Invoice Info", new String[][]{
+                {"Invoice ID:", invoice.getInvoiceId()},
+                {"Order ID:", invoice.getOrderId()},
+                {"Order Date:", invoice.getOrderDate()},
+                {"Invoice Date:", invoice.getInvoiceDate()}
+        }));
 
-        document.add(getParagraph("Client Name : ",invoice.getClientName()));
-        document.add(getParagraph("Company Name : ",invoice.getCompanyName()));
-        document.add(getParagraph("Billing Address : ",invoice.getBillingAddress()));
-        document.add(getParagraph("Phone : ",invoice.getPhone()));
-        document.add(getParagraph("Email : ",invoice.getEmail()));
+        document.add(mainTable);
+        document.add(new Paragraph("Product Details:").setBold().setFontSize(16).setMarginTop(15));
 
-        // Service Details Section
-        Paragraph serviceHeader = new Paragraph("Service Details:")
-                .setBold()
-                .setFontSize(14)
-                .setMarginTop(20);
-        document.add(serviceHeader);
-
-        Table serviceTable = new Table(UnitValue.createPercentArray(new float[]{1, 4, 2, 2, 2}));
-        serviceTable.setWidth(UnitValue.createPercentValue(100));
-        addHeaderCell(serviceTable,"No");
-        addHeaderCell(serviceTable,"Product Name");
-        addHeaderCell(serviceTable,"Quantity");
-        addHeaderCell(serviceTable,"Per unit Price");
-        addHeaderCell(serviceTable,"Total ($)");
+        Table serviceTable = new Table(UnitValue.createPercentArray(new float[]{1, 4, 2, 2, 2})).useAllAvailableWidth();
+        addTableHeaders(serviceTable, new String[]{"No", "Product Name", "Quantity", "Unit Price", "Total ($)"});
 
         double subtotal = 0;
         List<InvoiceModel.Service> services = invoice.getServices();
@@ -87,112 +68,59 @@ public class InvoiceGenerator {
             subtotal += total;
 
             boolean addColor = i % 2 != 0;
-            setCell(serviceTable,String.valueOf(i + 1),addColor);
-            setCell(serviceTable,service.getDescription(),addColor);
-            setCell(serviceTable,String.valueOf(service.getQuantity()),addColor);
-            setCell(serviceTable,String.format("%.2f", service.getRate()),addColor);
-            setCell(serviceTable,String.format("%.2f", total),addColor);
+            addRow(serviceTable, new String[]{String.valueOf(i + 1), service.getDescription(), String.valueOf(service.getQuantity()), String.format("%.2f", service.getRate()), String.format("%.2f", total)}, addColor);
         }
         document.add(serviceTable);
 
-        // Subtotal, Tax, and Total Amount
         double tax = subtotal * invoice.getTaxRate() / 100;
         double totalAmount = subtotal + tax;
+        document.add(getKeyValueParagraph("Subtotal: ", String.format("%.2f", subtotal)));
+        document.add(getKeyValueParagraph("Tax (" + invoice.getTaxRate() + "%): ", String.format("%.2f", tax)));
+        document.add(getKeyValueParagraph("Total Amount Due: ", String.format("%.2f", totalAmount)).setBold());
 
-        // Paragraph totals = new Paragraph()
-        //         .add(String.format("Subtotal: %.2f%n", subtotal))
-        //         .add(String.format("Tax (%.1f%%): %.2f%n", invoice.getTaxRate(), tax))
-        //         .add(String.format("Total Amount Due: %.2f", totalAmount))
-        //         .setMarginTop(20);
-        // document.add(totals);
+        document.add(new Paragraph("Payment Information:").setBold().setFontSize(14).setMarginTop(15));
+        document.add(new Paragraph("Payment Method: " + invoice.getPaymentMethod() + "\nDue Date: " + invoice.getDueDate() + "\nBank Account: " + invoice.getBankAccount()));
 
-        document.add(getParagraph("Subtotal : ", String.format("%.2f%n", subtotal)).setMarginTop(20));
-        document.add(getParagraph(String.format("Tax (%.1f%%) : ",invoice.getTaxRate()), String.format("%.2f%n",tax)));
-        document.add(getParagraph("Total Amount Due : ",String.format("%.2f", totalAmount)));
-
-        // Payment Information
-        Paragraph paymentInfo = new Paragraph("Payment Information:")
-                .setBold()
-                .setFontSize(14)
-                .setMarginTop(20);
-        document.add(paymentInfo);
-
-        Paragraph paymentDetails = new Paragraph()
-                .add("Payment Method: " + invoice.getPaymentMethod() + "\n")
-                .add("Due Date: " + invoice.getDueDate() + "\n")
-                .add("Bank Account: " + invoice.getBankAccount() + "\n");
-        document.add(paymentDetails);
-
-        // Footer Notes
-        Paragraph footer = new Paragraph(invoice.getAdditionalNotes())
-                .setMarginTop(30)
-                .setItalic()
-                .setTextAlignment(TextAlignment.CENTER);
-        document.add(footer);
-
-        // Close the document
+        document.add(new Paragraph(invoice.getAdditionalNotes()).setMarginTop(30).setItalic().setHorizontalAlignment(HorizontalAlignment.CENTER));
         document.close();
     }
 
-    private Paragraph getParagraph(String key,String value)
-    {
-        Text txtLabel = new Text(key).setBold().setFontSize(12).setFontColor(ColorConstants.BLACK);
-        Text txtValue = new Text(value).setFontSize(11).setFontColor(ColorConstants.DARK_GRAY);
-        // Combine the text into a single paragraph
-        return new Paragraph().add(txtLabel).add(txtValue)
-                .setMarginBottom(0)
-                .setMarginTop(0);
+    private Table createSectionTable(String title, String[][] data) {
+        Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth().setMarginBottom(10);
+        table.addCell(new Cell(1, 2).add(new Paragraph(title).setBold().setFontSize(16)).setBorder(Border.NO_BORDER));
+        for (String[] row : data) {
+            table.addCell(createCell(row[0], true));
+            table.addCell(createCell(row[1], false));
+        }
+        return table;
     }
 
-    private void setCell(Table table,String content,boolean addColor)
-    {
-        Cell cell = new Cell()
-                .add(new Paragraph(content).setFontColor(ColorConstants.DARK_GRAY))
-                .setBorder(Border.NO_BORDER);
-
-        if(addColor)
-            cell.setBackgroundColor(WebColors.getRGBColor("#DFE1E5"));
-
-        table.addCell(cell);
+    private void addTableHeaders(Table table, String[] headers) {
+        for (String header : headers) {
+            table.addHeaderCell(new Cell().add(new Paragraph(header).setBold())
+                    .setBackgroundColor(WebColors.getRGBColor("#F7C650"))
+                    .setTextAlignment(TextAlignment.CENTER));
+        }
     }
 
-    private void addHeaderCell(Table table,String content_text)
-    {
-        // Add Header Row
-        Cell headerCell = new Cell()
-                .add(new Paragraph(content_text).setBold())
-                .setBackgroundColor(WebColors.getRGBColor("#F7C650"))
-                .setBorder(Border.NO_BORDER);
-
-        table.addHeaderCell(headerCell);
+    private void addRow(Table table, String[] data, boolean addColor) {
+        for (String content : data) {
+            Cell cell = new Cell().add(new Paragraph(content).setFontColor(ColorConstants.DARK_GRAY))
+                    .setPadding(5)
+                    .setBorder(Border.NO_BORDER);
+            if (addColor) cell.setBackgroundColor(WebColors.getRGBColor("#DFE1E5"));
+            table.addCell(cell);
+        }
     }
 
-//    public static void main(String[] args) throws Exception {
-//        // Sample Data
-//        Invoice invoice = new Invoice();
-//        invoice.setClientName("Dhruv gajera");
-//        invoice.setCompanyName("ABC Corporation");
-//        invoice.setBillingAddress("123 Pramukh park,Amroli");
-//        invoice.setPhone("9099235623");
-//        invoice.setEmail("dhruv@gmail.com");
-//        invoice.setInvoiceNumber("SI2023-001");
-//        invoice.setInvoiceDate("September 26, 2030");
-//        invoice.setTaxRate(8);
-//        invoice.setPaymentMethod("Bank Transfer");
-//        invoice.setDueDate("October 15, 2030");
-//        invoice.setBankAccount("1234-5678-9012-3456");
-//        invoice.setAdditionalNotes("Thanks for shopping from our e-store.");
-//
-//        // Adding services
-//        List<Invoice.Service> services = List.of(
-//                new Invoice.Service("iPhone", 1, 100000.00),
-//                new Invoice.Service("Tv", 2, 12000.00),
-//                new Invoice.Service("earbuds", 1, 800.00),
-//                new Invoice.Service("oppo v15", 3, 8000.00)
-//        );
-//        invoice.setServices(services);
-//
-//        // Generate Invoice
-//        generateInvoice(invoice, "..\\pdfs\\new_gpt_invoice.pdf");
-//    }
+    private Cell createCell(String content, boolean isBold) {
+        Paragraph paragraph = new Paragraph(content).setFontSize(12);
+        if (isBold) paragraph.setBold();
+        return new Cell().add(paragraph).setBorder(Border.NO_BORDER).setPadding(5);
+    }
+
+    private Paragraph getKeyValueParagraph(String key, String value) {
+        return new Paragraph().add(new Text(key).setBold().setFontSize(12))
+                .add(new Text(value).setFontSize(11).setFontColor(ColorConstants.DARK_GRAY));
+    }
 }
