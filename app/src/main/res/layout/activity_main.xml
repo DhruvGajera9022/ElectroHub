@@ -24,7 +24,6 @@
         android:layout_height="50dp"
         android:layout_gravity="bottom"
         android:background="@color/white"
-        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
         app:cnb_menuResource="@menu/bottom_navigation_items" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -20,9 +20,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.swiftmart.Adapter.CategoryProductAdapter;
+import com.example.swiftmart.Adapter.ProductAdapter;
 import com.example.swiftmart.Adapter.ProductImageSliderAdapter;
+import com.example.swiftmart.CategoryScreen.MobilesActivity;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.Model.RatingModel;
 import com.example.swiftmart.Utils.CustomToast;
@@ -36,6 +44,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.razorpay.Checkout;
 
@@ -44,6 +53,7 @@ import org.json.JSONObject;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -51,11 +61,14 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ProductDetailsActivity extends AppCompatActivity {
-    private TextView productDetailsProductName, productDetailsProductDescription, productDetailsProductPrice, expandDescriptionButton, productDetailsRating, productDetailsRatingCount;
+    private TextView productDetailsProductName, productDetailsProductDescription,
+            productDetailsProductPrice, expandDescriptionButton, productDetailsRating,
+            productDetailsRatingCount, similarText;
     private String productId, productCategory, productCompany;
     private ViewPager2 productDetailsViewPager;
     private AppCompatButton productBuyNowButton;
     private LinearLayout productAddToCartButton;
+    private NestedScrollView productDetailsNestedScrollView;
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
@@ -66,6 +79,12 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private Runnable sliderRunnable;
 
     private RelativeLayout productDetailsRelativeLayout;
+
+    private RecyclerView productDetailsSimilarRecyclerView, productDetailsExploreMoreRecyclerView;
+    private ArrayList<ProductModel> similarDataList = new ArrayList<>();
+    private ArrayList<ProductModel> exploreMoreDataList = new ArrayList<>();
+    private ProductAdapter similarAdapter;
+    private CategoryProductAdapter exploreMoreAdapter;
 
     private ImageView productDetailsBackArrow, productDetailsWishlist, productDetailsShare;
 
@@ -107,6 +126,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     private void initialization(){
 
+        productDetailsNestedScrollView = findViewById(R.id.productDetailsNestedScrollView);
+
         productDetailsRelativeLayout = findViewById(R.id.productDetailsRelativeLayout);
 
         productDetailsProductName = findViewById(R.id.productDetailsProductName);
@@ -123,6 +144,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productDetailsWishlist = findViewById(R.id.productDetailsWishlist);
         productDetailsShare = findViewById(R.id.productDetailsShare);
 
+        productDetailsSimilarRecyclerView = findViewById(R.id.productDetailsSimilarRecyclerView);
+        productDetailsExploreMoreRecyclerView = findViewById(R.id.productDetailsExploreMoreRecyclerView);
+        similarText = findViewById(R.id.similarText);
+
         expandDescriptionButton = findViewById(R.id.expandDescriptionButton);
 
         db = FirebaseFirestore.getInstance();
@@ -130,6 +155,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         uid = mAuth.getCurrentUser().getUid();
 
         productId = getIntent().getStringExtra("productId");
+
+        productDetailsNestedScrollView.setVerticalScrollBarEnabled(false);
 
     }
 
@@ -150,6 +177,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                 currentImageUrls = product.getImgurls();
                                 productCategory = product.getCategory();
                                 productCompany = product.getCompany();
+
+                                getSimilarProducts(productId, productCategory, productCompany);
+                                getExploreMoreProducts(productCategory, productCompany);
                             }
                         }
                     }
@@ -468,6 +498,80 @@ public class ProductDetailsActivity extends AppCompatActivity {
             Window window = getWindow();
             window.setStatusBarColor(getResources().getColor(colorResource));
         }
+    }
+
+
+    // get similar products
+    private void getSimilarProducts(String productId, String productCategory, String productCompany) {
+        productDetailsSimilarRecyclerView.setLayoutManager(new LinearLayoutManager(ProductDetailsActivity.this, LinearLayoutManager.HORIZONTAL, false));
+
+        db.collection("Products")
+                .whereEqualTo("category", productCategory)
+                .whereEqualTo("company", productCompany)
+                .limit(10)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            CustomToast.showToast(ProductDetailsActivity.this, "Error in data fetching");
+                            return;
+                        }
+
+                        if (value != null && !value.isEmpty()) {
+                            similarDataList.clear();
+                            for (QueryDocumentSnapshot documentSnapshot : value) {
+                                ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+
+                                // Skip the current product
+                                if (!productModel.getPid().equals(productId)) {
+                                    similarDataList.add(productModel);
+                                }
+                            }
+
+                            // Only update adapter after the loop
+                            similarAdapter = new ProductAdapter(ProductDetailsActivity.this, similarDataList);
+                            productDetailsSimilarRecyclerView.setHasFixedSize(true);
+                            productDetailsSimilarRecyclerView.setAdapter(similarAdapter);
+                            productDetailsSimilarRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                        }
+                    }
+                });
+    }
+
+    // get explore more products
+    private void getExploreMoreProducts(String productCategory, String productCompany) {
+        productDetailsExploreMoreRecyclerView.setLayoutManager(new LinearLayoutManager(ProductDetailsActivity.this));
+        exploreMoreDataList.clear();
+
+        db.collection("Products")
+                .whereEqualTo("category", productCategory)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            return;
+                        }
+
+                        if (value != null && !value.isEmpty()) {
+                            for (QueryDocumentSnapshot documentSnapshot : value) {
+                                ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+
+                                // Skip products of the given company
+                                if (!productModel.getCompany().equalsIgnoreCase(productCompany)) {
+                                    exploreMoreDataList.add(productModel);
+                                }
+                            }
+
+                            // Set up RecyclerView after filtering products
+                            GridLayoutManager layoutManager = new GridLayoutManager(ProductDetailsActivity.this, 2);
+                            productDetailsExploreMoreRecyclerView.setLayoutManager(layoutManager);
+                            exploreMoreAdapter = new CategoryProductAdapter(ProductDetailsActivity.this, exploreMoreDataList);
+                            productDetailsExploreMoreRecyclerView.setHasFixedSize(true);
+                            productDetailsExploreMoreRecyclerView.setAdapter(exploreMoreAdapter);
+                            productDetailsExploreMoreRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                        }
+                    }
+                });
     }
 
 
