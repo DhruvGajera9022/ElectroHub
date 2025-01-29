@@ -53,4 +53,13 @@
     <!-- Ripple effect color -->
     <color name="ripple_color">#33000000</color>
 
+
+    <color name="primary">#6750A4</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="secondary">#E8DEF8</color>
+    <color name="surface">#FEF7FF</color>
+    <color name="surface_container">#F3EDF7</color>
+    <color name="on_surface">#1D1B20</color>
+    <color name="outline">#79747E</color>
+
 </resources>

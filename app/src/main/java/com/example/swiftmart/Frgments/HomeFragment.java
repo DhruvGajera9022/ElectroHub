@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -81,6 +82,10 @@ public class HomeFragment extends Fragment {
     BottomSheetDialog sheetDialog;
     SearchView homeFragmentSearchView;
 
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
+
     private HorizontalScrollView homeFragmentHorizontalScrollView;
     private ViewPager2 mainViewPager;
     private MobileSliderAdapter mobilesliderAdapter;
@@ -140,6 +145,7 @@ public class HomeFragment extends Fragment {
         homeFragmentSearchView = view.findViewById(R.id.homeFragmentSearchView);
         topPanel = view.findViewById(R.id.topPanel);
 
+        sliderIndicator = view.findViewById(R.id.sliderIndicator);
         mainViewPager = view.findViewById(R.id.mainViewPager);
 
         seeAll1 = view.findViewById(R.id.seeAll1);
@@ -490,21 +496,27 @@ public class HomeFragment extends Fragment {
                         }
                     }
 
+                    // Set adapter to ViewPager2
                     mobilesliderAdapter = new MobileSliderAdapter(getContext(), imageUrls);
                     mainViewPager.setAdapter(mobilesliderAdapter);
 
+                    // Setup the slider indicator
+                    setupSliderIndicator();
+
+                    // Auto-slide functionality
                     sliderHandler.postDelayed(slideRunnable, 3000);
 
-                    // Add listener to reset the auto-slide when the page is changed
+                    // Handle page change
                     mainViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                         @Override
                         public void onPageSelected(int position) {
+                            updateIndicator(position);
                             sliderHandler.removeCallbacks(slideRunnable);
                             sliderHandler.postDelayed(slideRunnable, 3000);
                         }
                     });
 
-                    // Handle touch events to reset auto-slide interval
+                    // Reset auto-slide interval on touch
                     mainViewPager.setOnTouchListener((v, event) -> {
                         sliderHandler.removeCallbacks(slideRunnable);
                         sliderHandler.postDelayed(slideRunnable, 3000);
@@ -520,6 +532,44 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void setupSliderIndicator() {
+        dotCount = mobilesliderAdapter.getItemCount();
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(getContext());
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_non_active));
+        }
+
+        // Set the current dot to active
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_active));
+        }
+    }
+
     private final Runnable slideRunnable = new Runnable() {
         @Override
         public void run() {
@@ -530,6 +580,7 @@ public class HomeFragment extends Fragment {
             }
         }
     };
+
 
     @Override
     public void onPause() {
