@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -62,6 +63,10 @@ public class EarphoneActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private List<String> imageUrls;
 
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +96,9 @@ public class EarphoneActivity extends AppCompatActivity {
         earphoneScrollView.setVerticalScrollBarEnabled(false);
         earphoneHorizontalScrollView.setHorizontalScrollBarEnabled(false);
 
+        sliderIndicator = findViewById(R.id.sliderIndicator);
+        earbudsViewPager = findViewById(R.id.earbudsViewPager);
+
         getEarbuds();
         setStatusBarColor(R.color.home);
         getEarbudsCompany();
@@ -99,7 +107,7 @@ public class EarphoneActivity extends AppCompatActivity {
         backBtn.setOnClickListener(v -> onBackPressed());
 
         getImageUrls();
-        earbudsViewPager = findViewById(R.id.earbudsViewPager);
+
 
     }
 
@@ -211,12 +219,16 @@ public class EarphoneActivity extends AppCompatActivity {
                     earphoneSliderAdapter = new MobileSliderAdapter(EarphoneActivity.this, imageUrls);
                     earbudsViewPager.setAdapter(earphoneSliderAdapter);
 
+                    // Setup the slider indicator
+                    setupSliderIndicator();
+
                     sliderHandler.postDelayed(slideRunnable, 3000);
 
                     // Add listener to reset the auto-slide when the page is changed
                     earbudsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                         @Override
                         public void onPageSelected(int position) {
+                            updateIndicator(position);
                             sliderHandler.removeCallbacks(slideRunnable);
                             sliderHandler.postDelayed(slideRunnable, 3000);
                         }
@@ -238,10 +250,48 @@ public class EarphoneActivity extends AppCompatActivity {
         });
     }
 
+    private void setupSliderIndicator() {
+        dotCount = earphoneSliderAdapter.getItemCount();
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(EarphoneActivity.this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(EarphoneActivity.this, R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(EarphoneActivity.this, R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(EarphoneActivity.this, R.drawable.indicator_non_active));
+        }
+
+        // Set the current dot to active
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(EarphoneActivity.this, R.drawable.indicator_active));
+        }
+    }
+
     private final Runnable slideRunnable = new Runnable() {
         @Override
         public void run() {
-            if (earbudsViewPager != null && earbudsViewPager != null) {
+            if (earbudsViewPager != null && earphoneSliderAdapter != null) {
                 int nextItem = (earbudsViewPager.getCurrentItem() + 1) % earphoneSliderAdapter.getItemCount();
                 earbudsViewPager.setCurrentItem(nextItem);
                 sliderHandler.postDelayed(this, 3000);

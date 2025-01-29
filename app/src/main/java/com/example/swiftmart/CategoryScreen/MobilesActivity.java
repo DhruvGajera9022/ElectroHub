@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -62,6 +63,10 @@ public class MobilesActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private List<String> imageUrls;
 
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +109,7 @@ public class MobilesActivity extends AppCompatActivity {
         backBtn.setOnClickListener(v -> onBackPressed());
 
         getImageUrls();
+        sliderIndicator = findViewById(R.id.sliderIndicator);
         mobileViewPager = findViewById(R.id.mobileViewPager);
 
     }
@@ -220,12 +226,16 @@ public class MobilesActivity extends AppCompatActivity {
                     mobilesliderAdapter = new MobileSliderAdapter(MobilesActivity.this, imageUrls);
                     mobileViewPager.setAdapter(mobilesliderAdapter);
 
+                    // Setup the slider indicator
+                    setupSliderIndicator();
+
                     sliderHandler.postDelayed(slideRunnable, 3000);
 
                     // Add listener to reset the auto-slide when the page is changed
                     mobileViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                         @Override
                         public void onPageSelected(int position) {
+                            updateIndicator(position);
                             sliderHandler.removeCallbacks(slideRunnable);
                             sliderHandler.postDelayed(slideRunnable, 3000);
                         }
@@ -245,6 +255,44 @@ public class MobilesActivity extends AppCompatActivity {
                 Log.e("FirebaseError", "Database error: " + error.getMessage());
             }
         });
+    }
+
+    private void setupSliderIndicator() {
+        dotCount = mobilesliderAdapter.getItemCount();
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(MobilesActivity.this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(MobilesActivity.this, R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(MobilesActivity.this, R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(MobilesActivity.this, R.drawable.indicator_non_active));
+        }
+
+        // Set the current dot to active
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(MobilesActivity.this, R.drawable.indicator_active));
+        }
     }
 
     private final Runnable slideRunnable = new Runnable() {

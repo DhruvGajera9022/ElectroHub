@@ -16,6 +16,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -67,6 +68,10 @@ public class CameraActivity extends AppCompatActivity {
     private RecyclerView cameraRecyclerView;
     private ProgressBar cameraActivityProgressBar;
 
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +98,7 @@ public class CameraActivity extends AppCompatActivity {
         cameraScrollView = findViewById(R.id.cameraScrollView);
         cameraHorizontalScrollView = findViewById(R.id.cameraHorizontalScrollView);
 
+        sliderIndicator = findViewById(R.id.sliderIndicator);
         cameraViewPager = findViewById(R.id.cameraViewPager);
 
         cameraRecyclerView = findViewById(R.id.cameraRecyclerView);
@@ -211,18 +217,22 @@ public class CameraActivity extends AppCompatActivity {
                     cameraSliderAdapter = new MobileSliderAdapter(CameraActivity.this, imageUrls);
                     cameraViewPager.setAdapter(cameraSliderAdapter);
 
+                    // Setup the slider indicator
+                    setupSliderIndicator();
+
                     sliderHandler.postDelayed(slideRunnable, 3000);
 
-                    // Add listener to reset the auto-slide when the page is changed
+                    // Handle page change
                     cameraViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                         @Override
                         public void onPageSelected(int position) {
+                            updateIndicator(position);
                             sliderHandler.removeCallbacks(slideRunnable);
                             sliderHandler.postDelayed(slideRunnable, 3000);
                         }
                     });
 
-                    // Handle touch events to reset auto-slide interval
+                    // Reset auto-slide interval on touch
                     cameraViewPager.setOnTouchListener((v, event) -> {
                         sliderHandler.removeCallbacks(slideRunnable);
                         sliderHandler.postDelayed(slideRunnable, 3000);
@@ -236,6 +246,44 @@ public class CameraActivity extends AppCompatActivity {
                 Log.e("FirebaseError", "Database error: " + error.getMessage());
             }
         });
+    }
+
+    private void setupSliderIndicator() {
+        dotCount = cameraSliderAdapter.getItemCount();
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(CameraActivity.this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(CameraActivity.this, R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(CameraActivity.this, R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(CameraActivity.this, R.drawable.indicator_non_active));
+        }
+
+        // Set the current dot to active
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(CameraActivity.this, R.drawable.indicator_active));
+        }
     }
 
     private final Runnable slideRunnable = new Runnable() {

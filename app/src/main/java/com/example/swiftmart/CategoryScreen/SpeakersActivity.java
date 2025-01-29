@@ -16,6 +16,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -64,7 +65,11 @@ public class SpeakersActivity extends AppCompatActivity {
     private ArrayList<ProductModel> datalist = new ArrayList<>();
     private CategoryProductAdapter adapter;
     private RecyclerView speakerRecyclerView;
-    private ProgressBar SpeakersActivityProgressBar;
+    private ProgressBar speakerActivityProgressBar;
+
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,10 +96,11 @@ public class SpeakersActivity extends AppCompatActivity {
         speakerScrollView = findViewById(R.id.speakerScrollView);
         speakerHorizontalScrollView = findViewById(R.id.speakerHorizontalScrollView);
 
+        sliderIndicator = findViewById(R.id.sliderIndicator);
         speakerViewPager = findViewById(R.id.speakerViewPager);
 
         speakerRecyclerView = findViewById(R.id.speakerRecyclerView);
-        SpeakersActivityProgressBar = findViewById(R.id.speakerActivityProgressBar);
+        speakerActivityProgressBar = findViewById(R.id.speakerActivityProgressBar);
 
         backBtn = findViewById(R.id.backBtn);
         toolBarTitle = findViewById(R.id.toolBarTitle);
@@ -111,7 +117,7 @@ public class SpeakersActivity extends AppCompatActivity {
     // Get all the laptops
     private void getLaptops(){
         speakerRecyclerView.setLayoutManager(new LinearLayoutManager(SpeakersActivity.this));
-        SpeakersActivityProgressBar.setVisibility(View.VISIBLE);
+        speakerActivityProgressBar.setVisibility(View.VISIBLE);
         datalist.clear();
 
         db.collection("Products")
@@ -121,13 +127,13 @@ public class SpeakersActivity extends AppCompatActivity {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (error != null){
                             CustomToast.showToast(SpeakersActivity.this,  "Error in data fetching");
-                            SpeakersActivityProgressBar.setVisibility(View.GONE);
+                            speakerActivityProgressBar.setVisibility(View.GONE);
                             return;
                         }
 
 
                         if (value != null && !value.isEmpty()){
-                            SpeakersActivityProgressBar.setVisibility(View.GONE);
+                            speakerActivityProgressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot documentSnapshot : value){
                                 ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
                                 datalist.add(productModel);
@@ -149,7 +155,7 @@ public class SpeakersActivity extends AppCompatActivity {
     // Get single mobile company data
     private void getCompany(String company){
         speakerRecyclerView.setLayoutManager(new LinearLayoutManager(SpeakersActivity.this));
-        SpeakersActivityProgressBar.setVisibility(View.VISIBLE);
+        speakerActivityProgressBar.setVisibility(View.VISIBLE);
         datalist.clear();
 
         db.collection("Products")
@@ -160,12 +166,12 @@ public class SpeakersActivity extends AppCompatActivity {
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (error != null){
                             CustomToast.showToast(SpeakersActivity.this, "Error in data fetching");
-                            SpeakersActivityProgressBar.setVisibility(View.GONE);
+                            speakerActivityProgressBar.setVisibility(View.GONE);
                             return;
                         }
 
                         if (value != null && !value.isEmpty()){
-                            SpeakersActivityProgressBar.setVisibility(View.GONE);
+                            speakerActivityProgressBar.setVisibility(View.GONE);
                             for (QueryDocumentSnapshot documentSnapshot : value){
                                 ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
                                 datalist.add(productModel);
@@ -206,12 +212,16 @@ public class SpeakersActivity extends AppCompatActivity {
                     speakerSliderAdapter = new MobileSliderAdapter(SpeakersActivity.this, imageUrls);
                     speakerViewPager.setAdapter(speakerSliderAdapter);
 
+                    // Setup the slider indicator
+                    setupSliderIndicator();
+
                     sliderHandler.postDelayed(slideRunnable, 3000);
 
                     // Add listener to reset the auto-slide when the page is changed
                     speakerViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                         @Override
                         public void onPageSelected(int position) {
+                            updateIndicator(position);
                             sliderHandler.removeCallbacks(slideRunnable);
                             sliderHandler.postDelayed(slideRunnable, 3000);
                         }
@@ -231,6 +241,44 @@ public class SpeakersActivity extends AppCompatActivity {
                 Log.e("FirebaseError", "Database error: " + error.getMessage());
             }
         });
+    }
+
+    private void setupSliderIndicator() {
+        dotCount = speakerSliderAdapter.getItemCount();
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(SpeakersActivity.this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(SpeakersActivity.this, R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(SpeakersActivity.this, R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(SpeakersActivity.this, R.drawable.indicator_non_active));
+        }
+
+        // Set the current dot to active
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(SpeakersActivity.this, R.drawable.indicator_active));
+        }
     }
 
     private final Runnable slideRunnable = new Runnable() {

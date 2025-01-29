@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,6 +62,10 @@ public class tv_brandActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private List<String> imageUrls;
 
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,7 @@ public class tv_brandActivity extends AppCompatActivity {
         setStatusBarColor(R.color.home);
 
         getImageUrls();
+        sliderIndicator = findViewById(R.id.sliderIndicator);
         tvViewPager = findViewById(R.id.tvViewPager);
 
         toolBarTitle.setText("TV");
@@ -204,12 +210,16 @@ public class tv_brandActivity extends AppCompatActivity {
                     tvSliderAdapter = new MobileSliderAdapter(tv_brandActivity.this, imageUrls);
                     tvViewPager.setAdapter(tvSliderAdapter);
 
+                    // Setup the slider indicator
+                    setupSliderIndicator();
+
                     sliderHandler.postDelayed(slideRunnable, 3000);
 
                     // Add listener to reset the auto-slide when the page is changed
                     tvViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
                         @Override
                         public void onPageSelected(int position) {
+                            updateIndicator(position);
                             sliderHandler.removeCallbacks(slideRunnable);
                             sliderHandler.postDelayed(slideRunnable, 3000);
                         }
@@ -231,10 +241,48 @@ public class tv_brandActivity extends AppCompatActivity {
         });
     }
 
+    private void setupSliderIndicator() {
+        dotCount = tvSliderAdapter.getItemCount();
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(tv_brandActivity.this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(tv_brandActivity.this, R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(tv_brandActivity.this, R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(tv_brandActivity.this, R.drawable.indicator_non_active));
+        }
+
+        // Set the current dot to active
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(tv_brandActivity.this, R.drawable.indicator_active));
+        }
+    }
+
     private final Runnable slideRunnable = new Runnable() {
         @Override
         public void run() {
-            if (tvViewPager != null && tvViewPager != null) {
+            if (tvViewPager != null && tvSliderAdapter != null) {
                 int nextItem = (tvViewPager.getCurrentItem() + 1) % tvSliderAdapter.getItemCount();
                 tvViewPager.setCurrentItem(nextItem);
                 sliderHandler.postDelayed(this, 3000);
