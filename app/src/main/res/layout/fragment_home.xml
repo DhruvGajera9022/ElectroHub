@@ -477,6 +477,7 @@
                    android:layout_height="match_parent" />
 
                <LinearLayout
+                   android:id="@+id/recentViewedLL"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
                    android:orientation="horizontal"
@@ -497,17 +498,6 @@
                        android:gravity="start"
                        android:layout_weight="4"
                        android:textStyle="bold"/>
-
-                   <TextView
-                       android:id="@+id/seeAll4"
-                       android:layout_width="wrap_content"
-                       android:layout_height="wrap_content"
-                       android:layout_gravity="center"
-                       android:fontFamily="@font/poppinsregular"
-                       android:text="See All"
-                       android:textColor="#6055D8"
-                       android:textSize="12sp"
-                       android:layout_weight="1"/>
                </LinearLayout>
 
                <androidx.recyclerview.widget.RecyclerView

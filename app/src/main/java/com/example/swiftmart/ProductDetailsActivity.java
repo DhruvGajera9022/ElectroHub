@@ -279,10 +279,15 @@ public class ProductDetailsActivity extends AppCompatActivity {
         SharedPreferences preferences = context.getSharedPreferences("recently_viewed", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
-        // Save only the product ID as a string in SharedPreferences
+        // Get the current timestamp in milliseconds
+        long timestamp = System.currentTimeMillis();
+
+        // Save the product ID and timestamp
         editor.putString("product_" + productId, productId);
+        editor.putLong("timestamp_" + productId, timestamp);
         editor.apply();
     }
+
 
 
     private void handleAddToCartClick(){

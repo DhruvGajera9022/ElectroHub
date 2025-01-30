@@ -72,6 +72,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -83,7 +84,7 @@ public class HomeFragment extends Fragment {
             homeFragmentRecentRecyclerView;
     CircleImageView homeFragmentUserAvatar;
     LinearLayout topPanel;
-    TextView homeFragmentUserName, seeAll1, seeAll2, seeAll3, seeAll4;
+    TextView homeFragmentUserName, seeAll1, seeAll2, seeAll3;
     FirebaseAuth mAuth;
     String uid;
     NestedScrollView homeFragmentScrollView;
@@ -111,6 +112,8 @@ public class HomeFragment extends Fragment {
     private ProductAdapter mostPopularAdapter;
     private ProductAdapter newArrivedAdapter;
     private ProductAdapter recentAdapter;
+
+    private LinearLayout recentViewedLL;
 
     // Categories
     private ImageView homeMobileImage, homeEarbudsImage, homeTVImage, homeLaptopImage, homeHeadphoneImage, homeSpeakersImage, homeKeyboardImage, homeMouseImage, homeCameraImage, homeSmartwatchImage, homeTabletImage;
@@ -162,7 +165,6 @@ public class HomeFragment extends Fragment {
         seeAll1 = view.findViewById(R.id.seeAll1);
         seeAll2 = view.findViewById(R.id.seeAll2);
         seeAll3 = view.findViewById(R.id.seeAll3);
-        seeAll4 = view.findViewById(R.id.seeAll4);
 
         homeMobileImage = view.findViewById(R.id.homeMobileImage);
         homeEarbudsImage = view.findViewById(R.id.homeEarbudsImage);
@@ -176,6 +178,8 @@ public class HomeFragment extends Fragment {
         homeSmartwatchImage = view.findViewById(R.id.homeSmartwatchImage);
         homeTabletImage = view.findViewById(R.id.homeTabletImage);
 
+        recentViewedLL = view.findViewById(R.id.recentViewedLL);
+
         homeFragmentScrollView.setVerticalScrollBarEnabled(false);
         homeFragmentHorizontalScrollView.setHorizontalScrollBarEnabled(false);
 
@@ -188,7 +192,6 @@ public class HomeFragment extends Fragment {
         getTrendingData();
         getMostPopularData();
         getNewArrivedData();
-        getRecentData();
         handleSeeAllClick();
         getImageUrls();
 
@@ -424,13 +427,11 @@ public class HomeFragment extends Fragment {
 
         // Check if there are any recently viewed products
         if (recentlyViewedProductIds.isEmpty()) {
-            // Optionally show a message if there are no recently viewed products
-            CustomToast.showToast(getContext(), "No recently viewed products.");
+            recentViewedLL.setVisibility(View.GONE);
             return;
         }
 
-        // Reverse the order to display the most recent product first
-        Collections.reverse(recentlyViewedProductIds);
+        recentViewedLL.setVisibility(View.VISIBLE);
 
         // Create a list to hold the product details
         recentDataList = new ArrayList<>();
@@ -441,8 +442,7 @@ public class HomeFragment extends Fragment {
                     .document(productId)
                     .addSnapshotListener((documentSnapshot, e) -> {
                         if (e != null) {
-                            // Handle failure, e.g., network issues
-                            CustomToast.showToast(getContext(), "Error fetching product: " + e.getMessage());
+                            recentDataList.clear();
                             return;
                         }
 
@@ -474,17 +474,24 @@ public class HomeFragment extends Fragment {
     private List<String> getRecentlyViewedProductIds(Context context) {
         SharedPreferences preferences = context.getSharedPreferences("recently_viewed", Context.MODE_PRIVATE);
         Map<String, ?> allEntries = preferences.getAll();
+        List<String> sortedProductIds = new ArrayList<>();
+        Map<Long, String> productTimestampMap = new TreeMap<>(Collections.reverseOrder());
 
-        List<String> productIds = new ArrayList<>();
-
+        // Iterate through all saved entries and map the timestamps to the product IDs
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            // Assuming you saved product IDs using keys like "product_<productId>"
             if (entry.getKey().startsWith("product_")) {
-                productIds.add((String) entry.getValue());
+                String productId = (String) entry.getValue();
+                long timestamp = preferences.getLong("timestamp_" + productId, 0);
+                productTimestampMap.put(timestamp, productId);
             }
         }
 
-        return productIds;
+        // Now, extract the product IDs in descending order of timestamps
+        for (Long timestamp : productTimestampMap.keySet()) {
+            sortedProductIds.add(productTimestampMap.get(timestamp));
+        }
+
+        return sortedProductIds;
     }
 
     // handle see all click
@@ -504,13 +511,6 @@ public class HomeFragment extends Fragment {
             }
         });
         seeAll3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AllProducts.class);
-                startActivity(intent);
-            }
-        });
-        seeAll4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AllProducts.class);
@@ -763,6 +763,8 @@ public class HomeFragment extends Fragment {
         }
 
         sliderHandler.postDelayed(slideRunnable, 3000);
+
+        getRecentData();
     }
 
 
