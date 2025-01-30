@@ -9,20 +9,20 @@
         android:id="@+id/nav_explore"
         android:icon="@drawable/icon_explore"
         android:title="Explore"
-        app:cnb_iconColor="@color/like"/>
+        app:cnb_iconColor="@color/home"/>
     <item
         android:id="@+id/nav_category"
         android:icon="@drawable/icon_category"
         android:title="Category"
-        app:cnb_iconColor="@color/notification" />
+        app:cnb_iconColor="@color/home" />
     <item
         android:id="@+id/nav_person"
         android:icon="@drawable/icon_person"
         android:title="Profile"
-        app:cnb_iconColor="@color/profile" />
+        app:cnb_iconColor="@color/home" />
     <item
         android:id="@+id/nav_cart"
         android:icon="@drawable/icon_cart"
         android:title="Cart"
-        app:cnb_iconColor="@color/cart" />
+        app:cnb_iconColor="@color/home" />
 </menu>

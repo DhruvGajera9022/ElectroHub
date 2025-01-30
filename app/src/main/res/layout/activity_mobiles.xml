@@ -45,6 +45,7 @@
                 android:src="@drawable/logo_apple"
                 android:layout_marginHorizontal="10sp"
                 android:layout_gravity="center"
+                android:background="@drawable/round"
                 android:layout_height="60dp"/>
             </LinearLayout>
 
@@ -59,6 +60,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_samsung"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -76,6 +78,7 @@
                     android:layout_width="60dp"
                     android:layout_gravity="center"
                     android:src="@drawable/logo_vivo"
+                    android:background="@drawable/round"
                     android:layout_height="60dp"/>
 
 
@@ -92,6 +95,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:layout_gravity="center"
+                    android:background="@drawable/round"
                     android:src="@drawable/logo_oppo"
                     android:layout_height="60dp"/>
 
@@ -109,6 +113,7 @@
                     android:layout_width="60dp"
                     android:layout_gravity="center"
                     android:src="@drawable/logo_redmi"
+                    android:background="@drawable/round"
                     android:layout_height="60dp"/>
 
             </LinearLayout>
@@ -124,6 +129,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_realme"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -140,6 +146,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_motorola"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -157,6 +164,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_poco"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -174,6 +182,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_goggle"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -191,6 +200,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_oneplus"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -208,6 +218,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_iqoo"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
@@ -224,6 +235,7 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="60dp"
                     android:src="@drawable/logo_nothing"
+                    android:background="@drawable/round"
                     android:layout_gravity="center"
                     android:layout_height="60dp"/>
 
