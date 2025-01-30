@@ -510,17 +510,8 @@
                             android:src="@drawable/logo_apple"
                             android:layout_marginHorizontal="10sp"
                             android:layout_gravity="center"
+                            android:background="@drawable/round"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/iphone"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -536,17 +527,8 @@
                             android:layout_width="60dp"
                             android:src="@drawable/logo_samsung"
                             android:layout_gravity="center"
+                            android:background="@drawable/round"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/samsung"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -561,18 +543,10 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:layout_gravity="center"
+                            android:background="@drawable/round"
                             android:src="@drawable/logo_vivo"
                             android:layout_height="60dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/vivo"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -587,18 +561,9 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:layout_gravity="center"
+                            android:background="@drawable/round"
                             android:src="@drawable/logo_oppo"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/oppo"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -614,17 +579,9 @@
                             android:layout_width="60dp"
                             android:layout_gravity="center"
                             android:src="@drawable/logo_redmi"
+                            android:background="@drawable/round"
                             android:layout_height="60dp"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/redmi"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -639,18 +596,9 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:src="@drawable/logo_realme"
+                            android:background="@drawable/round"
                             android:layout_gravity="center"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/realme"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -667,17 +615,8 @@
                             android:layout_width="60dp"
                             android:src="@drawable/logo_motorola"
                             android:layout_gravity="center"
+                            android:background="@drawable/round"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/motorola"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -692,18 +631,9 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:src="@drawable/logo_poco"
+                            android:background="@drawable/round"
                             android:layout_gravity="center"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/poco"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -719,17 +649,8 @@
                             android:layout_width="60dp"
                             android:src="@drawable/logo_goggle"
                             android:layout_gravity="center"
+                            android:background="@drawable/round"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/goggle"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -744,18 +665,9 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:src="@drawable/logo_oneplus"
+                            android:background="@drawable/round"
                             android:layout_gravity="center"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/oneplus"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -770,18 +682,9 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:src="@drawable/logo_iqoo"
+                            android:background="@drawable/round"
                             android:layout_gravity="center"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/iqoo"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -796,18 +699,9 @@
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:layout_width="60dp"
                             android:src="@drawable/logo_nothing"
+                            android:background="@drawable/round"
                             android:layout_gravity="center"
                             android:layout_height="60dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:text="@string/nothing"
-                            android:fontFamily="@font/poppinsregular"/>
 
                     </LinearLayout>
 
@@ -847,8 +741,6 @@
 
 
                     </LinearLayout>
-
-
 
                     <LinearLayout
                         android:layout_width="wrap_content"
