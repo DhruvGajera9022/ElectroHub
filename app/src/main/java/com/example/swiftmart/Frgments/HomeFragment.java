@@ -533,6 +533,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupSliderIndicator() {
+        if (getContext() == null) {
+            Log.e("HomeFragment", "setupSliderIndicator: Context is null, skipping setup.");
+            return;
+        }
+
         dotCount = mobilesliderAdapter.getItemCount();
         dots = new ImageView[dotCount];
 
@@ -541,7 +546,7 @@ public class HomeFragment extends Fragment {
 
         // Create and add dots
         for (int i = 0; i < dotCount; i++) {
-            dots[i] = new ImageView(getContext());
+            dots[i] = new ImageView(getContext()); // Ensure getContext() is not null before calling this
             dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_non_active));
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -591,9 +596,13 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (mobilesliderAdapter != null && getContext() != null) {
+            setupSliderIndicator();
+        }
+
         sliderHandler.postDelayed(slideRunnable, 3000);
     }
-
 
 
     private void showBottomSheetDialog() {
@@ -615,74 +624,5 @@ public class HomeFragment extends Fragment {
             requireActivity().finish();
         });
     }
-
-
-
-
-
-
-
-
-    // handle search
-//    private void handleSearch(){
-//        homeFragmentSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                searchProducts(query);
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                searchProducts(newText);
-//                return false;
-//            }
-//        });
-//    }
-
-//    // handle searchProduct
-//    private void searchProducts(String query){
-//        homeFragmentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//        datalist.clear();
-//
-//        if (query.isEmpty()){
-//            getAllProducts();
-//        } else {
-//            datalist.clear();
-//            db.collection("Products")
-//                    .whereGreaterThanOrEqualTo("name", query)
-//                    .whereLessThanOrEqualTo("name", query + '\uf8ff')
-//                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                            if (error != null) {
-//                                CustomToast.showToast(getContext(), "Error in data fetching");
-//                                return;
-//                            }
-//
-//                            if (value != null && !value.isEmpty()) {
-//                                // Clear the list before adding new data
-//                                datalist.clear();
-//
-//                                for (QueryDocumentSnapshot documentSnapshot : value) {
-//                                    ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
-//                                    datalist.add(productModel);
-//                                }
-//
-//                                // Set the layout manager and adapter only once
-//                                GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-//                                homeFragmentRecyclerView.setLayoutManager(layoutManager);
-//                                adapter = new ProductAdapter(getContext(), datalist);
-//                                homeFragmentRecyclerView.setHasFixedSize(true);
-//                                homeFragmentRecyclerView.setAdapter(adapter);
-//                                homeFragmentRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//                            } else {
-//                                // Handle empty data case
-//                                CustomToast.showToast(getContext(), "No products found.");
-//                            }
-//                        }
-//                    });
-//        }
-//    }
 
 }
