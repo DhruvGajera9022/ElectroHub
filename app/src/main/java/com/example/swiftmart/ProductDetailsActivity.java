@@ -1,7 +1,9 @@
 package com.example.swiftmart;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -119,6 +121,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         getUserData();
         handleOnBackArrowPress();
         getProductRating();
+
+        saveRecentlyViewed(productId, ProductDetailsActivity.this);
 
         setStatusBarColor(R.color.home);
 
@@ -270,6 +274,16 @@ public class ProductDetailsActivity extends AppCompatActivity {
             return false;
         });
     }
+
+    public void saveRecentlyViewed(String productId, Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("recently_viewed", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        // Save only the product ID as a string in SharedPreferences
+        editor.putString("product_" + productId, productId);
+        editor.apply();
+    }
+
 
     private void handleAddToCartClick(){
         productAddToCartButton.setOnClickListener(new View.OnClickListener() {

@@ -1,7 +1,9 @@
 package com.example.swiftmart.Frgments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -77,10 +79,11 @@ public class HomeFragment extends Fragment {
 
     LinearLayout mobiles, earbuds, tv, laptop, headphone, speaker, keyword, mouse, camera, smartwatch, tablet;
     FirebaseFirestore db;
-    RecyclerView homeFragmentFeaturedRecyclerView, homeFragmentMostPopularRecyclerView, homeFragmentNewRecyclerView;
+    RecyclerView homeFragmentFeaturedRecyclerView, homeFragmentMostPopularRecyclerView, homeFragmentNewRecyclerView,
+            homeFragmentRecentRecyclerView;
     CircleImageView homeFragmentUserAvatar;
     LinearLayout topPanel;
-    TextView homeFragmentUserName, seeAll1, seeAll2, seeAll3;
+    TextView homeFragmentUserName, seeAll1, seeAll2, seeAll3, seeAll4;
     FirebaseAuth mAuth;
     String uid;
     NestedScrollView homeFragmentScrollView;
@@ -102,10 +105,12 @@ public class HomeFragment extends Fragment {
     private ArrayList<ProductModel> featuredDataList = new ArrayList<>();
     private ArrayList<ProductModel> mostPopularDataList = new ArrayList<>();
     private ArrayList<ProductModel> newArrivedDataList = new ArrayList<>();
+    private ArrayList<ProductModel> recentDataList = new ArrayList<>();
 
     private ProductAdapter featuredAdapter;
     private ProductAdapter mostPopularAdapter;
     private ProductAdapter newArrivedAdapter;
+    private ProductAdapter recentAdapter;
 
     // Categories
     private ImageView homeMobileImage, homeEarbudsImage, homeTVImage, homeLaptopImage, homeHeadphoneImage, homeSpeakersImage, homeKeyboardImage, homeMouseImage, homeCameraImage, homeSmartwatchImage, homeTabletImage;
@@ -133,6 +138,7 @@ public class HomeFragment extends Fragment {
         homeFragmentFeaturedRecyclerView = view.findViewById(R.id.homeFragmentFeaturedRecyclerView);
         homeFragmentMostPopularRecyclerView = view.findViewById(R.id.homeFragmentMostPopularRecyclerView);
         homeFragmentNewRecyclerView = view.findViewById(R.id.homeFragmentNewRecyclerView);
+        homeFragmentRecentRecyclerView = view.findViewById(R.id.homeFragmentRecentRecyclerView);
 
         mobiles = view.findViewById(R.id.mobiles);
         earbuds = view.findViewById(R.id.earbuds);
@@ -156,6 +162,7 @@ public class HomeFragment extends Fragment {
         seeAll1 = view.findViewById(R.id.seeAll1);
         seeAll2 = view.findViewById(R.id.seeAll2);
         seeAll3 = view.findViewById(R.id.seeAll3);
+        seeAll4 = view.findViewById(R.id.seeAll4);
 
         homeMobileImage = view.findViewById(R.id.homeMobileImage);
         homeEarbudsImage = view.findViewById(R.id.homeEarbudsImage);
@@ -181,6 +188,7 @@ public class HomeFragment extends Fragment {
         getTrendingData();
         getMostPopularData();
         getNewArrivedData();
+        getRecentData();
         handleSeeAllClick();
         getImageUrls();
 
@@ -248,6 +256,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
 
     // get Featured Data
     private void getTrendingData(){
@@ -406,6 +415,78 @@ public class HomeFragment extends Fragment {
                 });
     }
 
+    // Method to get recently viewed products
+    private void getRecentData() {
+        homeFragmentRecentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        // Retrieve recently viewed product IDs from SharedPreferences
+        List<String> recentlyViewedProductIds = getRecentlyViewedProductIds(getContext());
+
+        // Check if there are any recently viewed products
+        if (recentlyViewedProductIds.isEmpty()) {
+            // Optionally show a message if there are no recently viewed products
+            CustomToast.showToast(getContext(), "No recently viewed products.");
+            return;
+        }
+
+        // Reverse the order to display the most recent product first
+        Collections.reverse(recentlyViewedProductIds);
+
+        // Create a list to hold the product details
+        recentDataList = new ArrayList<>();
+
+        // Fetch product details for each recently viewed product ID using SnapshotListener for real-time updates
+        for (String productId : recentlyViewedProductIds) {
+            db.collection("Products")
+                    .document(productId)
+                    .addSnapshotListener((documentSnapshot, e) -> {
+                        if (e != null) {
+                            // Handle failure, e.g., network issues
+                            CustomToast.showToast(getContext(), "Error fetching product: " + e.getMessage());
+                            return;
+                        }
+
+                        if (documentSnapshot != null && documentSnapshot.exists()) {
+                            // Get the product details
+                            ProductModel product = documentSnapshot.toObject(ProductModel.class);
+
+                            if (product != null) {
+                                // Add the product to the list
+                                if (!recentDataList.contains(product)) {
+                                    recentDataList.add(product);
+                                }
+
+                                // After fetching all products, set up the RecyclerView
+                                if (recentDataList.size() == recentlyViewedProductIds.size()) {
+                                    // Set the adapter only after all products are fetched
+                                    ProductAdapter recentAdapter = new ProductAdapter(getContext(), recentDataList);
+                                    homeFragmentRecentRecyclerView.setHasFixedSize(true);
+                                    homeFragmentRecentRecyclerView.setAdapter(recentAdapter);
+                                    homeFragmentRecentRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
+    // Method to retrieve recently viewed product IDs from SharedPreferences
+    private List<String> getRecentlyViewedProductIds(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences("recently_viewed", Context.MODE_PRIVATE);
+        Map<String, ?> allEntries = preferences.getAll();
+
+        List<String> productIds = new ArrayList<>();
+
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            // Assuming you saved product IDs using keys like "product_<productId>"
+            if (entry.getKey().startsWith("product_")) {
+                productIds.add((String) entry.getValue());
+            }
+        }
+
+        return productIds;
+    }
+
     // handle see all click
     private void handleSeeAllClick(){
         seeAll1.setOnClickListener(new View.OnClickListener() {
@@ -429,7 +510,15 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        seeAll4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), AllProducts.class);
+                startActivity(intent);
+            }
+        });
     }
+
 
 
     // handle mobile click
