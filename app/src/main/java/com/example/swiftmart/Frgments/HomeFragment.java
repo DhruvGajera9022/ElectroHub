@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +56,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -64,7 +66,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -275,31 +280,98 @@ public class HomeFragment extends Fragment {
     }
 
     // get Most Popular Data
-    private void getMostPopularData(){
+    private void getMostPopularData() {
         homeFragmentMostPopularRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        db.collection("Products")
-                .orderBy("price", Query.Direction.DESCENDING)
-                .limit(10)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (error != null){
-                            CustomToast.showToast(getContext(), "Error in data fetching");
+
+        db.collection("Ratings")
+                .get()
+                .addOnCompleteListener(ratingTask -> {
+                    if (ratingTask.isSuccessful() && ratingTask.getResult() != null) {
+                        // Store rating details
+                        Map<String, Pair<Double, Integer>> productRatingsMap = new HashMap<>();
+
+                        for (QueryDocumentSnapshot ratingSnapshot : ratingTask.getResult()) {
+                            String productId = ratingSnapshot.getString("pid"); // Product ID
+                            Object ratingObj = ratingSnapshot.get("rating"); // Get rating field
+
+                            // Convert rating to double safely
+                            double rating = 0.0;
+                            if (ratingObj instanceof Number) {
+                                rating = ((Number) ratingObj).doubleValue();
+                            } else if (ratingObj instanceof String) {
+                                try {
+                                    rating = Double.parseDouble((String) ratingObj);
+                                } catch (NumberFormatException e) {
+                                    rating = 0.0; // Default if conversion fails
+                                }
+                            }
+
+                            if (productId != null) {
+                                if (!productRatingsMap.containsKey(productId)) {
+                                    productRatingsMap.put(productId, new Pair<>(rating, 1));
+                                } else {
+                                    Pair<Double, Integer> existing = productRatingsMap.get(productId);
+                                    double newTotalRating = existing.first + rating;
+                                    int newCount = existing.second + 1;
+                                    productRatingsMap.put(productId, new Pair<>(newTotalRating, newCount));
+                                }
+                            }
+                        }
+
+                        if (productRatingsMap.isEmpty()) {
+                            CustomToast.showToast(getContext(), "No ratings found");
                             return;
                         }
 
-                        if (value != null && !value.isEmpty()){
-                            mostPopularDataList.clear();
-                            for (QueryDocumentSnapshot documentSnapshot : value){
-                                ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
-                                mostPopularDataList.add(productModel);
+                        // Fetch products only for IDs that have ratings
+                        db.collection("Products")
+                                .whereIn(FieldPath.documentId(), new ArrayList<>(productRatingsMap.keySet()))
+                                .limit(10)
+                                .get()
+                                .addOnCompleteListener(productTask -> {
+                                    if (productTask.isSuccessful() && productTask.getResult() != null) {
+                                        mostPopularDataList.clear();
+                                        List<ProductModel> tempProductList = new ArrayList<>();
 
-                                mostPopularAdapter = new ProductAdapter(getContext(), mostPopularDataList);
-                                homeFragmentMostPopularRecyclerView.setHasFixedSize(true);
-                                homeFragmentMostPopularRecyclerView.setAdapter(mostPopularAdapter);
-                                homeFragmentMostPopularRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                            }
-                        }
+                                        for (QueryDocumentSnapshot documentSnapshot : productTask.getResult()) {
+                                            ProductModel productModel = documentSnapshot.toObject(ProductModel.class);
+                                            String productId = documentSnapshot.getId();
+
+                                            // Set rating and review count
+                                            Pair<Double, Integer> ratingData = productRatingsMap.get(productId);
+                                            if (ratingData != null) {
+                                                double averageRating = ratingData.first / ratingData.second;
+                                                productModel.setAverageRating(averageRating);
+                                                productModel.setReviewCount(ratingData.second);
+                                            }
+
+                                            tempProductList.add(productModel);
+                                        }
+
+                                        // Sort products by rating (desc) and then review count (desc)
+                                        Collections.sort(tempProductList, (p1, p2) -> {
+                                            if (p2.getAverageRating() == p1.getAverageRating()) {
+                                                return Integer.compare(p2.getReviewCount(), p1.getReviewCount());
+                                            }
+                                            return Double.compare(p2.getAverageRating(), p1.getAverageRating());
+                                        });
+
+                                        // Update RecyclerView
+                                        mostPopularDataList.addAll(tempProductList);
+                                        if (mostPopularAdapter == null) {
+                                            mostPopularAdapter = new ProductAdapter(getContext(), mostPopularDataList);
+                                            homeFragmentMostPopularRecyclerView.setHasFixedSize(true);
+                                            homeFragmentMostPopularRecyclerView.setAdapter(mostPopularAdapter);
+                                            homeFragmentMostPopularRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                        } else {
+                                            mostPopularAdapter.notifyDataSetChanged();
+                                        }
+                                    } else {
+                                        CustomToast.showToast(getContext(), "Error fetching products");
+                                    }
+                                });
+                    } else {
+                        CustomToast.showToast(getContext(), "Error fetching ratings");
                     }
                 });
     }

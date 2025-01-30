@@ -9,6 +9,8 @@ public class ProductModel {
     private boolean isWishlisted;
     private String qty;
     private double totalPrice;
+    private double averageRating;
+    private int reviewCount;
 
     public ProductModel(){
 
@@ -26,7 +28,9 @@ public class ProductModel {
             String oid,
             String qty,
             double totalPrice,
-            String totalAmount
+            String totalAmount,
+            double averageRating,
+            int reviewCount
     ){
         this.pid = pid;
         this.name = name;
@@ -40,6 +44,8 @@ public class ProductModel {
         this.qty = qty;
         this.totalPrice = totalPrice;
         this.totalAmount = totalAmount;
+        this.averageRating = averageRating;
+        this.reviewCount = reviewCount;
     }
 
     public String getPid() {
@@ -136,5 +142,21 @@ public class ProductModel {
 
     public void setTotalAmount(String totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) { // Add this setter
+        this.averageRating = averageRating;
+    }
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(int reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }
