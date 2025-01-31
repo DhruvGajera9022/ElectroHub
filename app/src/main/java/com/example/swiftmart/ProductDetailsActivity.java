@@ -302,8 +302,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
             if (i == 0) {
                 // First indicator starts as a ProgressBar with an inactive background
                 ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-                progressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.progress_bar_fill)); // Set fill color
-                progressBar.setBackground(ContextCompat.getDrawable(this, R.drawable.progress_bar_background)); // Set background color
+                progressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.progress_bar_fill)); // Set the fill drawable
+                progressBar.setBackground(ContextCompat.getDrawable(this, R.drawable.progress_bar_background)); // Set the background
                 progressBar.setLayoutParams(new LinearLayout.LayoutParams(100, 10)); // Adjust width for line effect
                 progressBar.setMax(100);
                 progressBar.setProgress(0); // Start with 0 progress
@@ -347,7 +347,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             if (dots[i] instanceof ProgressBar) {
                 sliderIndicator.removeView(dots[i]); // Remove previous progress bar
                 ImageView dot = new ImageView(this);
-                dot.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
+                dot.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active)); // Set to inactive dot
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20);
                 params.setMargins(8, 0, 8, 0);
                 dot.setLayoutParams(params);
@@ -374,7 +374,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         dots[position] = progressBar;
         sliderIndicator.addView(progressBar, position);
 
-        startProgressAnimation(position);
+        startProgressAnimation(position); // Start the animation to fill the progress
     }
 
     public void saveRecentlyViewed(String productId, Context context) {
