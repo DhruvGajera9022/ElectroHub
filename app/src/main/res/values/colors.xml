@@ -62,4 +62,8 @@
     <color name="on_surface">#1D1B20</color>
     <color name="outline">#79747E</color>
 
+    <color name="recently_viewed_pressed">#FF9800</color> <!-- Orange for pressed state -->
+    <color name="recently_viewed_focused">#4CAF50</color> <!-- Green for focused state -->
+    <color name="recently_viewed_default">#FFFFFF</color> <!-- White for default state -->
+
 </resources>

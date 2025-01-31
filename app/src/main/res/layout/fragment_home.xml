@@ -476,34 +476,48 @@
                    android:layout_width="match_parent"
                    android:layout_height="match_parent" />
 
-               <LinearLayout
-                   android:id="@+id/recentViewedLL"
+               <androidx.cardview.widget.CardView
+                   android:id="@+id/recentViewedCard"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:orientation="horizontal"
-                   android:layout_gravity="center"
-                   android:layout_marginHorizontal="10sp"
+                   android:layout_marginHorizontal="10dp"
                    android:layout_marginTop="10dp"
-                   android:gravity="center"
-                   android:weightSum="4">
+                   android:layout_gravity="center"
+                   app:cardCornerRadius="10dp"
+                   app:cardElevation="4dp"
+                   android:layout_marginBottom="5dp"
+                   android:background="@drawable/recent_viewed_linear_layout_background">
 
-                   <TextView
-                       android:layout_width="0dp"
+                   <LinearLayout
+                       android:id="@+id/recentViewedLL"
+                       android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:text="Recently Viewed"
-                       android:textSize="16sp"
-                       android:fontFamily="@font/poppinsmedium"
-                       android:textColor="@color/black"
-                       android:layout_gravity="center"
-                       android:gravity="start"
-                       android:layout_weight="4"
-                       android:textStyle="bold"/>
-               </LinearLayout>
+                       android:orientation="vertical"
+                       android:gravity="center"
+                       android:padding="10dp">
 
-               <androidx.recyclerview.widget.RecyclerView
-                   android:id="@+id/homeFragmentRecentRecyclerView"
-                   android:layout_width="match_parent"
-                   android:layout_height="match_parent" />
+                       <!-- TextView for Recently Viewed -->
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:text="Recently Viewed"
+                           android:textSize="16sp"
+                           android:fontFamily="@font/poppinsmedium"
+                           android:textColor="@color/black"
+                           android:gravity="start"
+                           android:textStyle="bold"
+                           android:layout_marginBottom="10dp"/>
+
+                       <!-- RecyclerView to display recently viewed items -->
+                       <androidx.recyclerview.widget.RecyclerView
+                           android:id="@+id/homeFragmentRecentRecyclerView"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content" />
+
+                   </LinearLayout>
+
+               </androidx.cardview.widget.CardView>
+
 
            </LinearLayout>
 

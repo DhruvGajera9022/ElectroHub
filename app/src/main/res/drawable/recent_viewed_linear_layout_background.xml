@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- State when the view is pressed -->
+    <item android:drawable="@color/recently_viewed_pressed" android:state_pressed="true"/>
+
+    <!-- State when the view is focused -->
+    <item android:drawable="@color/recently_viewed_focused" android:state_focused="true"/>
+
+    <!-- Default state when no interaction occurs -->
+    <item android:drawable="@color/recently_viewed_default"/>
+
+</selector>

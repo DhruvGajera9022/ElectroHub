@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import androidx.appcompat.widget.SearchView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.swiftmart.Adapter.HomeRecentProductAdapter;
 import com.example.swiftmart.Adapter.MobileSliderAdapter;
 import com.example.swiftmart.Adapter.ProductAdapter;
 import com.example.swiftmart.AllProducts;
@@ -111,7 +113,7 @@ public class HomeFragment extends Fragment {
     private ProductAdapter featuredAdapter;
     private ProductAdapter mostPopularAdapter;
     private ProductAdapter newArrivedAdapter;
-    private ProductAdapter recentAdapter;
+    private HomeRecentProductAdapter homeRecentProductAdapter;
 
     private LinearLayout recentViewedLL;
 
@@ -420,10 +422,15 @@ public class HomeFragment extends Fragment {
 
     // Method to get recently viewed products
     private void getRecentData() {
-        homeFragmentRecentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        homeFragmentRecentRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Retrieve recently viewed product IDs from SharedPreferences
         List<String> recentlyViewedProductIds = getRecentlyViewedProductIds(getContext());
+
+        // Limit to the latest 4 products
+        if (recentlyViewedProductIds.size() > 4) {
+            recentlyViewedProductIds = recentlyViewedProductIds.subList(0, 4);
+        }
 
         // Check if there are any recently viewed products
         if (recentlyViewedProductIds.isEmpty()) {
@@ -438,6 +445,7 @@ public class HomeFragment extends Fragment {
 
         // Fetch product details for each recently viewed product ID using SnapshotListener for real-time updates
         for (String productId : recentlyViewedProductIds) {
+            List<String> finalRecentlyViewedProductIds = recentlyViewedProductIds;
             db.collection("Products")
                     .document(productId)
                     .addSnapshotListener((documentSnapshot, e) -> {
@@ -457,11 +465,13 @@ public class HomeFragment extends Fragment {
                                 }
 
                                 // After fetching all products, set up the RecyclerView
-                                if (recentDataList.size() == recentlyViewedProductIds.size()) {
+                                if (recentDataList.size() == finalRecentlyViewedProductIds.size()) {
+                                    GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+                                    homeFragmentRecentRecyclerView.setLayoutManager(layoutManager);
                                     // Set the adapter only after all products are fetched
-                                    ProductAdapter recentAdapter = new ProductAdapter(getContext(), recentDataList);
+                                    homeRecentProductAdapter = new HomeRecentProductAdapter(getContext(), recentDataList);
                                     homeFragmentRecentRecyclerView.setHasFixedSize(true);
-                                    homeFragmentRecentRecyclerView.setAdapter(recentAdapter);
+                                    homeFragmentRecentRecyclerView.setAdapter(homeRecentProductAdapter);
                                     homeFragmentRecentRecyclerView.setItemAnimator(new DefaultItemAnimator());
                                 }
                             }
