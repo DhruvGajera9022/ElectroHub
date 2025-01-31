@@ -532,7 +532,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                         if (error != null) {
-                            CustomToast.showToast(ProductDetailsActivity.this, "Error in data fetching");
                             return;
                         }
 
