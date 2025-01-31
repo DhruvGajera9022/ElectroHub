@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -92,6 +93,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     private String userName, userPhone;
 
+    private LinearLayout sliderIndicator;
+    private int dotCount;
+    private ImageView[] dots;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,9 +142,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productDetailsProductName = findViewById(R.id.productDetailsProductName);
         productDetailsProductDescription = findViewById(R.id.productDetailsProductDescription);
         productDetailsProductPrice = findViewById(R.id.productDetailsProductPrice);
-        productDetailsViewPager = findViewById(R.id.productDetailsViewPager);
         productDetailsRating = findViewById(R.id.productDetailsRating);
         productDetailsRatingCount = findViewById(R.id.productDetailsRatingCount);
+
+        sliderIndicator = findViewById(R.id.sliderIndicator);
+        productDetailsViewPager = findViewById(R.id.productDetailsViewPager);
 
         productAddToCartButton = findViewById(R.id.productAddToCartButton);
         productBuyNowButton = findViewById(R.id.productBuyNowButton);
@@ -163,6 +170,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productDetailsNestedScrollView.setVerticalScrollBarEnabled(false);
 
     }
+
 
     private void loadProductData(String productId) {
         db.collection("Products").document(productId)
@@ -189,6 +197,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     private void displayProductDetails(ProductModel product) {
         productDetailsProductName.setText(product.getName());
@@ -248,6 +257,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
         ProductImageSliderAdapter adapter = new ProductImageSliderAdapter(this, imageUrls);
         productDetailsViewPager.setAdapter(adapter);
 
+        // Setup the slider indicator
+        setupSliderIndicator(imageUrls.size());
+
         sliderRunnable = new Runnable() {
             @Override
             public void run() {
@@ -263,6 +275,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productDetailsViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
+                updateIndicator(position);
                 sliderHandler.removeCallbacks(sliderRunnable);
                 sliderHandler.postDelayed(sliderRunnable, 3000);
             }
@@ -273,6 +286,42 @@ public class ProductDetailsActivity extends AppCompatActivity {
             sliderHandler.postDelayed(sliderRunnable, 3000);
             return false;
         });
+    }
+
+    private void setupSliderIndicator(int count) {
+        dotCount = count;
+        dots = new ImageView[dotCount];
+
+        // Clear any existing dots
+        sliderIndicator.removeAllViews();
+
+        // Create and add dots
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = new ImageView(this);
+            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 0, 8, 0);
+            sliderIndicator.addView(dots[i], params);
+        }
+
+        // Activate the first dot
+        if (dotCount > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_active));
+        }
+    }
+
+    private void updateIndicator(int position) {
+        for (int i = 0; i < dotCount; i++) {
+            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
+        }
+
+        if (position >= 0 && position < dotCount) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_active));
+        }
     }
 
     public void saveRecentlyViewed(String productId, Context context) {
@@ -288,16 +337,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         editor.apply();
     }
 
-
-
-    private void handleAddToCartClick(){
-        productAddToCartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addToCart();
-            }
-        });
-    }
 
     // handle wishlist
     private void handleWishlist(ProductModel product){
@@ -328,6 +367,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
 
     // handle share
     private void handleShare(){
@@ -361,6 +401,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
         });
     }
 
+
+    // handle buy click
     private void handleBuyClick(){
         productBuyNowButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -369,6 +411,16 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 intent.putExtra("productId", productId);
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
+    }
+
+    // handle cart click
+    private void handleAddToCartClick(){
+        productAddToCartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToCart();
             }
         });
     }
@@ -428,6 +480,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
+
 
     // handle on back arrow press
     private void handleOnBackArrowPress() {

@@ -32,6 +32,15 @@
                     android:padding="5dp"
                     android:background="@drawable/curved_bottom_background" />
 
+                <!-- Slider Indicator -->
+                <LinearLayout
+                    android:id="@+id/sliderIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal" />
+
 
                 <!-- Back Arrow ImageView -->
                 <ImageView
