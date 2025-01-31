@@ -1,5 +1,6 @@
 package com.example.swiftmart;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +11,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,7 +98,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     private LinearLayout sliderIndicator;
     private int dotCount;
-    private ImageView[] dots;
+    private View[] dots;
 
 
     @Override
@@ -290,38 +293,88 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
     private void setupSliderIndicator(int count) {
         dotCount = count;
-        dots = new ImageView[dotCount];
+        dots = new View[dotCount]; // Use View[] to support both ImageView and ProgressBar
 
-        // Clear any existing dots
+        // Clear existing indicators
         sliderIndicator.removeAllViews();
 
-        // Create and add dots
         for (int i = 0; i < dotCount; i++) {
-            dots[i] = new ImageView(this);
-            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(8, 0, 8, 0);
-            sliderIndicator.addView(dots[i], params);
+            if (i == 0) {
+                // First indicator starts as a ProgressBar with an inactive background
+                ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+                progressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.progress_bar_fill)); // Set fill color
+                progressBar.setBackground(ContextCompat.getDrawable(this, R.drawable.progress_bar_background)); // Set background color
+                progressBar.setLayoutParams(new LinearLayout.LayoutParams(100, 10)); // Adjust width for line effect
+                progressBar.setMax(100);
+                progressBar.setProgress(0); // Start with 0 progress
+                dots[i] = progressBar;
+            } else {
+                // Other indicators start as dots
+                ImageView dot = new ImageView(this);
+                dot.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20); // Dot size
+                params.setMargins(8, 0, 8, 0);
+                dot.setLayoutParams(params);
+                dots[i] = dot;
+            }
+            sliderIndicator.addView(dots[i]);
         }
 
-        // Activate the first dot
-        if (dotCount > 0) {
-            dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_active));
+        startProgressAnimation(0); // Start animation for the first image
+    }
+
+    private void startProgressAnimation(int position) {
+        if (position < dotCount) {
+            if (dots[position] instanceof ProgressBar) {
+                ((ProgressBar) dots[position]).setProgress(0);
+            }
+
+            ValueAnimator animator = ValueAnimator.ofInt(0, 100);
+            animator.setDuration(3000); // Match the slide duration
+            animator.addUpdateListener(animation -> {
+                int progress = (int) animation.getAnimatedValue();
+                if (dots[position] instanceof ProgressBar) {
+                    ((ProgressBar) dots[position]).setProgress(progress);
+                }
+            });
+
+            animator.start();
         }
     }
 
     private void updateIndicator(int position) {
         for (int i = 0; i < dotCount; i++) {
-            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
+            if (dots[i] instanceof ProgressBar) {
+                sliderIndicator.removeView(dots[i]); // Remove previous progress bar
+                ImageView dot = new ImageView(this);
+                dot.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_non_active));
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(20, 20);
+                params.setMargins(8, 0, 8, 0);
+                dot.setLayoutParams(params);
+                dots[i] = dot;
+                sliderIndicator.addView(dot, i);
+            }
         }
 
-        if (position >= 0 && position < dotCount) {
-            dots[position].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.indicator_active));
-        }
+        // Convert the new active position into a progress bar with inactive background
+        ProgressBar progressBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+        progressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.progress_bar_fill)); // Apply fill
+        progressBar.setBackground(ContextCompat.getDrawable(this, R.drawable.progress_bar_background)); // Apply background
+        progressBar.setLayoutParams(new LinearLayout.LayoutParams(100, 10)); // Set size
+
+        progressBar.setMax(100);
+        progressBar.setProgress(0);
+
+        // Center the ProgressBar vertically in the layout
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(100, 10);
+        params.gravity = Gravity.CENTER_VERTICAL;
+        progressBar.setLayoutParams(params);
+
+        sliderIndicator.removeView(dots[position]);
+        dots[position] = progressBar;
+        sliderIndicator.addView(progressBar, position);
+
+        startProgressAnimation(position);
     }
 
     public void saveRecentlyViewed(String productId, Context context) {
