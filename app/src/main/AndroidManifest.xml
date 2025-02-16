@@ -26,9 +26,6 @@
             android:name=".ConfirmAddressActivity2"
             android:exported="false" />
         <activity
-            android:name=".MainActivity2"
-            android:exported="false" />
-        <activity
             android:name=".OrderTrackingActivity"
             android:exported="false" />
         <activity
@@ -103,9 +100,6 @@
             android:exported="false" />
         <activity
             android:name=".CategoryScreen.EarphoneActivity"
-            android:exported="false" />
-        <activity
-            android:name=".WarrantyDetails"
             android:exported="false" />
         <activity
             android:name=".CategoryScreen.MobilesActivity"
