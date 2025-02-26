@@ -5,20 +5,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_margin="5dp"
-    android:elevation="5dp">
+    android:background="@drawable/card_bg">
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_margin="5dp"
         android:layout_height="147dp">
 
-        <!-- Product Image -->
+
         <ImageView
             android:id="@+id/cardProductImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/boatearbuds" />
 
-        <!-- Wishlist Heart Button -->
+
         <ImageView
             android:id="@+id/wishlistButton"
             android:layout_width="24dp"
@@ -28,14 +29,15 @@
             android:src="@drawable/ic_heart_outline" />
     </FrameLayout>
 
-    <!-- FrameLayout for Product Info -->
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:layout_marginBottom="5dp"
         android:background="@drawable/card_background">
 
-        <!-- Main LinearLayout -->
+
         <LinearLayout
             android:id="@+id/cardProductLinearLayout"
             android:layout_width="match_parent"

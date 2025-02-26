@@ -4,17 +4,19 @@
     android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_margin="5dp"
-    android:elevation="5dp">
+    android:background="@drawable/card_bg"
+    android:layout_margin="5dp">
 
     <FrameLayout
         android:layout_width="match_parent"
+        android:layout_margin="5dp"
         android:layout_height="147dp">
 
         <!-- Product Image -->
         <ImageView
             android:id="@+id/cardProductImage"
             android:layout_width="match_parent"
+            android:scaleType="fitCenter"
             android:layout_height="match_parent"
             android:src="@drawable/boatearbuds" />
 
@@ -32,7 +34,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_margin="5dp"
         android:background="@drawable/card_background">
 
         <!-- Main LinearLayout -->
@@ -48,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/boat"
+                android:singleLine="true"
                 android:layout_marginHorizontal="10dp"
                 android:textColor="@color/black"
                 android:textSize="14sp"

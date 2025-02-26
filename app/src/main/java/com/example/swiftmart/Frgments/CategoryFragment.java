@@ -1,10 +1,14 @@
 package com.example.swiftmart.Frgments;
 
+import static com.example.swiftmart.R.drawable.category_card;
+import static com.example.swiftmart.R.drawable.category_card1;
+
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -39,6 +43,7 @@ import java.util.List;
 public class CategoryFragment extends Fragment {
     //Category
     private LinearLayout mobiles, earbuds, tv, laptop, headphone, speaker, keyword, mouse, camera, smartwatch, tablet; // All category
+    private LinearLayout mobiles1, earbuds1, tv1, laptop1, headphone1, speaker1, keyword1, mouse1, camera1, smartwatch1, tablet1; // All category
 
     //Mobile company
     private LinearLayout iphone, samsung, vivo, oppo, mi, realme, motorola, poco, goggle, oneplus, iqoo, nothing;
@@ -125,6 +130,19 @@ public class CategoryFragment extends Fragment {
         camera = view.findViewById(R.id.camera);
         smartwatch = view.findViewById(R.id.smartwatch);
         tablet = view.findViewById(R.id.tablet);
+
+
+        mobiles1 = view.findViewById(R.id.mobiles1);
+        earbuds1 = view.findViewById(R.id.earbuds1);
+        tv1 = view.findViewById(R.id.tv1);
+        laptop1 = view.findViewById(R.id.laptop1);
+        headphone1 = view.findViewById(R.id.headphone1);
+        speaker1 = view.findViewById(R.id.speaker1);
+        keyword1 = view.findViewById(R.id.keyword1);
+        mouse1 = view.findViewById(R.id.mouse1);
+        camera1 = view.findViewById(R.id.camera1);
+        smartwatch1 = view.findViewById(R.id.smartwatch1);
+        tablet1 = view.findViewById(R.id.tablet1);
 
         // category indicators
         mobileIndicator = view.findViewById(R.id.mobileIndicator);
@@ -289,49 +307,206 @@ public class CategoryFragment extends Fragment {
         mobiles.setOnClickListener(v -> {
             handleCategoryClick("Mobile", mobileScrollView);
             selectIndicator(mobileIndicator);
+            mobile();
         });
         earbuds.setOnClickListener(v -> {
             handleCategoryClick("AirBuds", earphoneHorizontalScrollView);
             selectIndicator(earbudsIndicator);
+            earbuds();
         });
         tv.setOnClickListener(v -> {
             handleCategoryClick("TV", tvHorizontalScrollView);
             selectIndicator(tvIndicator);
+            tv();
         });
         laptop.setOnClickListener(v -> {
             handleCategoryClick("Laptop", laptopHorizontalScrollView);
             selectIndicator(laptopsIndicator);
+            leptop();
         });
         headphone.setOnClickListener(v -> {
             handleCategoryClick("Headphone", headphoneHorizontalScrollView);
             selectIndicator(headphonesIndicator);
+            headphone();
         });
         speaker.setOnClickListener(v -> {
             handleCategoryClick("Speaker", speakerHorizontalScrollView);
             selectIndicator(speakersIndicator);
+            speaker();
         });
         keyword.setOnClickListener(v -> {
             handleCategoryClick("Keyboard", keyboardHorizontalScrollView);
             selectIndicator(keyboardIndicator);
+            keyword();
         });
         mouse.setOnClickListener(v -> {
             handleCategoryClick("Mouse", mouseHorizontalScrollView);
             selectIndicator(mouseIndicator);
+            mouse();
         });
         camera.setOnClickListener(v -> {
             handleCategoryClick("Camera", cameraHorizontalScrollView);
             selectIndicator(cameraIndicator);
+            camera();
         });
         smartwatch.setOnClickListener(v -> {
             handleCategoryClick("SmartWatch", smartwatchHorizontalScrollView);
             selectIndicator(smartwatchesIndicator);
+            smartwatch();
         });
         tablet.setOnClickListener(v -> {
             handleCategoryClick("Tablet", tabletHorizontalScrollView);
             selectIndicator(tabletsIndicator);
+            tablet();
         });
     }
 
+
+
+    public  void mobile(){
+       mobiles1.setBackgroundResource(category_card1);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void earbuds(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card1);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void tv(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card1);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void leptop(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card1);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void headphone(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card1);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void speaker(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card1);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void keyword(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card1);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void mouse(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card1);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void camera(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card1);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card);
+
+    } public  void smartwatch(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card1);
+        tablet1.setBackgroundResource(category_card);
+
+    }public  void tablet(){
+       mobiles1.setBackgroundResource(category_card);
+        earbuds1.setBackgroundResource(category_card);
+        tv1.setBackgroundResource(category_card);
+        laptop1.setBackgroundResource(category_card);
+        headphone1.setBackgroundResource(category_card);
+        speaker1.setBackgroundResource(category_card);
+        keyword1.setBackgroundResource(category_card);
+        mouse1.setBackgroundResource(category_card);
+        camera1.setBackgroundResource(category_card);
+        smartwatch1.setBackgroundResource(category_card);
+        tablet1.setBackgroundResource(category_card1);
+
+    }
     // Set click on mobile company
     private void setMobileCompanyClickListeners() {
         iphone.setOnClickListener(v -> fetchFilteredData("Mobile", "Apple"));

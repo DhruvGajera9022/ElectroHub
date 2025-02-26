@@ -735,14 +735,20 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateIndicator(int position) {
-        // Reset all dots to inactive
-        for (int i = 0; i < dotCount; i++) {
-            dots[i].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_non_active));
+        if (getContext() == null || dots == null || dots.length == 0) {
+            return; // Prevent crash if context or dots are null
         }
 
-        // Set the current dot to active
-        if (position >= 0 && position < dotCount) {
-            dots[position].setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.indicator_active));
+        // Reset all dots to inactive
+        for (int i = 0; i < dotCount; i++) {
+            if (dots[i] != null) {  // Ensure dots[i] is not null before accessing
+                dots[i].setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.indicator_non_active));
+            }
+        }
+
+        // Set the selected dot to active
+        if (dots[position] != null) {
+            dots[position].setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.indicator_active));
         }
     }
 

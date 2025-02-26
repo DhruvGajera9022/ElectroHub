@@ -480,11 +480,10 @@
                    android:id="@+id/recentViewedCard"
                    android:layout_width="match_parent"
                    android:layout_height="wrap_content"
-                   android:layout_marginHorizontal="10dp"
                    android:layout_marginTop="10dp"
                    android:layout_gravity="center"
-                   app:cardCornerRadius="10dp"
-                   app:cardElevation="4dp"
+                   app:cardCornerRadius="5dp"
+                   app:cardElevation="1dp"
                    android:layout_marginBottom="5dp"
                    android:background="@drawable/recent_viewed_linear_layout_background">
 
@@ -492,21 +491,21 @@
                        android:id="@+id/recentViewedLL"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:orientation="vertical"
                        android:gravity="center"
+                       android:orientation="vertical"
                        android:padding="10dp">
 
                        <!-- TextView for Recently Viewed -->
                        <TextView
                            android:layout_width="wrap_content"
                            android:layout_height="wrap_content"
-                           android:text="Recently Viewed"
-                           android:textSize="16sp"
+                           android:layout_marginBottom="10dp"
                            android:fontFamily="@font/poppinsmedium"
-                           android:textColor="@color/black"
                            android:gravity="start"
-                           android:textStyle="bold"
-                           android:layout_marginBottom="10dp"/>
+                           android:text="Recently Viewed"
+                           android:textColor="@color/black"
+                           android:textSize="16sp"
+                           android:textStyle="bold" />
 
                        <!-- RecyclerView to display recently viewed items -->
                        <androidx.recyclerview.widget.RecyclerView

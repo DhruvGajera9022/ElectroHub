@@ -22,21 +22,14 @@ public class Activity_splash extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        setStatusBarColor(R.color.home);
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 startActivity(new Intent(Activity_splash.this, WelcomeActivity.class));
                 finish();
             }
-        },2000);
+        },5000);
     }
 
-    private void setStatusBarColor(int colorResource) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.setStatusBarColor(getResources().getColor(colorResource));
-        }
-    }
+
 }

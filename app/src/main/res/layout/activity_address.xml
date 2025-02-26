@@ -27,7 +27,7 @@
             android:text="+ Add a new address"
             android:textColor="#2C4AFB"
             android:textSize="17sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/outfit_medium"
             android:gravity="center"
             />
 
