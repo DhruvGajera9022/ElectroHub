@@ -221,7 +221,14 @@ public class HomeFragment extends Fragment {
 
     // Get the user data from the database
     private void getUserData(){
+
+        if (mAuth.getCurrentUser() == null) {
+            Log.e("HomeFragment", "User is not signed in");
+            return;
+        }
+
         uid = mAuth.getCurrentUser().getUid();
+
         DocumentReference reference = db.collection("Users").document(uid);
 
         reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {

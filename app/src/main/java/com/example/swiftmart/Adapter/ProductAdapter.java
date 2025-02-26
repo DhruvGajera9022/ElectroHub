@@ -3,6 +3,7 @@ package com.example.swiftmart.Adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +23,9 @@ import com.bumptech.glide.Glide;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.ProductDetailsActivity;
 import com.example.swiftmart.R;
+import com.example.swiftmart.Utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -55,6 +59,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ProductModel product = datalist.get(position);
 
+        Log.d("PRODUCT_ID", product.getPid());
+
         Glide.with(holder.cardProductImage.getContext())
                 .load(product.getImgurls().get(0))
                 .placeholder(R.raw.loading)
@@ -73,30 +79,36 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         holder.wishlistButton.setImageResource(
                 product.isWishlisted() ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
 
-        // Check if the product is in the wishlist using QuerySnapshot
-        db.collection("Users")
-                        .document(uid)
-                                .collection("wishlist")
-                                        .whereEqualTo("pid", product.getPid())
-                                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                        if (value != null && !value.isEmpty()){
-                                                            product.setWishlisted(true);
-                                                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
-                                                        }else {
-                                                            product.setWishlisted(false);
-                                                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
-                                                        }
-                                                    }
-                                                });
+        // Get the authenticated user
+        FirebaseUser user = mAuth.getCurrentUser();
+        String uid = (user != null) ? user.getUid() : null;
 
+        // Set wishlist icon based on Firestore data
+        if (uid != null) {
+            db.collection("Users")
+                    .document(uid)
+                    .collection("wishlist")
+                    .whereEqualTo("pid", product.getPid())
+                    .addSnapshotListener((value, error) -> {
+                        if (value != null && !value.isEmpty()) {
+                            product.setWishlisted(true);
+                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
+                        } else {
+                            product.setWishlisted(false);
+                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
+                        }
+                    });
+        } else {
+            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
+        }
 
+        // Handle product item click
         holder.cardProductLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ProductDetailsActivity.class);
                 intent.putExtra("productId", product.getPid());
+                Log.d("PRODUCT_ID_1", product.getPid());
                 context.startActivity(intent);
             }
         });
@@ -106,12 +118,26 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             public void onClick(View v) {
                 Intent intent = new Intent(context, ProductDetailsActivity.class);
                 intent.putExtra("productId", product.getPid());
+                Log.d("PRODUCT_ID_1", product.getPid());
                 context.startActivity(intent);
             }
         });
 
-        // Handle wishlist button clicks
+        // Handle wishlist button clicks (removed the duplicate implementation)
         holder.wishlistButton.setOnClickListener(v -> {
+            // Check if user is logged in
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                CustomToast.showToast(context, "Please login to add items to wishlist");
+                return;
+            }
+
+            if (product.getPid() == null || product.getPid().isEmpty()) {
+                Log.e("ProductAdapter", "Error: Product ID is null or empty");
+                CustomToast.showToast(context, "Unable to add to wishlist. Please try again.");
+                return;
+            }
+
             boolean isWishlisted = !product.isWishlisted();
             product.setWishlisted(isWishlisted);
 
@@ -134,7 +160,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                         .delete();
             }
         });
-
     }
 
     @Override
@@ -144,7 +169,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         ImageView cardProductImage, wishlistButton;
-        TextView cardProductName, cardProductDescription, cardProductPrice, cardMaxPrice;
+        TextView cardProductName, cardProductPrice;
         LinearLayout cardProductLinearLayout;
 
 
@@ -154,12 +179,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             cardProductLinearLayout = itemView.findViewById(R.id.cardProductLinearLayout);
             cardProductImage = itemView.findViewById(R.id.cardProductImage);
             cardProductName = itemView.findViewById(R.id.cardProductName);
-//            cardProductDescription = itemView.findViewById(R.id.cardProductDescription);
             cardProductPrice = itemView.findViewById(R.id.cardProductPrice);
-//            cardMaxPrice = itemView.findViewById(R.id.cardMaxPrice);
             wishlistButton = itemView.findViewById(R.id.wishlistButton);
-
         }
     }
-
 }

@@ -75,6 +75,14 @@ public class AccountFragment extends Fragment {
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+
+        // Check if user is logged in, redirect to login if not
+        if (mAuth.getCurrentUser() == null) {
+            Log.e("AccountFragment", "User is not signed in");
+            redirectToLogin();
+            return view;
+        }
+
         uid = mAuth.getCurrentUser().getUid();
 
         accountFragmentUserName = view.findViewById(R.id.accountFragmentUserName);
@@ -121,27 +129,55 @@ public class AccountFragment extends Fragment {
         return view;
     }
 
+    // Redirect to login screen
+    private void redirectToLogin() {
+        if (getContext() != null) {
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            startActivity(intent);
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        }
+    }
+
     // Get the user data from the database
     private void getUserData(){
+        if (mAuth.getCurrentUser() == null) {
+            redirectToLogin();
+            return;
+        }
+
         uid = mAuth.getCurrentUser().getUid();
         DocumentReference reference = db.collection("Users").document(uid);
 
         reference.addSnapshotListener((value, error) -> {
             if (value != null && value.exists()){
-                accountFragmentUserName.append(value.getString("Username").split(" ")[0]);
+                String username = value.getString("Username");
+                if (username != null && username.contains(" ")) {
+                    accountFragmentUserName.setText(username.split(" ")[0]);
+                } else {
+                    accountFragmentUserName.setText(username);
+                }
             }
         });
-
     }
 
     // handle edit profile click
     private void handleEditProfileClick(){
         btnEditProfile.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
             startActivity(intent);
         });
 
         llEditProfile.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
             startActivity(intent);
         });
@@ -150,11 +186,19 @@ public class AccountFragment extends Fragment {
     // handle order history click
     private void handleOrderHistoryClick(){
         btnOrderHistory.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), OrdersActivity.class);
             startActivity(intent);
         });
 
         llOrderHistory.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), OrdersActivity.class);
             startActivity(intent);
         });
@@ -176,11 +220,19 @@ public class AccountFragment extends Fragment {
     // handle wishlist click
     private void handleWishlistClick(){
         btnWishlist.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), WishlistActivity.class);
             startActivity(intent);
         });
 
         llWishlist.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), WishlistActivity.class);
             startActivity(intent);
         });
@@ -189,11 +241,19 @@ public class AccountFragment extends Fragment {
     // handle saved address click
     private void handleSavedAddressClick(){
         llsavedaddress.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), Address_Activity.class);
             startActivity(intent);
         });
 
         btnAddress.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
             Intent intent = new Intent(getContext(), Address_Activity.class);
             startActivity(intent);
         });
@@ -201,32 +261,49 @@ public class AccountFragment extends Fragment {
 
     // handle delete account click
     private void handleDeleteAccountClick(){
-        btnDeleteUser.setOnClickListener(v -> displayDialog());
+        btnDeleteUser.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
+            displayDialog();
+        });
 
-        llDeleteUser.setOnClickListener(v -> displayDialog());
+        llDeleteUser.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
+            displayDialog();
+        });
     }
 
 
     // TODO handle about us click
     private void handleAboutUsClick(){
-
+        // This doesn't require user authentication
     }
 
     // TODO handle privacy policy click
     private void handlePrivacyPolicyClick(){
-
+        // This doesn't require user authentication
     }
 
     // TODO handle rate us click
     private void handleRateUsClick(){
-
+        // This doesn't require user authentication
     }
 
     private void displayDialog(){
+        if (mAuth.getCurrentUser() == null) {
+            redirectToLogin();
+            return;
+        }
+
         dialog = new AlertDialog.Builder(getContext())
-                .setView(R.layout.delete_account_dialog)
-                .setCancelable(false)
-                .create();
+                         .setView(R.layout.delete_account_dialog)
+                         .setCancelable(false)
+                         .create();
         dialog.show();
 
         AppCompatButton deleteButton = dialog.findViewById(R.id.deleteButton);
@@ -236,6 +313,12 @@ public class AccountFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (mAuth.getCurrentUser() == null) {
+                    dialog.dismiss();
+                    redirectToLogin();
+                    return;
+                }
+
                 db.collection("Users")
                         .document(uid)
                         .delete()
@@ -246,6 +329,9 @@ public class AccountFragment extends Fragment {
                                 if (getContext() != null) {
                                     Intent intent = new Intent(getContext(), WelcomeActivity.class);
                                     startActivity(intent);
+                                    if (getActivity() != null) {
+                                        getActivity().finish();
+                                    }
                                 }
                             }
                         });
@@ -277,12 +363,19 @@ public class AccountFragment extends Fragment {
     // handle user logout
     private void handleUserLogout(){
         btnLogout.setOnClickListener(v -> {
+            if (mAuth.getCurrentUser() == null) {
+                redirectToLogin();
+                return;
+            }
+
             mAuth.signOut();
             if (getContext() != null){
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 progress();
-                getActivity().finish();
+                if (getActivity() != null) {
+                    getActivity().finish();
+                }
             }
         });
     }
@@ -297,5 +390,4 @@ public class AccountFragment extends Fragment {
             accountFragmentProgressBar.setVisibility(View.GONE);
         }
     }
-
 }

@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sign up"
-            android:textSize="24sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             android:textColor="@color/primary_text_color"
             android:layout_marginBottom="8dp"
@@ -56,6 +56,7 @@
             android:textColor="@color/black"
             android:inputType="textEmailAddress"
             android:padding="12dp"
+            android:textSize="14sp"
             android:background="@drawable/rounded_edit_text"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/poppinsregular"/>
@@ -70,23 +71,50 @@
             android:textColor="@color/black"
             android:inputType="textEmailAddress"
             android:padding="12dp"
+            android:textSize="14sp"
             android:background="@drawable/rounded_edit_text"
             android:layout_marginBottom="12dp"
             android:fontFamily="@font/poppinsregular"/>
 
-        <!-- Password Input -->
-        <EditText
-            android:id="@+id/signUpPasswordInput"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="******"
-            android:textColorHint="#999999"
-            android:textColor="@color/black"
-            android:inputType="textPassword"
-            android:padding="12dp"
-            android:background="@drawable/rounded_edit_text"
-            android:layout_marginBottom="12dp"
-            android:fontFamily="@font/poppinsregular"/>
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/signUpPasswordInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="******"
+                android:textColorHint="#999999"
+                android:textColor="@color/black"
+                android:inputType="textPassword"
+                android:padding="12dp"
+                android:textSize="14sp"
+                android:background="@drawable/rounded_edit_text"
+                android:layout_marginBottom="12dp"
+                android:fontFamily="@font/poppinsregular"
+                android:paddingEnd="48dp"
+                android:paddingRight="48dp" />
+
+            <ImageView
+                android:id="@+id/passwordToggle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignBottom="@+id/signUpPasswordInput"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginBottom="14dp"
+                android:clickable="true"
+                android:contentDescription="Toggle password visibility"
+                android:focusable="true"
+                android:src="@drawable/icon_eye_closed" />
+        </RelativeLayout>
+
+
 
         <!-- Confirm Password Input -->
         <EditText
@@ -98,6 +126,7 @@
             android:textColor="@color/black"
             android:inputType="textPassword"
             android:padding="12dp"
+            android:textSize="14sp"
             android:background="@drawable/rounded_edit_text"
             android:layout_marginBottom="30dp"
             android:fontFamily="@font/poppinsregular"/>
@@ -113,7 +142,27 @@
             android:padding="12dp"
             app:cornerRadius="15dp"
             android:elevation="8dp"
-            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/poppinssemibold"/>
+
+        <!-- Sign in with Google Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/signupGoogleBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/white"
+            android:text="Sign up with google"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:cornerRadius="15dp"
+            app:icon="@drawable/img_google"
+            app:iconSize="20dp"
+            app:iconGravity="textStart"
+            app:iconPadding="16dp"
+            app:iconTint="@color/black"
+            android:textAllCaps="false"
+            app:strokeColor="@color/border_color"
+            app:strokeWidth="1dp"
             android:fontFamily="@font/poppinssemibold"/>
 
         <!-- Progress Bar -->
@@ -129,7 +178,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:layout_width="wrap_content"

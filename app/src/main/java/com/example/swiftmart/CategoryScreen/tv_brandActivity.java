@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,7 +57,7 @@ public class tv_brandActivity extends AppCompatActivity {
     private ArrayList<ProductModel> datalist = new ArrayList<>();
     private FirebaseFirestore db;
     private CategoryProductAdapter adapter;
-    private ScrollView tvActivityScrollView;
+    private NestedScrollView tvActivityScrollView;
     private ProgressBar tvActivityProgressBar;
 
     private DatabaseReference databaseReference;

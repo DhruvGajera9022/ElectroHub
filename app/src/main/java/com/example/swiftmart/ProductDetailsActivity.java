@@ -43,6 +43,7 @@ import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.firestore.DocumentReference;
@@ -122,7 +123,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
 
         initialization();
-        loadProductData(productId);
         handleAddToCartClick();
         handleShare();
         handleBuyClick();
@@ -166,16 +166,18 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        uid = mAuth.getCurrentUser().getUid();
 
         productId = getIntent().getStringExtra("productId");
+        Log.d("ProductDetailsActivity", "Product ID: " + productId);
 
         productDetailsNestedScrollView.setVerticalScrollBarEnabled(false);
+
+        loadProductData(productId);
 
     }
 
 
-    private void loadProductData(String productId) {
+    private void loadProductData(String productId)  {
         db.collection("Products").document(productId)
                 .addSnapshotListener(new EventListener<DocumentSnapshot>() {
                     @Override
@@ -200,7 +202,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     private void displayProductDetails(ProductModel product) {
         productDetailsProductName.setText(product.getName());
@@ -231,30 +232,39 @@ public class ProductDetailsActivity extends AppCompatActivity {
             }
         });
 
+        FirebaseUser currentUser = mAuth.getCurrentUser(); // Get current user
+        if (currentUser == null) {
+            // User not logged in, set default wishlist state
+            product.setWishlisted(false);
+            productDetailsWishlist.setImageResource(R.drawable.ic_heart_outline);
+            return; // Exit the function early
+        }
 
-        // Check if the product is in the wishlist using QuerySnapshot
+        String uid = currentUser.getUid();
+
+        // Check if the product is in the wishlist
         db.collection("Users")
                 .document(uid)
                 .collection("wishlist")
                 .whereEqualTo("pid", product.getPid())
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (value != null && !value.isEmpty()){
-                            product.setWishlisted(true);
-                            productDetailsWishlist.setImageResource(R.drawable.ic_heart_filled);
-                        }else {
-                            product.setWishlisted(false);
-                            productDetailsWishlist.setImageResource(R.drawable.ic_heart_outline);
-                        }
+                .addSnapshotListener((value, error) -> {
+                    if (error != null) {
+                        Log.e("WishlistCheck", "Error fetching wishlist data", error);
+                        return;
+                    }
+
+                    if (value != null && !value.isEmpty()) {
+                        product.setWishlisted(true);
+                        productDetailsWishlist.setImageResource(R.drawable.ic_heart_filled);
+                    } else {
+                        product.setWishlisted(false);
+                        productDetailsWishlist.setImageResource(R.drawable.ic_heart_outline);
                     }
                 });
 
-        productDetailsWishlist.setImageResource(
-                product.isWishlisted() ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
-
         handleWishlist(product);
     }
+
 
     private void setupImageSlider(List<String> imageUrls) {
         ProductImageSliderAdapter adapter = new ProductImageSliderAdapter(this, imageUrls);
@@ -377,6 +387,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         startProgressAnimation(position); // Start the animation to fill the progress
     }
 
+
     public void saveRecentlyViewed(String productId, Context context) {
         SharedPreferences preferences = context.getSharedPreferences("recently_viewed", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
@@ -392,35 +403,49 @@ public class ProductDetailsActivity extends AppCompatActivity {
 
 
     // handle wishlist
-    private void handleWishlist(ProductModel product){
-        productDetailsWishlist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean isWishlisted = !product.isWishlisted();
-                product.setWishlisted(isWishlisted);
+    private void handleWishlist(ProductModel product) {
+        productDetailsWishlist.setOnClickListener(v -> {
+            FirebaseUser currentUser = mAuth.getCurrentUser(); // Get current user
+            if (currentUser == null) {
+                CustomToast.showToast(ProductDetailsActivity.this, "Please login to add items to wishlist");
+                return;
+            }
 
-                // Update UI
-                productDetailsWishlist.setImageResource(
-                        isWishlisted ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+            String uid = currentUser.getUid(); // Ensure UID is retrieved safely
 
-                // Update Firestore
-                if (isWishlisted) {
-                    db.collection("Users")
-                            .document(uid)
-                            .collection("wishlist")
-                            .document(product.getPid())
-                            .set(product);
-                } else {
-                    db.collection("Users")
-                            .document(uid)
-                            .collection("wishlist")
-                            .document(product.getPid())
-                            .delete();
-                }
+            if (product.getPid() == null || product.getPid().isEmpty()) {
+                Log.e("WishlistError", "Product ID is null or empty");
+                CustomToast.showToast(ProductDetailsActivity.this, "Unable to update wishlist. Try again.");
+                return;
+            }
+
+            boolean isWishlisted = !product.isWishlisted();
+            product.setWishlisted(isWishlisted);
+
+            // Update UI immediately
+            productDetailsWishlist.setImageResource(
+                    isWishlisted ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
+
+            // Update Firestore based on wishlist status
+            if (isWishlisted) {
+                db.collection("Users")
+                        .document(uid)
+                        .collection("wishlist")
+                        .document(product.getPid())
+                        .set(product)
+                        .addOnSuccessListener(aVoid -> Log.d("Wishlist", "Added to wishlist"))
+                        .addOnFailureListener(e -> Log.e("WishlistError", "Failed to add to wishlist", e));
+            } else {
+                db.collection("Users")
+                        .document(uid)
+                        .collection("wishlist")
+                        .document(product.getPid())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> Log.d("Wishlist", "Removed from wishlist"))
+                        .addOnFailureListener(e -> Log.e("WishlistError", "Failed to remove from wishlist", e));
             }
         });
     }
-
 
     // handle share
     private void handleShare(){
@@ -455,16 +480,19 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
 
-    // handle buy click
-    private void handleBuyClick(){
-        productBuyNowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ProductDetailsActivity.this, ConfirmAddressActivity.class);
-                intent.putExtra("productId", productId);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    // Handle Buy Click
+    private void handleBuyClick() {
+        productBuyNowButton.setOnClickListener(v -> {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                CustomToast.showToast(ProductDetailsActivity.this, "Please login to buy product");
+                return;
             }
+
+            Intent intent = new Intent(ProductDetailsActivity.this, ConfirmAddressActivity.class);
+            intent.putExtra("productId", productId);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
 
@@ -478,18 +506,32 @@ public class ProductDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // handle add to cart
+    // Handle Add to Cart Logic
     private void addToCart() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            CustomToast.showToast(ProductDetailsActivity.this, "Please login to add product to cart");
+            return;
+        }
+
+        String uid = currentUser.getUid();
+
+        if (productId == null || productId.isEmpty()) {
+            Log.e("CartError", "Product ID is null or empty");
+            CustomToast.showToast(ProductDetailsActivity.this, "Invalid product. Please try again.");
+            return;
+        }
+
         String productName = productDetailsProductName.getText().toString();
-        String productPrice = productDetailsProductPrice.getText().toString();
-        productPrice = productPrice.replace(",", "");
+        String productPrice = productDetailsProductPrice.getText().toString().replace(",", "");
         String productDescription = productDetailsProductDescription.getText().toString();
 
         Calendar calForDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
-        String saveCurrentDate = currentDate.format(calForDate.getTime());
-        String saveCurrentTime = currentTime.format(calForDate.getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss a", Locale.getDefault());
+
+        String saveCurrentDate = dateFormat.format(calForDate.getTime());
+        String saveCurrentTime = timeFormat.format(calForDate.getTime());
 
         Map<String, Object> cartMap = new HashMap<>();
         cartMap.put("imgurls", currentImageUrls);
@@ -503,34 +545,41 @@ public class ProductDetailsActivity extends AppCompatActivity {
         cartMap.put("pid", productId);
         cartMap.put("qty", "1");
 
+        // Check if the item is already in the cart before adding
         db.collection("Users")
                 .document(uid)
                 .collection("Cart")
                 .whereEqualTo("pid", productId)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                    if (task.isSuccessful() && task.getResult() != null && !task.getResult().isEmpty()) {
                         CustomToast.showToast(ProductDetailsActivity.this, "Item is already in your cart");
                     } else {
                         db.collection("Users")
                                 .document(uid)
                                 .collection("Cart")
                                 .add(cartMap)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        String oid = documentReference.getId();
-                                        documentReference.update("oid", oid)
-                                                .addOnSuccessListener(aVoid -> {
-                                                    CustomToast.showToast(ProductDetailsActivity.this, "Added to Cart");
-                                                    onBackPressed();
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    CustomToast.showToast(ProductDetailsActivity.this, "Failed to add to cart");
-                                                });
-                                    }
+                                .addOnSuccessListener(documentReference -> {
+                                    String oid = documentReference.getId();
+                                    documentReference.update("oid", oid)
+                                            .addOnSuccessListener(aVoid -> {
+                                                CustomToast.showToast(ProductDetailsActivity.this, "Added to Cart");
+                                                finish(); // Close activity instead of using `onBackPressed()`
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.e("CartError", "Failed to update order ID", e);
+                                                CustomToast.showToast(ProductDetailsActivity.this, "Failed to add to cart");
+                                            });
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("CartError", "Failed to add to cart", e);
+                                    CustomToast.showToast(ProductDetailsActivity.this, "Failed to add to cart");
                                 });
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("CartError", "Error checking cart", e);
+                    CustomToast.showToast(ProductDetailsActivity.this, "Failed to check cart. Please try again.");
                 });
     }
 
@@ -545,21 +594,31 @@ public class ProductDetailsActivity extends AppCompatActivity {
         });
     }
 
-    // get user data
-    private void getUserData(){
-        uid = mAuth.getCurrentUser().getUid();
+    // Get user data
+    private void getUserData() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e("ProductDetailsActivity", "User is not signed in");
+            return;
+        }
+
+        String uid = currentUser.getUid();
         DocumentReference reference = db.collection("Users").document(uid);
 
-        reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if (value != null && value.exists()){
-                    userName = value.getString("Username");
-                    userPhone = value.getString("Number");
-                }
-            }
-        });
+        reference.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        userName = documentSnapshot.getString("Username");
+                        userPhone = documentSnapshot.getString("Number");
 
+                        Log.d("UserData", "Username: " + userName + ", Phone: " + userPhone);
+                    } else {
+                        Log.e("UserData", "No user data found");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("UserData", "Error fetching user data", e);
+                });
     }
 
 

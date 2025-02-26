@@ -3,6 +3,7 @@ package com.example.swiftmart.Adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,9 @@ import com.bumptech.glide.Glide;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.ProductDetailsActivity;
 import com.example.swiftmart.R;
+import com.example.swiftmart.Utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -77,23 +80,28 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
         holder.wishlistButton.setImageResource(
                 product.isWishlisted() ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
 
-        // Check if the product is in the wishlist using QuerySnapshot
-        db.collection("Users")
-                        .document(uid)
-                                .collection("wishlist")
-                                        .whereEqualTo("pid", product.getPid())
-                                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                        if (value != null && !value.isEmpty()){
-                                                            product.setWishlisted(true);
-                                                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
-                                                        }else {
-                                                            product.setWishlisted(false);
-                                                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
-                                                        }
-                                                    }
-                                                });
+        // Get the authenticated user
+        FirebaseUser user = mAuth.getCurrentUser();
+        String uid = (user != null) ? user.getUid() : null;
+
+        // Set wishlist icon based on Firestore data
+        if (uid != null) {
+            db.collection("Users")
+                    .document(uid)
+                    .collection("wishlist")
+                    .whereEqualTo("pid", product.getPid())
+                    .addSnapshotListener((value, error) -> {
+                        if (value != null && !value.isEmpty()) {
+                            product.setWishlisted(true);
+                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
+                        } else {
+                            product.setWishlisted(false);
+                            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
+                        }
+                    });
+        } else {
+            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
+        }
 
 
         holder.cardProductLinearLayout.setOnClickListener(new View.OnClickListener() {
@@ -114,8 +122,21 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
             }
         });
 
-        // Handle wishlist button clicks
+        // Handle wishlist button clicks (removed the duplicate implementation)
         holder.wishlistButton.setOnClickListener(v -> {
+            // Check if user is logged in
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                CustomToast.showToast(context, "Please login to add items to wishlist");
+                return;
+            }
+
+            if (product.getPid() == null || product.getPid().isEmpty()) {
+                Log.e("ProductAdapter", "Error: Product ID is null or empty");
+                CustomToast.showToast(context, "Unable to add to wishlist. Please try again.");
+                return;
+            }
+
             boolean isWishlisted = !product.isWishlisted();
             product.setWishlisted(isWishlisted);
 

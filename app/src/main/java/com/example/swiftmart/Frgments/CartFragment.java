@@ -14,14 +14,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.swiftmart.Adapter.CartAdapter;
 import com.example.swiftmart.ConfirmAddressActivity2;
+import com.example.swiftmart.LoginActivity;  // Assuming you have a LoginActivity
 import com.example.swiftmart.Model.CartModel;
-import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
 import com.example.swiftmart.Utils.CustomToast;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,23 +49,20 @@ public class CartFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_cart, container, false);
 
         initialization(view);
-        getCartData();
+        checkAuthenticationState();
         handleOnBackPress();
-        handleCheckoutClick();
         return view;
     }
 
     private void initialization(View view) {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        uid = mAuth.getCurrentUser().getUid();
 
         cartRecyclerView = view.findViewById(R.id.cartRecyclerView);
         cartProductTotal = view.findViewById(R.id.cartProductTotal);
         cartProductDeliveryTotal = view.findViewById(R.id.cartProductDeliveryTotal);
         cartProductVoucherTotal = view.findViewById(R.id.cartProductVoucherTotal);
         cartProductFinalTotal = view.findViewById(R.id.cartProductFinalTotal);
-
         cartFragmentCheckout = view.findViewById(R.id.cartFragmentCheckout);
 
         adapter = new CartAdapter(getContext(), datalist);
@@ -90,13 +87,79 @@ public class CartFragment extends Fragment {
                 }
 
                 if (datalist.isEmpty()) {
-                    resetTotals();
+                    showEmptyCartView();
                 }
             }
         });
     }
 
+    private void checkAuthenticationState() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            uid = currentUser.getUid();
+            getCartData();
+            configureCheckoutButton(true); // Configure for checkout
+        } else {
+            // User is not logged in
+            showLoginView();
+            configureCheckoutButton(false); // Configure for login
+        }
+    }
+
+    private void configureCheckoutButton(boolean forCheckout) {
+        if (forCheckout) {
+            // Set up for checkout functionality
+            cartFragmentCheckout.setText("Proceed to Checkout");
+            cartFragmentCheckout.setOnClickListener(v -> {
+                if (datalist.isEmpty()) {
+                    CustomToast.showToast(getContext(), "Your cart is empty");
+                    return;
+                }
+
+                ArrayList<String> productIds = new ArrayList<>();
+                for (CartModel product : datalist) {
+                    productIds.add(product.getPid());
+                }
+
+                Intent intent = new Intent(getContext(), ConfirmAddressActivity2.class);
+                intent.putStringArrayListExtra("productIDs", productIds);
+                intent.putExtra("totalAmount", cartProductFinalTotal.getText().toString());
+                startActivity(intent);
+            });
+        } else {
+            // Set up for login functionality
+            cartFragmentCheckout.setText("Login to View Cart");
+            cartFragmentCheckout.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intent);
+            });
+        }
+
+        // Always enable the button - it's either for checkout (if items exist) or for login
+        cartFragmentCheckout.setEnabled(true);
+    }
+
+    private void showLoginView() {
+        cartRecyclerView.setVisibility(View.GONE);
+        resetTotals();
+        CustomToast.showToast(getContext(), "Please log in to view your cart");
+    }
+
+    private void showCartView() {
+        cartRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void showEmptyCartView() {
+        cartRecyclerView.setVisibility(View.GONE);
+        resetTotals();
+    }
+
     private void getCartData() {
+        if (uid == null) {
+            showLoginView();
+            return;
+        }
+
         db.collection("Users").document(uid).collection("Cart")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
@@ -129,23 +192,20 @@ public class CartFragment extends Fragment {
 
                         adapter.notifyDataSetChanged();
                         updateTotal();
-                        handleCheckoutButtonState();
+
+                        if (!datalist.isEmpty()) {
+                            showCartView();
+                        } else {
+                            showEmptyCartView();
+                        }
                     } else {
                         datalist.clear();
                         itemTotals.clear();
                         adapter.notifyDataSetChanged();
                         resetTotals();
-                        handleCheckoutButtonState();
+                        showEmptyCartView();
                     }
                 });
-    }
-
-    private void handleCheckoutButtonState() {
-        if (datalist.isEmpty()) {
-            cartFragmentCheckout.setEnabled(false);
-        } else {
-            cartFragmentCheckout.setEnabled(true);
-        }
     }
 
     private void resetTotals() {
@@ -161,7 +221,7 @@ public class CartFragment extends Fragment {
         NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.getDefault());
         cartProductTotal.setText(currencyFormat.format(totalPrice));
         cartProductDeliveryTotal.setText(currencyFormat.format(deliveryCharges));
-        double finalTotal = totalPrice;
+        double finalTotal = totalPrice + deliveryCharges; // Added delivery charges to final total
         cartProductFinalTotal.setText(currencyFormat.format(finalTotal));
     }
 
@@ -175,24 +235,6 @@ public class CartFragment extends Fragment {
         }
     }
 
-    private void handleCheckoutClick(){
-        cartFragmentCheckout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                ArrayList<String> productIds = new ArrayList<>();
-                for (CartModel product : datalist) {
-                    productIds.add(product.getPid());
-                }
-
-                Intent intent = new Intent(getContext(), ConfirmAddressActivity2.class);
-                intent.putStringArrayListExtra("productIDs", productIds);
-                intent.putExtra("totalAmount", cartProductFinalTotal.getText().toString());
-                startActivity(intent);
-            }
-        });
-    }
-
     private void handleOnBackPress() {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -202,5 +244,12 @@ public class CartFragment extends Fragment {
                         .commit();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Check authentication state every time the fragment resumes
+        checkAuthenticationState();
     }
 }

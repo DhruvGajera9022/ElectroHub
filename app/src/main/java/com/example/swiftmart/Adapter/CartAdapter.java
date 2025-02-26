@@ -134,14 +134,20 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 }
             });
 
-            // handle product delete from cart
+            // Inside onBindViewHolder method - Fix trash button click handler
             holder.cartTrashButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     db = FirebaseFirestore.getInstance();
                     mAuth = FirebaseAuth.getInstance();
-                    uid = mAuth.getCurrentUser().getUid();
 
+                    // Check if user is logged in
+                    if (mAuth.getCurrentUser() == null) {
+                        CustomToast.showToast(context, "Please log in to remove items from cart");
+                        return;
+                    }
+
+                    uid = mAuth.getCurrentUser().getUid();
                     String oid = product.getOid();
                     // Calculate total price of the item being removed
                     double itemTotal = Double.parseDouble(product.getPrice()) * Integer.parseInt(product.getQty());
@@ -179,6 +185,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return datalist.size();
     }
 
+    // Updated updateQTY method with better null handling
     public void updateQTY(String oid, String qty, int position) {
         if (db == null) {
             db = FirebaseFirestore.getInstance();
@@ -187,16 +194,18 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             mAuth = FirebaseAuth.getInstance();
         }
 
-        uid = mAuth.getCurrentUser() != null ? mAuth.getCurrentUser().getUid() : null;
-        if (uid == null) {
-            Log.e("Firestore", "User is not authenticated.");
+        // Check if user is logged in
+        if (mAuth.getCurrentUser() == null) {
+            CustomToast.showToast(context, "Please log in to update cart");
             return;
         }
 
+        uid = mAuth.getCurrentUser().getUid();
+
         DocumentReference productRef = db.collection("Users")
-                .document(uid)
-                .collection("Cart")
-                .document(oid);
+                                               .document(uid)
+                                               .collection("Cart")
+                                               .document(oid);
 
         productRef.update("qty", qty)
                 .addOnSuccessListener(aVoid -> {

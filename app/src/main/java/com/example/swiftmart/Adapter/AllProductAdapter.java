@@ -3,6 +3,7 @@ package com.example.swiftmart.Adapter;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -44,7 +46,6 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
     ArrayList<ProductModel> datalist;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    String uid = mAuth.getUid();
 
     public AllProductAdapter(Context context, ArrayList<ProductModel> datalist) {
         this.context = context;
@@ -81,24 +82,28 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
         holder.wishlistButton.setImageResource(
                 product.isWishlisted() ? R.drawable.ic_heart_filled : R.drawable.ic_heart_outline);
 
-        // Check if the product is in the wishlist using QuerySnapshot
-        db.collection("Users")
-                .document(uid)
-                .collection("wishlist")
-                .whereEqualTo("pid", product.getPid())
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        if (value != null && !value.isEmpty()){
+        // Get the authenticated user
+        FirebaseUser user = mAuth.getCurrentUser();
+        String uid = (user != null) ? user.getUid() : null;
+
+        // Set wishlist icon based on Firestore data
+        if (uid != null) {
+            db.collection("Users")
+                    .document(uid)
+                    .collection("wishlist")
+                    .whereEqualTo("pid", product.getPid())
+                    .addSnapshotListener((value, error) -> {
+                        if (value != null && !value.isEmpty()) {
                             product.setWishlisted(true);
                             holder.wishlistButton.setImageResource(R.drawable.ic_heart_filled);
-                        }else {
+                        } else {
                             product.setWishlisted(false);
                             holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
                         }
-                    }
-                });
-
+                    });
+        } else {
+            holder.wishlistButton.setImageResource(R.drawable.ic_heart_outline);
+        }
 
         holder.cardProductLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +125,19 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
 
         // Handle wishlist button clicks
         holder.wishlistButton.setOnClickListener(v -> {
+            // Check if user is logged in
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser == null) {
+                CustomToast.showToast(context, "Please log in to add items to wishlist");
+                return;
+            }
+
+            if (product.getPid() == null || product.getPid().isEmpty()) {
+                Log.e("AllProductAdapter", "Error: Product ID is null or empty");
+                CustomToast.showToast(context, "Unable to add to wishlist. Please try again.");
+                return;
+            }
+
             boolean isWishlisted = !product.isWishlisted();
             product.setWishlisted(isWishlisted);
 
@@ -143,26 +161,40 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
             }
         });
 
-        db.collection("Users")
-                        .document(uid)
-                                .collection("Cart")
-                                        .whereEqualTo("pid", product.getPid())
-                                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                                    @Override
-                                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                                        if (value != null && !value.isEmpty()){
-                                                            holder.addToCartAllProducts.setVisibility(View.GONE);
-                                                            holder.addToCartDoneAllProducts.setVisibility(View.VISIBLE);
-                                                        }else {
-                                                            holder.addToCartAllProducts.setVisibility(View.VISIBLE);
-                                                            holder.addToCartDoneAllProducts.setVisibility(View.GONE);
-                                                        }
-                                                    }
-                                                });
+        // Check cart status and update UI accordingly
+        if (uid != null) {
+            db.collection("Users")
+                    .document(uid)
+                    .collection("Cart")
+                    .whereEqualTo("pid", product.getPid())
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            if (value != null && !value.isEmpty()) {
+                                holder.addToCartAllProducts.setVisibility(View.GONE);
+                                holder.addToCartDoneAllProducts.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.addToCartAllProducts.setVisibility(View.VISIBLE);
+                                holder.addToCartDoneAllProducts.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+        } else {
+            // If user is not logged in, just show the "Add to Cart" button
+            holder.addToCartAllProducts.setVisibility(View.VISIBLE);
+            holder.addToCartDoneAllProducts.setVisibility(View.GONE);
+        }
 
+        // Handle add to cart button click
         holder.addToCartAllProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Check if user is logged in
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null) {
+                    CustomToast.showToast(context, "Please log in to add items to cart");
+                    return;
+                }
 
                 Calendar calForDate = Calendar.getInstance();
                 SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
@@ -215,13 +247,20 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
                                         });
                             }
                         });
-
             }
         });
 
+        // Handle remove from cart button click
         holder.addToCartDoneAllProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Check if user is logged in
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null) {
+                    CustomToast.showToast(context, "Please login to remove items from cart");
+                    return;
+                }
+
                 db.collection("Users")
                         .document(uid)
                         .collection("Cart")
@@ -241,12 +280,12 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
                                             holder.addToCartDoneAllProducts.setVisibility(View.GONE);
                                         })
                                         .addOnFailureListener(e -> {
+                                            CustomToast.showToast(context, "Error removing from cart");
                                         });
                             }
                         });
             }
         });
-
     }
 
     @Override
@@ -260,7 +299,6 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
         LinearLayout cardProductLinearLayout;
         ImageView wishlistButton, addToCartAllProducts, addToCartDoneAllProducts;
 
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -271,8 +309,6 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
             wishlistButton = itemView.findViewById(R.id.wishlistButton);
             addToCartAllProducts = itemView.findViewById(R.id.addToCartAllProducts);
             addToCartDoneAllProducts = itemView.findViewById(R.id.addToCartDoneAllProducts);
-
         }
     }
-
 }

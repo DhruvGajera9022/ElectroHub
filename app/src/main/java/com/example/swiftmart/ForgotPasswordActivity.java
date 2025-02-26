@@ -5,6 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -66,13 +67,13 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         // Email input
         forgotPasswordEmailInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (forgotPasswordEmailInput.getText().toString().isEmpty()) {
+                String email = forgotPasswordEmailInput.getText().toString().trim();
+                if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    forgotPasswordEmailInput.setError("Invalid email format");
                     forgotPasswordEmailInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                 } else {
                     forgotPasswordEmailInput.setBackgroundResource(R.drawable.rounded_edit_text_success);
