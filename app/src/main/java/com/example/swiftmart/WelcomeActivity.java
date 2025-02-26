@@ -63,10 +63,10 @@ public class WelcomeActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
-        if (mAuth.getCurrentUser() != null){
-            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
-            finish();
-        }
+//        if (mAuth.getCurrentUser() != null){
+//            startActivity(new Intent(WelcomeActivity.this, MainActivity.class));
+//            finish();
+//        }
 
         welcomeScrollView.setVerticalScrollBarEnabled(false);
     }
