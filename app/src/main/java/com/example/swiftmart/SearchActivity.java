@@ -1,6 +1,7 @@
 package com.example.swiftmart;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -9,6 +10,7 @@ import android.transition.Explode;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -96,6 +98,8 @@ public class SearchActivity extends AppCompatActivity {
 		setupSearchFunctionality();
 
 		getAllProducts();
+
+		setStatusBarColor(R.color.home);
 	}
 
 	private void getAllProducts() {
@@ -249,6 +253,13 @@ public class SearchActivity extends AppCompatActivity {
 				return true;
 			}
 		});
+	}
+
+	private void setStatusBarColor(int colorResource) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			Window window = getWindow();
+			window.setStatusBarColor(getResources().getColor(colorResource));
+		}
 	}
 
 	@Override
