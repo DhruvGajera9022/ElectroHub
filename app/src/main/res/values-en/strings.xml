@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Swiftmart</string>
+    <string name="app_name">ElectroHub</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="earbuds">Earbuds</string>
     <string name="boat">boAt</string>
@@ -41,7 +41,7 @@
     <string name="headphones">Headphones</string>
     <string name="speakers">Speakers</string>
     <string name="keywords">Keyboard</string>
-    <string name="mouses">Mice</string>
+    <string name="mouses">Mouse</string>
     <string name="camera">Camera</string>
     <string name="smartwatches">Smartwatches</string>
     <string name="tablets">Tablets</string>
