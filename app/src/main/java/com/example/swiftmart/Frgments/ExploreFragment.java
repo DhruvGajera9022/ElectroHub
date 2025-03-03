@@ -51,9 +51,19 @@ public class ExploreFragment extends Fragment {
     private RecyclerView exploreFragmentRecyclerView;
     private ProgressBar exploreFragmentProgressBar;
 
+    private ImageButton exploreFilterIcon;
+
     FirebaseFirestore db;
     ArrayList<ProductModel> datalist = new ArrayList<>();
     ExploreProductAdapter adapter;
+
+    // Current filter state variables
+    private String currentSortBy = "name";
+    private boolean isAscending = true;
+    private float minPrice = 0;
+    private float maxPrice = 250000;
+    private String selectedCategory = "";
+    private String selectedCompany = "";
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -78,6 +88,15 @@ public class ExploreFragment extends Fragment {
         exploreFragmentSwipeRefresh = view.findViewById(R.id.exploreFragmentSwipeRefresh);
         exploreFragmentRecyclerView = view.findViewById(R.id.exploreFragmentRecyclerView);
         exploreFragmentProgressBar = view.findViewById(R.id.exploreFragmentProgressBar);
+
+        exploreFilterIcon = view.findViewById(R.id.exploreFilterIcon);
+        exploreFilterIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterBottomSheet();
+            }
+        });
+
         db = FirebaseFirestore.getInstance();
     }
 
@@ -183,6 +202,311 @@ public class ExploreFragment extends Fragment {
         exploreFragmentRecyclerView.setHasFixedSize(true);
         exploreFragmentRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
+
+    // Method to show the filter bottom sheet
+    private void showFilterBottomSheet() {
+        BottomSheetDialog filterDialog = new BottomSheetDialog(getContext());
+        View bottomSheetView = LayoutInflater.from(getContext())
+                                       .inflate(R.layout.filter_bottom_sheet, null);
+        filterDialog.setContentView(bottomSheetView);
+
+        // Initialize UI components
+        RadioGroup sortByGroup = bottomSheetView.findViewById(R.id.sortByRadioGroup);
+        RadioGroup orderGroup = bottomSheetView.findViewById(R.id.orderRadioGroup);
+        RangeSlider priceRangeSlider = bottomSheetView.findViewById(R.id.priceRangeSlider);
+        ChipGroup categoryChipGroup = bottomSheetView.findViewById(R.id.categoryChipGroup);
+        ChipGroup companyChipGroup = bottomSheetView.findViewById(R.id.companyChipGroup);
+        Button applyFilterBtn = bottomSheetView.findViewById(R.id.applyFilterBtn);
+        Button resetFilterBtn = bottomSheetView.findViewById(R.id.resetFilterBtn);
+
+        // Set initial values based on current filter state
+        setInitialRadioButton(sortByGroup, currentSortBy);
+        setInitialOrderRadioButton(orderGroup, isAscending);
+
+        // Setup price range slider
+        priceRangeSlider.setValues(minPrice, maxPrice);
+
+        // Load categories and companies dynamically
+        loadCategories(categoryChipGroup);
+        loadCompanies(companyChipGroup);
+
+        // Set selected chip if any
+        setSelectedChip(categoryChipGroup, selectedCategory);
+        setSelectedChip(companyChipGroup, selectedCompany);
+
+        // Apply filter button click listener
+        applyFilterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get selected sort field
+                int sortBySelectedId = sortByGroup.getCheckedRadioButtonId();
+                if (sortBySelectedId == R.id.sortByName) {
+                    currentSortBy = "name";
+                } else if (sortBySelectedId == R.id.sortByPrice) {
+                    currentSortBy = "price";
+                } else if (sortBySelectedId == R.id.sortByCompany) {
+                    currentSortBy = "company";
+                }
+
+                // Get selected order
+                int orderSelectedId = orderGroup.getCheckedRadioButtonId();
+                isAscending = (orderSelectedId == R.id.orderAscending);
+
+                // Get price range
+                List<Float> priceValues = priceRangeSlider.getValues();
+                minPrice = priceValues.get(0);
+                maxPrice = priceValues.get(1);
+
+                // Get selected category and company
+                selectedCategory = getSelectedChipText(categoryChipGroup);
+                selectedCompany = getSelectedChipText(companyChipGroup);
+
+                // Apply filters
+                applyFilters();
+                filterDialog.dismiss();
+            }
+        });
+
+        // Reset filter button click listener
+        resetFilterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetFilters();
+                filterDialog.dismiss();
+            }
+        });
+
+        filterDialog.show();
+    }
+
+    private void setInitialRadioButton(RadioGroup group, String value) {
+        int id;
+        switch (value) {
+            case "price":
+                id = R.id.sortByPrice;
+                break;
+            case "company":
+                id = R.id.sortByCompany;
+                break;
+            case "name":
+            default:
+                id = R.id.sortByName;
+                break;
+        }
+        group.check(id);
+    }
+
+    private void setInitialOrderRadioButton(RadioGroup group, boolean isAscending) {
+        group.check(isAscending ? R.id.orderAscending : R.id.orderDescending);
+    }
+
+    private void loadCategories(ChipGroup chipGroup) {
+        chipGroup.removeAllViews();
+
+        // Add "All" category chip
+        Chip allChip = createChip("All");
+        chipGroup.addView(allChip);
+
+        // Get unique categories from Firebase
+        db.collection("Products")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<String> categories = new ArrayList<>();
+
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            ProductModel model = document.toObject(ProductModel.class);
+                            if (model.getCategory() != null && !model.getCategory().isEmpty()
+                                        && !categories.contains(model.getCategory())) {
+                                categories.add(model.getCategory());
+                            }
+                        }
+
+                        // Sort categories alphabetically
+                        Collections.sort(categories);
+
+                        // Add category chips
+                        for (String category : categories) {
+                            Chip chip = createChip(category);
+                            chipGroup.addView(chip);
+                        }
+
+                        // Set selected chip if any
+                        setSelectedChip(chipGroup, selectedCategory);
+                    }
+                });
+    }
+
+    private void loadCompanies(ChipGroup chipGroup) {
+        chipGroup.removeAllViews();
+
+        // Add "All" company chip
+        Chip allChip = createChip("All");
+        chipGroup.addView(allChip);
+
+        // Get unique companies from Firebase
+        db.collection("Products")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        ArrayList<String> companies = new ArrayList<>();
+
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            ProductModel model = document.toObject(ProductModel.class);
+                            if (model.getCompany() != null && !model.getCompany().isEmpty()
+                                        && !companies.contains(model.getCompany())) {
+                                companies.add(model.getCompany());
+                            }
+                        }
+
+                        // Sort companies alphabetically
+                        Collections.sort(companies);
+
+                        // Add company chips
+                        for (String company : companies) {
+                            Chip chip = createChip(company);
+                            chipGroup.addView(chip);
+                        }
+
+                        // Set selected chip if any
+                        setSelectedChip(chipGroup, selectedCompany);
+                    }
+                });
+    }
+
+    private Chip createChip(String text) {
+        Chip chip = new Chip(getContext());
+        chip.setText(text);
+        chip.setCheckable(true);
+        chip.setClickable(true);
+        return chip;
+    }
+
+    private void setSelectedChip(ChipGroup chipGroup, String selectedText) {
+        if (TextUtils.isEmpty(selectedText) || selectedText.equals("All")) {
+            // Select "All" chip by default or if selected is "All"
+            for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                Chip chip = (Chip) chipGroup.getChildAt(i);
+                if (chip.getText().toString().equals("All")) {
+                    chip.setChecked(true);
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                Chip chip = (Chip) chipGroup.getChildAt(i);
+                if (chip.getText().toString().equals(selectedText)) {
+                    chip.setChecked(true);
+                    break;
+                }
+            }
+        }
+    }
+
+    private String getSelectedChipText(ChipGroup chipGroup) {
+        int selectedChipId = chipGroup.getCheckedChipId();
+        if (selectedChipId != View.NO_ID) {
+            Chip selectedChip = chipGroup.findViewById(selectedChipId);
+            return selectedChip.getText().toString();
+        }
+        return "All"; // Default to "All" if no chip is selected
+    }
+
+    private void applyFilters() {
+        exploreFragmentProgressBar.setVisibility(View.VISIBLE);
+        datalist.clear();
+
+        // Start building the query
+        Query query = db.collection("Products");
+
+        // Apply category filter if not "All"
+        if (!TextUtils.isEmpty(selectedCategory) && !selectedCategory.equals("All")) {
+            query = query.whereEqualTo("category", selectedCategory);
+        }
+
+        // Apply company filter if not "All"
+        if (!TextUtils.isEmpty(selectedCompany) && !selectedCompany.equals("All")) {
+            query = query.whereEqualTo("company", selectedCompany);
+        }
+
+        // Execute the query
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                exploreFragmentProgressBar.setVisibility(View.GONE);
+                datalist.clear();
+
+                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                    ProductModel model = document.toObject(ProductModel.class);
+
+                    // Apply price range filter
+                    float productPrice = 0;
+                    try {
+                        productPrice = Float.parseFloat(model.getPrice());
+                    } catch (NumberFormatException e) {
+                        // Handle price parsing error
+                    }
+
+                    if (productPrice >= minPrice && productPrice <= maxPrice) {
+                        datalist.add(model);
+                    }
+                }
+
+                // Apply sorting
+                applySorting();
+
+                // Update the RecyclerView
+                updateRecyclerView();
+            }
+        });
+    }
+
+    private void applySorting() {
+        // Sort the data list based on current sort and order
+        Collections.sort(datalist, new Comparator<ProductModel>() {
+            @Override
+            public int compare(ProductModel p1, ProductModel p2) {
+                int result = 0;
+
+                switch (currentSortBy) {
+                    case "name":
+                        result = p1.getName().compareToIgnoreCase(p2.getName());
+                        break;
+                    case "price":
+                        try {
+                            float price1 = Float.parseFloat(p1.getPrice());
+                            float price2 = Float.parseFloat(p2.getPrice());
+                            result = Float.compare(price1, price2);
+                        } catch (NumberFormatException e) {
+                            result = 0;
+                        }
+                        break;
+                    case "company":
+                        result = p1.getCompany().compareToIgnoreCase(p2.getCompany());
+                        break;
+                }
+
+                // Apply order (ascending or descending)
+                return isAscending ? result : -result;
+            }
+        });
+    }
+
+    private void resetFilters() {
+        // Reset filter state variables
+        currentSortBy = "name";
+        isAscending = true;
+        minPrice = 0;
+        maxPrice = 250000; // Changed from 10000 to 250000
+        selectedCategory = "";
+        selectedCompany = "";
+
+        // Reload all products
+        getAllProducts();
+    }
+
 
     private void handleOnBackPress() {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {

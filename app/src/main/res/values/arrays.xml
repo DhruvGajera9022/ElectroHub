@@ -15,4 +15,9 @@
         <item>Speaker</item>
         <item>Tablet</item>
     </string-array>
+
+    <array name="price_range_default">
+        <item>0</item>
+        <item>250000</item>
+    </array>
 </resources>
