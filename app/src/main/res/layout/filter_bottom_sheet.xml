@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/sheet_background">
 
     <TextView
         android:layout_width="match_parent"
@@ -12,6 +13,7 @@
         android:text="Filter Products"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:fontFamily="@font/poppinssemibold"
         android:textColor="@android:color/black"
         android:layout_marginBottom="16dp"/>
 
@@ -22,6 +24,7 @@
         android:text="Sort By"
         android:textStyle="bold"
         android:layout_marginTop="8dp"
+        android:fontFamily="@font/poppinssemibold"
         android:layout_marginBottom="8dp"/>
 
     <RadioGroup
@@ -35,6 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name"
+            android:fontFamily="@font/poppinsregular"
             android:checked="true"/>
 
         <RadioButton
@@ -42,6 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Price"
+            android:fontFamily="@font/poppinsregular"
             android:layout_marginStart="16dp"/>
 
         <RadioButton
@@ -49,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Company"
+            android:fontFamily="@font/poppinsregular"
             android:layout_marginStart="16dp"/>
     </RadioGroup>
 
@@ -59,6 +65,7 @@
         android:text="Order"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppinssemibold"
         android:layout_marginBottom="8dp"/>
 
     <RadioGroup
@@ -72,6 +79,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ascending"
+            android:fontFamily="@font/poppinsregular"
             android:checked="true"/>
 
         <RadioButton
@@ -79,6 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Descending"
+            android:fontFamily="@font/poppinsregular"
             android:layout_marginStart="16dp"/>
     </RadioGroup>
 
@@ -89,6 +98,7 @@
         android:text="Price Range"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppinssemibold"
         android:layout_marginBottom="8dp"/>
 
     <com.google.android.material.slider.RangeSlider
@@ -97,6 +107,7 @@
         android:layout_height="wrap_content"
         android:valueFrom="0"
         android:valueTo="250000"
+        android:fontFamily="@font/poppinsregular"
         app:values="@array/price_range_default"
         app:labelBehavior="visible"/>
 
@@ -107,6 +118,7 @@
         android:text="Category"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppinssemibold"
         android:layout_marginBottom="8dp"/>
 
     <HorizontalScrollView
@@ -118,7 +130,8 @@
             android:id="@+id/categoryChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleSelection="true">
+            app:singleSelection="true"
+            android:fontFamily="@font/poppinsregular">
             <!-- Chips will be added dynamically -->
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
@@ -130,6 +143,7 @@
         android:text="Company"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/poppinssemibold"
         android:layout_marginBottom="8dp"/>
 
     <HorizontalScrollView
@@ -141,7 +155,8 @@
             android:id="@+id/companyChipGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:singleSelection="true">
+            app:singleSelection="true"
+            android:fontFamily="@font/poppinsregular">
             <!-- Chips will be added dynamically -->
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
@@ -160,6 +175,7 @@
             android:layout_weight="1"
             android:text="Reset"
             android:layout_marginEnd="8dp"
+            android:fontFamily="@font/poppinsregular"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
         <Button
@@ -168,6 +184,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Apply"
+            android:fontFamily="@font/poppinsregular"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 </LinearLayout>

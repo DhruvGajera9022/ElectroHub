@@ -205,7 +205,7 @@ public class ExploreFragment extends Fragment {
 
     // Method to show the filter bottom sheet
     private void showFilterBottomSheet() {
-        BottomSheetDialog filterDialog = new BottomSheetDialog(getContext());
+        BottomSheetDialog filterDialog = new BottomSheetDialog(getContext(), R.style.BottomSheetDialog);
         View bottomSheetView = LayoutInflater.from(getContext())
                                        .inflate(R.layout.filter_bottom_sheet, null);
         filterDialog.setContentView(bottomSheetView);
@@ -377,7 +377,7 @@ public class ExploreFragment extends Fragment {
     }
 
     private Chip createChip(String text) {
-        Chip chip = new Chip(getContext());
+        Chip chip = new Chip(getContext(), null, R.style.FilterChip);
         chip.setText(text);
         chip.setCheckable(true);
         chip.setClickable(true);

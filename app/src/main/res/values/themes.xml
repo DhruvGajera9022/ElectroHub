@@ -8,7 +8,7 @@
     <style name="Theme.Swiftmart" parent="Base.Theme.Swiftmart" />
 
     <style name="BottomSheetDialog" parent="Theme.Material3.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle"/>
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>
 
     <style name="Modal" parent="Widget.Design.BottomSheet.Modal">
@@ -20,7 +20,6 @@
         <item name="behavior_peekHeight">600dp</item>
         <item name="behavior_hideable">true</item>
     </style>
-
 
     <!-- Simplified Chip Style -->
     <style name="FilterChip" parent="Widget.MaterialComponents.Chip.Filter">
