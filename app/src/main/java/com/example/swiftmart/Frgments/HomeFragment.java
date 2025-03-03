@@ -1,6 +1,7 @@
 package com.example.swiftmart.Frgments;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -48,6 +49,7 @@ import com.example.swiftmart.CategoryScreen.SpeakersActivity;
 import com.example.swiftmart.CategoryScreen.TabletsActivity;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
+import com.example.swiftmart.SearchActivity;
 import com.example.swiftmart.Utils.CustomToast;
 import com.example.swiftmart.CategoryScreen.tv_brandActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -209,6 +211,8 @@ public class HomeFragment extends Fragment {
         handleCameraClick();
         handleSmartWatchClick();
         handleTabletClick();
+
+        handleSearchClick();
 
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
@@ -669,6 +673,61 @@ public class HomeFragment extends Fragment {
         });
     }
 
+
+    // handle search click
+    private void handleSearchClick() {
+        // Disable the SearchView's default search functionality
+        homeFragmentSearchView.setOnQueryTextFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                // Cancel the focus to prevent keyboard from showing
+                view.clearFocus();
+
+                // Create intent for search activity
+                Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+
+                // Get the position of the search view for animation
+                int[] searchViewLocation = new int[2];
+                homeFragmentSearchView.getLocationInWindow(searchViewLocation);
+                searchIntent.putExtra("SEARCH_X", searchViewLocation[0]);
+                searchIntent.putExtra("SEARCH_Y", searchViewLocation[1]);
+                searchIntent.putExtra("SEARCH_WIDTH", homeFragmentSearchView.getWidth());
+                searchIntent.putExtra("SEARCH_HEIGHT", homeFragmentSearchView.getHeight());
+
+                // Start the activity with transition
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(
+                        getActivity(),
+                        homeFragmentSearchView,
+                        "searchTransition");
+
+                startActivity(searchIntent, options.toBundle());
+            }
+        });
+
+        // Also handle direct click on the SearchView
+        homeFragmentSearchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create intent for search activity
+                Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+
+                // Get the position of the search view for animation
+                int[] searchViewLocation = new int[2];
+                homeFragmentSearchView.getLocationInWindow(searchViewLocation);
+                searchIntent.putExtra("SEARCH_X", searchViewLocation[0]);
+                searchIntent.putExtra("SEARCH_Y", searchViewLocation[1]);
+                searchIntent.putExtra("SEARCH_WIDTH", homeFragmentSearchView.getWidth());
+                searchIntent.putExtra("SEARCH_HEIGHT", homeFragmentSearchView.getHeight());
+
+                // Start the activity with transition
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(
+                        getActivity(),
+                        homeFragmentSearchView,
+                        "searchTransition");
+
+                startActivity(searchIntent, options.toBundle());
+            }
+        });
+    }
 
 
     private void getImageUrls() {
