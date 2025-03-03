@@ -52,6 +52,7 @@ import com.example.swiftmart.Utils.CustomToast;
 import com.example.swiftmart.CategoryScreen.tv_brandActivity;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -248,13 +249,15 @@ public class HomeFragment extends Fragment {
         homeFragmentUserAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeFragmentUserAvatar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
-                        startActivity(intent);
-                    }
-                });
+                // Check if user is logged in
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null) {
+                    CustomToast.showToast(getContext(), "Please login first");
+                    return;
+                }
+
+                Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
+                startActivity(intent);
             }
         });
     }
@@ -263,6 +266,13 @@ public class HomeFragment extends Fragment {
         topPanel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Check if user is logged in
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                if (currentUser == null) {
+                    CustomToast.showToast(getContext(), "Please login first");
+                    return;
+                }
+
                 Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
                 startActivity(intent);
             }

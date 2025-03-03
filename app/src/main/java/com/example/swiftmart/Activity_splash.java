@@ -29,7 +29,16 @@ public class Activity_splash extends AppCompatActivity {
                 finish();
             }
         },5000);
+
+        setStatusBarColor(R.color.home);
+
     }
 
+    private void setStatusBarColor(int colorResource) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setStatusBarColor(getResources().getColor(colorResource));
+        }
+    }
 
 }
