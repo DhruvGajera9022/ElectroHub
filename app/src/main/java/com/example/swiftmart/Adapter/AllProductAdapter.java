@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.swiftmart.LoginActivity;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.ProductDetailsActivity;
 import com.example.swiftmart.R;
@@ -128,7 +129,7 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
             // Check if user is logged in
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser == null) {
-                CustomToast.showToast(context, "Please log in to add items to wishlist");
+                context.startActivity(new Intent(context, LoginActivity.class));
                 return;
             }
 
@@ -192,7 +193,7 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
                 // Check if user is logged in
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
-                    CustomToast.showToast(context, "Please log in to add items to cart");
+                    context.startActivity(new Intent(context, LoginActivity.class));
                     return;
                 }
 
@@ -257,7 +258,7 @@ public class AllProductAdapter extends RecyclerView.Adapter<AllProductAdapter.Vi
                 // Check if user is logged in
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
-                    CustomToast.showToast(context, "Please login to remove items from cart");
+                    context.startActivity(new Intent(context, LoginActivity.class));
                     return;
                 }
 

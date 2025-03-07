@@ -407,7 +407,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productDetailsWishlist.setOnClickListener(v -> {
             FirebaseUser currentUser = mAuth.getCurrentUser(); // Get current user
             if (currentUser == null) {
-                CustomToast.showToast(ProductDetailsActivity.this, "Please login to add items to wishlist");
+                startActivity(new Intent(ProductDetailsActivity.this, LoginActivity.class));
                 return;
             }
 
@@ -485,7 +485,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productBuyNowButton.setOnClickListener(v -> {
             FirebaseUser currentUser = mAuth.getCurrentUser();
             if (currentUser == null) {
-                CustomToast.showToast(ProductDetailsActivity.this, "Please login to buy product");
+                startActivity(new Intent(ProductDetailsActivity.this, LoginActivity.class));
                 return;
             }
 
@@ -510,7 +510,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private void addToCart() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            CustomToast.showToast(ProductDetailsActivity.this, "Please login to add product to cart");
+            startActivity(new Intent(ProductDetailsActivity.this, LoginActivity.class));
             return;
         }
 

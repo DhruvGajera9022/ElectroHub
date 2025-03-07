@@ -47,6 +47,7 @@ import com.example.swiftmart.CategoryScreen.MouseActivity;
 import com.example.swiftmart.CategoryScreen.SmartWatchActivity;
 import com.example.swiftmart.CategoryScreen.SpeakersActivity;
 import com.example.swiftmart.CategoryScreen.TabletsActivity;
+import com.example.swiftmart.LoginActivity;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.R;
 import com.example.swiftmart.SearchActivity;
@@ -256,7 +257,8 @@ public class HomeFragment extends Fragment {
                 // Check if user is logged in
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
-                    CustomToast.showToast(getContext(), "Please login first");
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
                     return;
                 }
 
@@ -273,7 +275,8 @@ public class HomeFragment extends Fragment {
                 // Check if user is logged in
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
-                    CustomToast.showToast(getContext(), "Please login first");
+                    Intent intent = new Intent(getContext(), LoginActivity.class);
+                    startActivity(intent);
                     return;
                 }
 

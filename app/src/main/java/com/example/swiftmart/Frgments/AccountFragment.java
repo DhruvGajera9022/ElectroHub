@@ -78,7 +78,6 @@ public class AccountFragment extends Fragment {
 
         // Check if user is logged in, redirect to login if not
         if (mAuth.getCurrentUser() == null) {
-            Log.e("AccountFragment", "User is not signed in");
             redirectToLogin();
             return view;
         }
