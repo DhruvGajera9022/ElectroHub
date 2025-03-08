@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // handle sign in button click
-    private void handleSignInButtonClick(){
+    private void handleSignInButtonClick() {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,29 +172,30 @@ public class LoginActivity extends AppCompatActivity {
                 String txtPassword = signInPasswordInput.getText().toString().trim();
                 boolean isValid = true;
 
-                if(txtEmail.isEmpty()){
+                if (txtEmail.isEmpty()) {
                     signInEmailInput.setError("Please provide your email");
                     signInEmailInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
-                if(txtPassword.isEmpty()){
+                if (txtPassword.isEmpty()) {
                     signInPasswordInput.setError("Please provide your password");
                     signInPasswordInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
 
-                if (isValid){
+                if (isValid) {
                     progress();
 
-                    CollectionReference usersRef = firestore.collection("Users");
-
-                    usersRef.whereEqualTo("email", txtEmail)
+                    // Query Firestore Users collection by email
+                    firestore.collection("Users")
+                            .whereEqualTo("Email", txtEmail) // Ensure field name matches Firestore
+                            .limit(1) // Limit to one result
                             .get()
                             .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                        // Email found, proceed with authentication
+                                        // Email exists, proceed with Firebase Authentication
                                         mAuth.signInWithEmailAndPassword(txtEmail, txtPassword)
                                                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                                     @Override
@@ -210,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
                                                     public void onFailure(@NonNull Exception e) {
                                                         signInButton.setVisibility(View.VISIBLE);
                                                         signInProgressBar.setVisibility(View.GONE);
-                                                        CustomToast.showToast(LoginActivity.this, "Password incorrect");
+                                                        CustomToast.showToast(LoginActivity.this, "Incorrect password");
                                                     }
                                                 });
                                     } else {
