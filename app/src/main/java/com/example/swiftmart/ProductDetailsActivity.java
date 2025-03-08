@@ -2,6 +2,7 @@ package com.example.swiftmart;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,10 +43,12 @@ import com.example.swiftmart.Model.RatingModel;
 import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -100,6 +103,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private LinearLayout sliderIndicator;
     private int dotCount;
     private View[] dots;
+
+    ProductModel currentProduct;
 
 
     @Override
@@ -448,37 +453,11 @@ public class ProductDetailsActivity extends AppCompatActivity {
     }
 
     // handle share
-    private void handleShare(){
-        productDetailsShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String deepLink = "https://swiftmartstore.page.link/product?productId=" + productId;
+    private void handleShare() {
+        productDetailsShare.setOnClickListener(v -> {
 
-                FirebaseDynamicLinks.getInstance().createDynamicLink()
-                        .setLink(Uri.parse(deepLink))
-                        .setDomainUriPrefix("https://swiftmartstore.page.link")
-                        .setAndroidParameters(
-                                new DynamicLink.AndroidParameters.Builder()
-                                        .build())
-                        .buildShortDynamicLink()
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful() && task.getResult() != null) {
-                                Uri shortLink = task.getResult().getShortLink();
-
-                                // Share the short link
-                                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                                sharingIntent.setType("text/plain");
-                                String shareBody = "Check out this product: " + shortLink.toString();
-                                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                                startActivity(Intent.createChooser(sharingIntent, "Share using"));
-                            } else {
-                                Toast.makeText(ProductDetailsActivity.this, "Failed to generate link", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            }
         });
     }
-
 
     // Handle Buy Click
     private void handleBuyClick() {
