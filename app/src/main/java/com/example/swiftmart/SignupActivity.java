@@ -58,6 +58,8 @@ public class SignupActivity extends AppCompatActivity {
     private String userID;
     private static final int RC_SIGN_IN = 1;
 
+    private String strEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +91,10 @@ public class SignupActivity extends AppCompatActivity {
         firestore = FirebaseFirestore.getInstance();
 
         signUpScrollView.setVerticalScrollBarEnabled(false);
+
+        String strEmail = getIntent().getStringExtra("email") != null ? getIntent().getStringExtra("email") : "";
+        signUpEmailInput.setText(strEmail);
+
     }
 
     // validate the input

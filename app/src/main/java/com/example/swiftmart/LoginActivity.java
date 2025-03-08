@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -34,8 +35,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -182,22 +185,42 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (isValid){
                     progress();
-                    mAuth.signInWithEmailAndPassword(txtEmail, txtPassword)
-                            .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+
+                    CollectionReference usersRef = firestore.collection("Users");
+
+                    usersRef.whereEqualTo("email", txtEmail)
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                 @Override
-                                public void onSuccess(AuthResult authResult) {
-                                    Intent intent = new Intent(LoginActivity.this, Language_Activity.class);
-                                    CustomToast.showToast(LoginActivity.this, "Login successful");
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    signInButton.setVisibility(View.VISIBLE);
-                                    signInProgressBar.setVisibility(View.GONE);
-                                    CustomToast.showToast(LoginActivity.this, "Login failed");
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                        // Email found, proceed with authentication
+                                        mAuth.signInWithEmailAndPassword(txtEmail, txtPassword)
+                                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                                    @Override
+                                                    public void onSuccess(AuthResult authResult) {
+                                                        Intent intent = new Intent(LoginActivity.this, Language_Activity.class);
+                                                        CustomToast.showToast(LoginActivity.this, "Login successful");
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        signInButton.setVisibility(View.VISIBLE);
+                                                        signInProgressBar.setVisibility(View.GONE);
+                                                        CustomToast.showToast(LoginActivity.this, "Password incorrect");
+                                                    }
+                                                });
+                                    } else {
+                                        // Email not found, redirect to sign-up page
+                                        CustomToast.showToast(LoginActivity.this, "User not found. Redirecting to sign-up...");
+                                        Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
+                                        intent.putExtra("email", txtEmail);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 }
                             });
                 }
