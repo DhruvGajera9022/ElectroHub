@@ -1,15 +1,19 @@
 package com.example.swiftmart.Frgments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -20,6 +24,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.swiftmart.Account.Address_Activity;
 import com.example.swiftmart.Account.Edit_profile_Activity;
@@ -44,6 +49,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,9 +57,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class AccountFragment extends Fragment {
-    private ImageButton btnEditProfile, btnLanguage, btnOrderHistory, btnWishlist, btnAboutUs, btnPrivacyPolicy, btnDeleteUser, profileRateUsBtn, btnAddress;
+    private ImageButton btnEditProfile, btnLanguage, btnOrderHistory, btnWishlist, btnAboutUs, btnPrivacyPolicy, btnDeleteUser, profileRateUsBtn, btnAddress, btnShare;
     private AppCompatButton btnLogout;
-    private LinearLayout llWishlist, llEditProfile, llOrderHistory, llAboutUs, llPrivacyPolicy,llLanguage, llDeleteUser, llRateUs,llsavedaddress;
+    private LinearLayout llWishlist, llEditProfile, llOrderHistory, llAboutUs, llPrivacyPolicy,llLanguage, llDeleteUser, llRateUs,llsavedaddress, llShare;
     private TextView accountFragmentUserName;
     private String uid;
     private FirebaseFirestore db;
@@ -95,6 +101,7 @@ public class AccountFragment extends Fragment {
         llDeleteUser = view.findViewById(R.id.llDeleteUser);
         llRateUs = view.findViewById(R.id.llRateUs);
         llsavedaddress = view.findViewById(R.id.llsavedaddress);
+        llShare = view.findViewById(R.id.llShare);
 
         btnEditProfile = view.findViewById(R.id.profileEditProfileBtn);
         btnLanguage = view.findViewById(R.id.profileSelectLanguageBtn);
@@ -105,6 +112,7 @@ public class AccountFragment extends Fragment {
         btnDeleteUser = view.findViewById(R.id.profileDeleteUserBtn);
         profileRateUsBtn = view.findViewById(R.id.profileRateUsBtn);
         btnAddress = view.findViewById(R.id.addressBtn);
+        btnShare = view.findViewById(R.id.profileShareBtn);
 
         btnLogout = view.findViewById(R.id.userLogout);
         accountFragmentProgressBar = view.findViewById(R.id.accountFragmentProgressBar);
@@ -121,6 +129,7 @@ public class AccountFragment extends Fragment {
         handleAboutUsClick();
         handlePrivacyPolicyClick();
         handleRateUsClick();
+        handleShareAppClick();
 
         handleOnBackPress();
         handleUserLogout();
@@ -292,6 +301,40 @@ public class AccountFragment extends Fragment {
     private void handleRateUsClick(){
         // This doesn't require user authentication
     }
+
+    private void handleShareAppClick() {
+        llShare.setOnClickListener(v -> shareAPK());
+        btnShare.setOnClickListener(v -> shareAPK());
+    }
+
+    private void shareAPK(){
+        try {
+            Context context = getContext();
+            if (context != null) {
+                // Get the path of the installed APK
+                ApplicationInfo appInfo = context.getApplicationInfo();
+                File apkFile = new File(appInfo.sourceDir);
+
+                Uri apkUri = FileProvider.getUriForFile(
+                        context,
+                        context.getPackageName() + ".provider",
+                        apkFile
+                );
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("application/vnd.android.package-archive");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, apkUri);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                String appName = context.getApplicationInfo().loadLabel(context.getPackageManager()).toString();
+                startActivity(Intent.createChooser(shareIntent, "Share " + appName + " via"));
+            }
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Unable to share the app!", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
+    }
+
 
     private void displayDialog(){
         if (mAuth.getCurrentUser() == null) {
