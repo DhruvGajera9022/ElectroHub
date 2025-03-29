@@ -82,7 +82,7 @@ public class SpeakersActivity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Speakers");
+        toolBarTitle.setText(R.string.speaker);
         backBtn.setOnClickListener(v -> onBackPressed());
 
     }

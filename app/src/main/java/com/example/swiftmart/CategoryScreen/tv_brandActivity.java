@@ -101,7 +101,7 @@ public class tv_brandActivity extends AppCompatActivity {
         sliderIndicator = findViewById(R.id.sliderIndicator);
         tvViewPager = findViewById(R.id.tvViewPager);
 
-        toolBarTitle.setText("TV");
+        toolBarTitle.setText(R.string.tv);
         backBtn.setOnClickListener(v -> onBackPressed());
     }
 

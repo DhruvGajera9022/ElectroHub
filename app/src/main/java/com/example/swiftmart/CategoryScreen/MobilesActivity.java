@@ -105,7 +105,7 @@ public class MobilesActivity extends AppCompatActivity {
         getMobileCompany();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Mobiles");
+        toolBarTitle.setText(R.string.mobile);
         backBtn.setOnClickListener(v -> onBackPressed());
 
         getImageUrls();

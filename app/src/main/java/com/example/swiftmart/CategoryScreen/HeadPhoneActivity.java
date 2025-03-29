@@ -82,7 +82,7 @@ public class HeadPhoneActivity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Headphone");
+        toolBarTitle.setText(R.string.headphone);
         backBtn.setOnClickListener(v -> onBackPressed());
     }
 

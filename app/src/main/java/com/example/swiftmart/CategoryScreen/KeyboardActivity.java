@@ -81,7 +81,7 @@ public class KeyboardActivity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Keyboards");
+        toolBarTitle.setText(R.string.keyboard);
         backBtn.setOnClickListener(v -> onBackPressed());
         
     }

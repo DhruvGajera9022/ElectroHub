@@ -74,7 +74,7 @@ public class Edit_profile_Activity extends AppCompatActivity {
 
         getUserData();
 
-        toolBarTitle.setText("Edit Profile");
+        toolBarTitle.setText(R.string.edit_profile);
         backBtn.setOnClickListener(v -> onBackPressed());
 
         handleEditProfileSelectImageClick();

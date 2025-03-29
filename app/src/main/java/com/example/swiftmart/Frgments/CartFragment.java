@@ -109,7 +109,7 @@ public class CartFragment extends Fragment {
     private void configureCheckoutButton(boolean forCheckout) {
         if (forCheckout) {
             // Set up for checkout functionality
-            cartFragmentCheckout.setText("Proceed to Checkout");
+            cartFragmentCheckout.setText(R.string.proceed_to_checkout);
             cartFragmentCheckout.setOnClickListener(v -> {
                 if (datalist.isEmpty()) {
                     CustomToast.showToast(getContext(), "Your cart is empty");
@@ -128,7 +128,7 @@ public class CartFragment extends Fragment {
             });
         } else {
             // Set up for login functionality
-            cartFragmentCheckout.setText("Login to View Cart");
+            cartFragmentCheckout.setText(R.string.login_to_view_cart);
             cartFragmentCheckout.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);

@@ -78,7 +78,7 @@ public class Leptop_Activity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Laptops");
+        toolBarTitle.setText(R.string.laptop);
         backBtn.setOnClickListener(v -> onBackPressed());
     }
 

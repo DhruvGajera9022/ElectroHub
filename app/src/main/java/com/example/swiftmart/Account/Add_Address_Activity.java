@@ -104,13 +104,13 @@ public class Add_Address_Activity extends AppCompatActivity {
 
         addressID = getIntent().getStringExtra("addressID");
         if (addressID != null) {
-            btnSaveAddress.setText("Edit Address");
-            toolBarTitle.setText("Edit Address");
+            btnSaveAddress.setText(R.string.edit_address);
+            toolBarTitle.setText(R.string.edit_address);
             getAddressData();
             btnSaveAddress.setOnClickListener(v -> editAddress());
         } else {
-            btnSaveAddress.setText("Save Address");
-            toolBarTitle.setText("Add Address");
+            btnSaveAddress.setText(R.string.add_address);
+            toolBarTitle.setText(R.string.add_address);
             btnSaveAddress.setOnClickListener(v -> {
                 if (validateInputs()) {
                     addAddress();

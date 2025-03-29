@@ -20,7 +20,7 @@ public class AboutUsActivity extends AppCompatActivity {
 		// Toolbar Elements
 		backBtn = findViewById(R.id.backBtn);
 		toolBarTitle = findViewById(R.id.toolBarTitle);
-		toolBarTitle.setText("About Us");
+		toolBarTitle.setText(R.string.about_us);
 		backBtn.setOnClickListener(v -> onBackPressed());
 
 		// About Us Content

@@ -118,7 +118,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
 
         trackOrderScrollView.setVerticalScrollBarEnabled(false);
 
-        toolBarTitle.setText("Order Details");
+        toolBarTitle.setText(R.string.order_details);
         backBtn.setOnClickListener(v -> onBackPressed());
     }
 
@@ -147,21 +147,21 @@ public class OrderTrackingActivity extends AppCompatActivity {
                     }
 
                     if ("Pending".equals(value.getString("status"))){
-                        msgText.setText("Your order has been placed on: ");
+                        msgText.setText(R.string.your_order_has_been_placed_on);
                         orderDateAndTime.setText(value.getString("orderDate"));
                         msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.black));
                         orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.black));
                     }
 
                     if ("Accepted".equals(value.getString("status"))){
-                        msgText.setText("Your order has been accepted on: ");
+                        msgText.setText(R.string.your_order_has_been_accepted_on);
                         orderDateAndTime.setText(value.getString("shippingDate"));
                         msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
                         orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
                     }
 
                     if ("Shipped".equals(value.getString("status"))){
-                        msgText.setText("Your order has been shipped on: ");
+                        msgText.setText(R.string.your_order_has_been_shipped_on);
                         orderDateAndTime.setText(value.getString("shippedDate"));
                         msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
                         orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.green));
@@ -170,7 +170,7 @@ public class OrderTrackingActivity extends AppCompatActivity {
                     }
 
                     if ("Canceled".equals(value.getString("status"))) {
-                        msgText.setText("Your order has been canceled on: ");
+                        msgText.setText(R.string.your_order_has_been_canceled_on);
                         orderDateAndTime.setText(value.getString("canceledDate"));
                         msgText.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.red));
                         orderDateAndTime.setTextColor(ContextCompat.getColor(OrderTrackingActivity.this, R.color.red));

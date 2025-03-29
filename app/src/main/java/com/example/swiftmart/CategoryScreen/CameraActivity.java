@@ -84,7 +84,7 @@ public class CameraActivity extends AppCompatActivity {
 
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Camera");
+        toolBarTitle.setText(R.string.camera);
         backBtn.setOnClickListener(v -> onBackPressed());
         
     }

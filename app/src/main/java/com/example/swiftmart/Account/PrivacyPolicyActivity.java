@@ -21,7 +21,7 @@ public class PrivacyPolicyActivity extends AppCompatActivity {
 		// Toolbar Elements
 		backBtn = findViewById(R.id.backBtn);
 		toolBarTitle = findViewById(R.id.toolBarTitle);
-		toolBarTitle.setText("Privacy Policy");
+		toolBarTitle.setText(R.string.privacy_policy);
 		backBtn.setOnClickListener(v -> onBackPressed());
 
 		// Privacy Policy Content

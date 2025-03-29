@@ -54,7 +54,7 @@ public class AllProducts extends AppCompatActivity {
         getAllProducts();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Products");
+        toolBarTitle.setText(R.string.products);
         backBtn.setOnClickListener(v -> onBackPressed());
 
     }

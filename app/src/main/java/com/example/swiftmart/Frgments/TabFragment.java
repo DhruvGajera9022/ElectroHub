@@ -70,19 +70,19 @@ public class TabFragment extends Fragment {
 
         switch (position) {
             case 0:
-                emptyView.setText("No active items");
+                emptyView.setText(R.string.no_active_items);
                 getOrders("Pending");
                 break;
             case 1:
-                emptyView.setText("No shippinggi items");
+                emptyView.setText(R.string.no_shipping_items);
                 getOrders("Accepted");
                 break;
             case 2:
-                emptyView.setText("No shipped items");
+                emptyView.setText(R.string.no_shipped_items);
                 getOrders("Shipped");
                 break;
             case 3:
-                emptyView.setText("No canceled items");
+                emptyView.setText(R.string.no_canceled_items);
                 getOrders("Canceled");
                 break;
         }
@@ -134,19 +134,19 @@ public class TabFragment extends Fragment {
             int position = getArguments().getInt("tab_position", 0);
             switch (position) {
                 case 0:
-                    emptyView.setText("No active items");
+                    emptyView.setText(R.string.no_active_items);
                     getOrders("Pending");
                     break;
                 case 1:
-                    emptyView.setText("No shipping items");
+                    emptyView.setText(R.string.no_shipping_items);
                     getOrders("Accepted");
                     break;
                 case 2:
-                    emptyView.setText("No shipped items");
+                    emptyView.setText(R.string.no_shipped_items);
                     getOrders("Shipped");
                     break;
                 case 3:
-                    emptyView.setText("No canceled items");
+                    emptyView.setText(R.string.no_canceled_items);
                     getOrders("Canceled");
                     break;
             }

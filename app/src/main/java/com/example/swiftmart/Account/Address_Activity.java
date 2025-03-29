@@ -68,7 +68,7 @@ public class Address_Activity extends AppCompatActivity {
         getAllAddress();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Address");
+        toolBarTitle.setText(R.string.address);
         backBtn.setOnClickListener(v -> onBackPressed());
 
         addnewadr.setOnClickListener(v -> {

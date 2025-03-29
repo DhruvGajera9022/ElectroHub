@@ -103,7 +103,7 @@ public class EarphoneActivity extends AppCompatActivity {
         setStatusBarColor(R.color.home);
         getEarbudsCompany();
 
-        toolBarTitle.setText("Earbuds");
+        toolBarTitle.setText(R.string.earbuds);
         backBtn.setOnClickListener(v -> onBackPressed());
 
         getImageUrls();

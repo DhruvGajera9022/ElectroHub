@@ -70,7 +70,7 @@ public class WishlistActivity extends AppCompatActivity {
         wishlistRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // Back button listener
-        toolBarTitle.setText("Wishlist");
+        toolBarTitle.setText(R.string.wishlist);
         backBtn.setOnClickListener(v -> onBackPressed());
 
         // Load wishlist data

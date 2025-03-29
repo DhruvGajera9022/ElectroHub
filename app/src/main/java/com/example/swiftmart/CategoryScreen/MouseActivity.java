@@ -82,7 +82,7 @@ public class MouseActivity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Mouse");
+        toolBarTitle.setText(R.string.mouse);
         backBtn.setOnClickListener(v -> onBackPressed());
     }
 

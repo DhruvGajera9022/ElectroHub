@@ -57,23 +57,23 @@ public class OrdersActivity extends AppCompatActivity {
                 (tab, position) -> {
                     switch (position) {
                         case 0:
-                            tab.setText("Pending");
+                            tab.setText(R.string.pending);
                             break;
                         case 1:
-                            tab.setText("Shipping");
+                            tab.setText(R.string.shipping);
                             break;
                         case 2:
-                            tab.setText("Shipped");
+                            tab.setText(R.string.shipped);
                             break;
                         case 3:
-                            tab.setText("Canceled");
+                            tab.setText(R.string.canceled);
                             break;
                     }
                 }
         );
         mediator.attach();
 
-        toolBarTitle.setText("Orders");
+        toolBarTitle.setText(R.string.orders);
         backBtn.setOnClickListener(v -> onBackPressed());
     }
 

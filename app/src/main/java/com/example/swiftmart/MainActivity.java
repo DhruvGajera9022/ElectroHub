@@ -104,6 +104,12 @@ public class MainActivity extends AppCompatActivity implements NetworkChangeRece
                 case "English":
                     selectLanguage("en", item);
                     break;
+                case "हिन्दी":
+                    selectLanguage("hi", item);
+                    break;
+                case "ગુજરાતી":
+                    selectLanguage("gu", item);
+                    break;
                 default:
                     Toast.makeText(this, "Unsupported language", Toast.LENGTH_SHORT).show();
                     return;

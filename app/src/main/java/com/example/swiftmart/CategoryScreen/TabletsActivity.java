@@ -82,7 +82,7 @@ public class TabletsActivity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Tablets");
+        toolBarTitle.setText(R.string.tablet);
         backBtn.setOnClickListener(v -> onBackPressed());
         
     }

@@ -82,7 +82,7 @@ public class SmartWatchActivity extends AppCompatActivity {
         getImageUrls();
         setStatusBarColor(R.color.home);
 
-        toolBarTitle.setText("Smart Watch");
+        toolBarTitle.setText(R.string.smartwatch);
         backBtn.setOnClickListener(v -> onBackPressed());
         
     }

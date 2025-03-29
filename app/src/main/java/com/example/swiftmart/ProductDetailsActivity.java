@@ -644,7 +644,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                         } else {
                             Log.d("ProductDetailsRating", "No valid ratings found.");
                             productDetailsRating.setText("0.0"); // Default rating
-                            productDetailsRatingCount.setText("(0 Reviews)"); // Default review count
+                            productDetailsRatingCount.setText(R.string._0_reviews); // Default review count
                         }
                     }
                 })
