@@ -31,6 +31,7 @@ import com.example.swiftmart.Account.Address_Activity;
 import com.example.swiftmart.Account.Edit_profile_Activity;
 import com.example.swiftmart.Account.Language_Activity;
 import com.example.swiftmart.Account.OrdersActivity;
+import com.example.swiftmart.Account.PrivacyPolicyActivity;
 import com.example.swiftmart.Account.WishlistActivity;
 import com.example.swiftmart.LoginActivity;
 import com.example.swiftmart.MainActivity;
@@ -288,15 +289,16 @@ public class AccountFragment extends Fragment {
     }
 
 
-    // TODO handle about us click
+    // handle about us click
     private void handleAboutUsClick(){
         llAboutUs.setOnClickListener(v -> startActivity(new Intent(getContext(), AboutUsActivity.class)));
         btnAboutUs.setOnClickListener(v -> startActivity(new Intent(getContext(), AboutUsActivity.class)));
     }
 
-    // TODO handle privacy policy click
+    // handle privacy policy click
     private void handlePrivacyPolicyClick(){
-        // This doesn't require user authentication
+        llPrivacyPolicy.setOnClickListener(v -> startActivity(new Intent(getContext(), PrivacyPolicyActivity.class)));
+        btnPrivacyPolicy.setOnClickListener(v -> startActivity(new Intent(getContext(), PrivacyPolicyActivity.class)));
     }
 
     // TODO handle rate us click

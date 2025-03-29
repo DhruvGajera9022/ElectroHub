@@ -1,23 +1,29 @@
 package com.example.swiftmart.Account;
 
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swiftmart.R;
 
 public class AboutUsActivity extends AppCompatActivity {
-	TextView tvAboutContent, tvHeader;
+	TextView tvAboutContent;
+	private ImageView backBtn;
+	private TextView toolBarTitle;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_about_us);
 
-		tvHeader = findViewById(R.id.tvHeader);
-		tvAboutContent = findViewById(R.id.tvAboutContent);
+		backBtn = findViewById(R.id.backBtn);
+		toolBarTitle = findViewById(R.id.toolBarTitle);
 
-		tvHeader.setText("About Us");
+		toolBarTitle.setText("About Us");
+		backBtn.setOnClickListener(v -> onBackPressed());
+
+		tvAboutContent = findViewById(R.id.tvAboutContent);
 
 		String aboutText = "Welcome to ElectroHub – your one-stop destination for all things electronic!\n\n" +
 				                   "At ElectroHub, we bring you a vast collection of the latest and most advanced electronic devices, including " +

@@ -1,31 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/white"
-    tools:context=".Account.AboutUsActivity">
+    android:background="#FFFFFF">
 
     <include layout="@layout/tool_bar"/>
 
-    <!-- ScrollView for Text Content -->
+    <!-- Scrollable Privacy Policy Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
-        android:scrollbars="none"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:scrollbars="none">
 
         <TextView
-            android:id="@+id/tvAboutContent"
+            android:id="@+id/tvPrivacyContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="@color/black"
+            android:textColor="#444444"
             android:lineSpacingExtra="4dp"
             android:padding="8dp"
             android:background="@drawable/about_us_text_background"
-            android:paddingHorizontal="12dp" />
+            android:textStyle="normal" />
     </ScrollView>
+
 </LinearLayout>
