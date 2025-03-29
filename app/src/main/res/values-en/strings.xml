@@ -1,54 +1,114 @@
 <resources>
     <string name="app_name">ElectroHub</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="earbuds">Earbuds</string>
-    <string name="boat">boAt</string>
-    <string name="airdopes_alpha_with_35">Airdopes Alpha with 35...</string>
-    <string name="_71">71%</string>
-    <string name="_3_490">3,490</string>
-    <string name="_999">₹999</string>
-    <string name="save_extra_with_vombo_offers">Save extra with vombo offers</string>
-    <string name="express">EXPRESS</string>
-    <string name="_1_day_delivery">1 day delivery</string>
-    <string name="airdopes_supreme_w_4">Airdopes Supreme w/4...</string>
-    <string name="_4_990">4,990</string>
-    <string name="_1_399">₹1,399</string>
-    <string name="airdopes_alpha_with_35_hrs_playback_13mm_drivers_duai_mics_enx_and_beast_mode_blutooth_headset_jet_black_in_the_ear">Airdopes Alpha with 35 HRS Playback, 13mm Drivers, Duai Mics ENx And Beast Mode Blutooth Headset (Jet Black , In the Ear )</string>
-    <string name="_3_9">3.9</string>
-    <string name="_4_43_600_ratings">4,43,600 ratings</string>
-    <string name="add_to_cart">Add to Cart</string>
-    <string name="buy_now">Buy Now</string>
-    <string name="earphones">Earphones</string>
-    <string name="leptops">Laptops</string>
-    <string name="mobiles">Mobiles</string>
-    <string name="iphone">iPhone</string>
-    <string name="vivo">Vivo</string>
-    <string name="oppo">Oppo</string>
-    <string name="redmi">Redmi</string>
-    <string name="realme">Realme</string>
-    <string name="samsung">Samsung</string>
-    <string name="motorola">Motorola</string>
-    <string name="poco">Bit</string>
-    <string name="goggle">Goggle</string>
-    <string name="oneplus">Oneplus</string>
-    <string name="iqoo">IQ</string>
-    <string name="nothing">Nothing</string>
-    <string name="iphones">iPhones</string>
-    <string name="television">Television</string>
-    <string name="warranty_details">Warranty details</string>
-    <string name="tv">Tv</string>
-    <string name="laptops">Laptops</string>
-    <string name="headphones">Headphones</string>
-    <string name="speakers">Speakers</string>
-    <string name="keywords">Keyboard</string>
-    <string name="mouses">Mouse</string>
-    <string name="camera">Camera</string>
-    <string name="smartwatches">Smartwatches</string>
-    <string name="tablets">Tablets</string>
-    <string name="home">Home</string>
-    <string name="explore">Explore</string>
-    <string name="category">Category</string>
-    <string name="account">Account</string>
-    <string name="cart">Cart</string>
+
     <string name="default_web_client_id">892451060696-7n9qvlnt2adqdis5t5ct16662e0ne66u.apps.googleusercontent.com</string>
+
+    <string name="full_name_required">Full Name (Required)*</string>
+    <string name="phone_number_required">Phone number (Required)*</string>
+    <string name="please_enable_location_gps_on_your_app_to_proceed">Please enable location/GPS on your app to proceed.</string>
+    <string name="pincode_required">Pincode (Required)*</string>
+    <string name="use_my_location">Use my location</string>
+    <string name="state_required">State (Required)*</string>
+    <string name="city_required">City (Required)*</string>
+    <string name="house_no_building_name_required">House No., Building Name (Required)*</string>
+    <string name="road_name_area_colony_required">Road name, Area, Colony (Required)*</string>
+    <string name="types_of_address">Types of address</string>
+    <string name="home">Home</string>
+    <string name="work">Work</string>
+    <string name="default_str">Default</string>
+    <string name="please_check_if_you_add_your_first_address">Please check if you add your first address</string>
+    <string name="save_address">Save Address</string>
+
+    <string name="add_a_new_address">+ Add a new address</string>
+    <string name="no_address_available_please_add_one">No address available. Please add one.</string>
+
+    <string name="details">Details</string>
+    <string name="address">Address</string>
+    <string name="payment">Payment</string>
+    <string name="summary">Summary</string>
+    <string name="add_new_address">+ Add New Address</string>
+    <string name="edit">Edit</string>
+    <string name="deliver_to_this_address">Deliver to this address</string>
+
+    <string name="username">Username</string>
+    <string name="phone">Phone</string>
+    <string name="email">Email</string>
+
+    <string name="language">Language</string>
+
+    <string name="shipping_details">Shipping Details</string>
+    <string name="rate_your_experience">Rate your experience</string>
+    <string name="rate_the_product">Rate the product</string>
+    <string name="cancel_order">Cancel Order</string>
+
+    <string name="search_products_brands">Search products, brands...</string>
+
+    <string name="are_you_sure_you_want_to_exit_the_app">Are you sure you want to exit the app?</string>
+    <string name="okay">Okay</string>
+
+    <string name="track_order">Track Order</string>
+
+    <string name="custom_toast_message">Custom Toast Message</string>
+
+    <string name="delete_account">Delete Account?</string>
+    <string name="are_you_sure_want_to_delete_account">Are you sure want to delete account?</string>
+    <string name="delete">Delete</string>
+
+    <string name="filter_products">Filter Products</string>
+    <string name="sort_by">Sort By</string>
+    <string name="name">Name</string>
+    <string name="price">Price</string>
+    <string name="company">Company</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="price_range">Price Range</string>
+    <string name="category">Category</string>
+    <string name="reset">Reset</string>
+    <string name="apply">Apply</string>
+
+    <string name="edit_profile">Edit Profile</string>
+    <string name="order_history">Order History</string>
+    <string name="select_language">Select Language</string>
+    <string name="wishlist">Wishlist</string>
+    <string name="saved_addresses">Saved Addresses</string>
+    <string name="delete_account_main">Delete Account</string>
+    <string name="information">Information</string>
+    <string name="about_us">About Us</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="rate_us">Rate Us</string>
+    <string name="share">Share</string>
+    <string name="logout">Logout</string>
+
+    <string name="cart">Cart</string>
+    <string name="total_amount">Total Amount</string>
+    <string name="total_discount">Total Discount</string>
+    <string name="additional_fees">Additional fees</string>
+    <string name="total">Total</string>
+    <string name="check_out">Check Out</string>
+
+    <string name="mobile">Mobile</string>
+    <string name="earbuds">Earbuds</string>
+    <string name="tv">TV</string>
+    <string name="laptop">Laptop</string>
+    <string name="headphone">Headphone</string>
+    <string name="speaker">Speaker</string>
+    <string name="keyboard">Keyboard</string>
+    <string name="mouse">Mouse</string>
+    <string name="camera">Camera</string>
+    <string name="smartwatch">Smartwatch</string>
+    <string name="tablet">Tablet</string>
+
+    <string name="search_here">Search here</string>
+    <string name="trending">Trending</string>
+    <string name="see_all">See All</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="new_arrived">New Arrived</string>
+    <string name="recently_viewed">Recently Viewed</string>
+
+    <string name="internet_not_available">Internet Not Available</string>
+    <string name="check_internet_and_try_again">check internet and try again</string>
+
+    <string name="buy_now">Buy Now</string>
+    <string name="similar_products">Similar Products</string>
+    <string name="explore_more">Explore More</string>
 </resources>

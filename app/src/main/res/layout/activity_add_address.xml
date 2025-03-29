@@ -28,7 +28,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Full Name (Required)*"
+                android:hint="@string/full_name_required"
                 app:hintTextColor="@color/black"
                 app:boxBackgroundColor="@color/white"
                 app:boxStrokeColor="#2C4AFB"
@@ -58,7 +58,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone number (Required)*"
+                android:hint="@string/phone_number_required"
                 app:hintTextColor="@color/black"
                 app:boxBackgroundColor="@color/white"
                 app:boxStrokeColor="#2C4AFB"
@@ -81,7 +81,7 @@
             android:id="@+id/tvEnableGPS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Please enable location/GPS on your app to proceed."
+            android:text="@string/please_enable_location_gps_on_your_app_to_proceed"
             android:textColor="@color/red"
             android:layout_marginTop="8dp"
             android:textSize="12sp" />
@@ -102,7 +102,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Pincode (Required)*"
+                    android:hint="@string/pincode_required"
                     app:hintTextColor="@color/black"
                     app:boxBackgroundColor="@color/white"
                     app:boxStrokeColor="#2C4AFB"
@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:backgroundTint="#6055D8"
-                android:text="Use my location"
+                android:text="@string/use_my_location"
                 android:drawablePadding="8dp" />
         </LinearLayout>
 
@@ -149,7 +149,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="State (Required)*"
+                    android:hint="@string/state_required"
                     app:hintTextColor="@color/black"
                     app:boxBackgroundColor="@color/white"
                     app:boxStrokeColor="#2C4AFB"
@@ -180,7 +180,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="City (Required)*"
+                    android:hint="@string/city_required"
                     app:hintTextColor="@color/black"
                     app:boxBackgroundColor="@color/white"
                     app:boxStrokeColor="#2C4AFB"
@@ -213,7 +213,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="House No., Building Name (Required)*"
+                android:hint="@string/house_no_building_name_required"
                 app:hintTextColor="@color/black"
                 app:boxBackgroundColor="@color/white"
                 app:boxStrokeColor="#2C4AFB"
@@ -243,7 +243,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Road name, Area, Colony (Required)*"
+                android:hint="@string/road_name_area_colony_required"
                 app:hintTextColor="@color/black"
                 app:boxBackgroundColor="@color/white"
                 app:boxStrokeColor="#2C4AFB"
@@ -267,7 +267,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Types of address"
+            android:text="@string/types_of_address"
             android:textColor="@color/gray"
             android:textStyle="bold"
             android:layout_marginTop="8dp"
@@ -289,14 +289,14 @@
                     android:id="@+id/rbHome"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Home" />
+                    android:text="@string/home" />
 
                 <RadioButton
                     android:id="@+id/rbWork"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Work" />
+                    android:text="@string/work" />
             </RadioGroup>
 
             <LinearLayout
@@ -309,12 +309,12 @@
                     android:id="@+id/isDefaultCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Default"/>
+                    android:text="@string/default_str"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Please check if you add your first address"
+                    android:text="@string/please_check_if_you_add_your_first_address"
                     android:textSize="10sp"
                     android:layout_marginStart="5dp"
                     android:textColor="@color/red"/>
@@ -328,7 +328,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:text="Save Address"
+            android:text="@string/save_address"
             android:background="@drawable/btn"
             android:textAllCaps="false"
             android:textSize="15sp"

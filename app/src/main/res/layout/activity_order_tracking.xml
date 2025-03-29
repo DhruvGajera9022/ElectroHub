@@ -208,7 +208,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Shipping Details"
+                        android:text="@string/shipping_details"
                         android:fontFamily="@font/poppinsregular"
                         android:textSize="12sp"
                         android:padding="10dp"/>
@@ -289,7 +289,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Rate your experience"
+                        android:text="@string/rate_your_experience"
                         android:fontFamily="@font/poppinsregular"
                         android:textSize="12sp"
                         android:padding="10dp"/>
@@ -315,7 +315,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Rate the product"
+                                android:text="@string/rate_the_product"
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
                                 android:fontFamily="@font/poppinsregular"/>
@@ -391,7 +391,7 @@
                 android:layout_gravity="center"
                 android:background="@drawable/btn"
                 android:backgroundTint="#FF0000"
-                android:text="Cancel Order"
+                android:text="@string/cancel_order"
                 android:padding="10dp"
                 android:layout_marginTop="30dp"
                 android:textSize="12sp"

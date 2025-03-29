@@ -38,7 +38,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="12dp"
                 android:background="@null"
-                android:hint="Search products, brands..."
+                android:hint="@string/search_products_brands"
                 android:imeOptions="actionSearch"
                 android:inputType="textCapWords"
                 android:singleLine="true"

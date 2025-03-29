@@ -80,7 +80,7 @@
                android:layout_height="wrap_content"
                android:background="@drawable/search_view_background"
                android:layout_marginHorizontal="10dp"
-               app:queryHint="Search here"
+               app:queryHint="@string/search_here"
                app:iconifiedByDefault="false"
                android:inputType="textCapWords"
                android:fontFamily="@font/poppinsregular"/>
@@ -148,7 +148,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/mobiles"
+                               android:text="@string/mobile"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -204,7 +204,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/laptops"
+                               android:text="@string/laptop"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -228,7 +228,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/headphones"
+                               android:text="@string/headphone"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -244,7 +244,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/speakers"
+                               android:text="@string/speaker"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -268,7 +268,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/keywords"
+                               android:text="@string/keyboard"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -284,7 +284,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/mouses"
+                               android:text="@string/mouse"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -324,7 +324,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/smartwatches"
+                               android:text="@string/smartwatch"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -348,7 +348,7 @@
                            <TextView
                                android:layout_width="wrap_content"
                                android:layout_height="wrap_content"
-                               android:text="@string/tablets"
+                               android:text="@string/tablet"
                                android:textSize="12sp"
                                android:textColor="@color/black"
                                android:fontFamily="@font/poppinsregular"
@@ -373,7 +373,7 @@
                    <TextView
                        android:layout_width="0dp"
                        android:layout_height="wrap_content"
-                       android:text="Trending"
+                       android:text="@string/trending"
                        android:textSize="16sp"
                        android:fontFamily="@font/poppinsmedium"
                        android:textColor="@color/black"
@@ -388,7 +388,7 @@
                        android:layout_height="wrap_content"
                        android:layout_gravity="center"
                        android:fontFamily="@font/poppinsregular"
-                       android:text="See All"
+                       android:text="@string/see_all"
                        android:textColor="#6055D8"
                        android:textSize="12sp"
                        android:layout_weight="1"/>
@@ -412,7 +412,7 @@
                    <TextView
                        android:layout_width="0dp"
                        android:layout_height="wrap_content"
-                       android:text="Most Popular"
+                       android:text="@string/most_popular"
                        android:textSize="16sp"
                        android:fontFamily="@font/poppinsmedium"
                        android:textColor="@color/black"
@@ -427,7 +427,7 @@
                        android:layout_height="wrap_content"
                        android:layout_gravity="center"
                        android:fontFamily="@font/poppinsregular"
-                       android:text="See All"
+                       android:text="@string/see_all"
                        android:textColor="#6055D8"
                        android:textSize="12sp"
                        android:layout_weight="1"/>
@@ -451,7 +451,7 @@
                    <TextView
                        android:layout_width="0dp"
                        android:layout_height="wrap_content"
-                       android:text="New Arrived"
+                       android:text="@string/new_arrived"
                        android:textSize="16sp"
                        android:fontFamily="@font/poppinsmedium"
                        android:textColor="@color/black"
@@ -466,7 +466,7 @@
                        android:layout_height="wrap_content"
                        android:layout_gravity="center"
                        android:fontFamily="@font/poppinsregular"
-                       android:text="See All"
+                       android:text="@string/see_all"
                        android:textColor="#6055D8"
                        android:textSize="12sp"
                        android:layout_weight="1"/>
@@ -503,7 +503,7 @@
                            android:layout_marginBottom="10dp"
                            android:fontFamily="@font/poppinsmedium"
                            android:gravity="start"
-                           android:text="Recently Viewed"
+                           android:text="@string/recently_viewed"
                            android:textColor="@color/black"
                            android:textSize="16sp"
                            android:textStyle="bold" />

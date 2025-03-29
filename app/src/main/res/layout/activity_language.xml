@@ -37,7 +37,7 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             android:id="@+id/language"
-            android:text="Language"
+            android:text="@string/language"
             android:fontFamily="@font/poppinsbold"/>
 
 

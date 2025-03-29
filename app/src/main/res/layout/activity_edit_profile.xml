@@ -65,7 +65,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="@string/username"
             app:hintTextColor="@color/black"
             app:boxBackgroundColor="@color/white"
             app:boxStrokeColor="#2C4AFB"
@@ -100,7 +100,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Phone"
+            android:hint="@string/phone"
             app:hintTextColor="@color/black"
             app:boxBackgroundColor="@color/white"
             app:boxStrokeColor="#2C4AFB"
@@ -125,7 +125,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="@string/email"
             app:hintTextColor="@color/black"
             app:boxBackgroundColor="@color/white"
             app:boxStrokeColor="#2C4AFB"
@@ -156,7 +156,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_marginHorizontal="20dp"
-        android:text="Edit"
+        android:text="@string/edit"
         android:textColor="@color/white"
         android:layout_marginTop="50dp"
         android:textAllCaps="false"

@@ -18,7 +18,7 @@
         android:id="@+id/toast_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Custom Toast Message"
+        android:text="@string/custom_toast_message"
         android:textColor="#FFFFFF"
         android:textSize="16sp"/>
 </LinearLayout>
