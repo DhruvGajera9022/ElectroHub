@@ -49,7 +49,6 @@ public class Language_Activity extends AppCompatActivity {
         arrlanguage.add(new LanguageModel("தமிழ்","Tamil"));
         arrlanguage.add(new LanguageModel("ગુજરાતી","Gujarati"));
         arrlanguage.add(new LanguageModel("اُردُو","Urdu"));
-        arrlanguage.add(new LanguageModel("ਪੰਜਾਬੀ","Punjabi"));
         arrlanguage.add(new LanguageModel("ಕನ್ನಡ","Kannada"));
         arrlanguage.add(new LanguageModel("മലയാളം","Malayalam"));
 

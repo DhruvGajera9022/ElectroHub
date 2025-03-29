@@ -107,17 +107,23 @@ public class MainActivity extends AppCompatActivity implements NetworkChangeRece
                 case "हिन्दी":
                     selectLanguage("hi", item);
                     break;
-                case "ગુજરાતી":
-                    selectLanguage("gu", item);
-                    break;
                 case "বাংলা":
                     selectLanguage("bn", item);
                     break;
                 case "मराठी":
                     selectLanguage("mr", item);
                     break;
-                case "ਪੰਜਾਬੀ":
-                    selectLanguage("pa", item);
+                case "తెలుగు":
+                    selectLanguage("te", item);
+                    break;
+                case "தமிழ்":
+                    selectLanguage("ta", item);
+                    break;
+                case "ગુજરાતી":
+                    selectLanguage("gu", item);
+                    break;
+                case "اُردُو":
+                    selectLanguage("ur", item);
                     break;
                 case "ಕನ್ನಡ":
                     selectLanguage("kn", item);
