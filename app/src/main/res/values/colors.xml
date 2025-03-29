@@ -66,4 +66,6 @@
     <color name="recently_viewed_focused">#4CAF50</color> <!-- Green for focused state -->
     <color name="recently_viewed_default">#FFFFFF</color> <!-- White for default state -->
 
+    <color name="teal_700">#008080</color>
+
 </resources>

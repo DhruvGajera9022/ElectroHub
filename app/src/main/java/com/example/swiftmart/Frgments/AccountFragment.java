@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.swiftmart.Account.AboutUsActivity;
 import com.example.swiftmart.Account.Address_Activity;
 import com.example.swiftmart.Account.Edit_profile_Activity;
 import com.example.swiftmart.Account.Language_Activity;
@@ -289,7 +290,8 @@ public class AccountFragment extends Fragment {
 
     // TODO handle about us click
     private void handleAboutUsClick(){
-        // This doesn't require user authentication
+        llAboutUs.setOnClickListener(v -> startActivity(new Intent(getContext(), AboutUsActivity.class)));
+        btnAboutUs.setOnClickListener(v -> startActivity(new Intent(getContext(), AboutUsActivity.class)));
     }
 
     // TODO handle privacy policy click
