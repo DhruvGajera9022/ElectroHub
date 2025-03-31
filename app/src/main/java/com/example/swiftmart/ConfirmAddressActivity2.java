@@ -18,6 +18,11 @@ import com.example.swiftmart.Account.Add_Address_Activity;
 import com.example.swiftmart.Model.CartModel;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.Utils.CustomToast;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -68,6 +73,17 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
         setupClickListeners();
 
         setStatusBarColor(R.color.home);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+            }
+        });
+
+        AdView mAdView;
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void initializeViews() {

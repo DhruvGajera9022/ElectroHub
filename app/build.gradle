@@ -87,4 +87,7 @@ dependencies {
 
     // For payment
     implementation("com.razorpay:checkout:1.6.23")
+
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
+
 }

@@ -26,6 +26,11 @@ import androidx.core.content.ContextCompat;
 import com.example.swiftmart.Model.InvoiceModel;
 import com.example.swiftmart.Utils.CustomToast;
 import com.example.swiftmart.Utils.InvoiceGenerator;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -84,6 +89,17 @@ public class OrderTrackingActivity extends AppCompatActivity {
         handleCancelOrder();
 
         setStatusBarColor(R.color.home);
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+            }
+        });
+
+        AdView mAdView;
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void initialization(){

@@ -21,6 +21,11 @@ import com.example.swiftmart.Adapter.AllProductAdapter;
 import com.example.swiftmart.Adapter.ProductAdapter;
 import com.example.swiftmart.Model.ProductModel;
 import com.example.swiftmart.Utils.CustomToast;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -56,6 +61,17 @@ public class AllProducts extends AppCompatActivity {
 
         toolBarTitle.setText(R.string.products);
         backBtn.setOnClickListener(v -> onBackPressed());
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+
+            }
+        });
+
+        AdView mAdView;
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
 
     }
 

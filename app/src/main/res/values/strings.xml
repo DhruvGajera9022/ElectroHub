@@ -114,4 +114,11 @@
     <string name="no_shipping_items">No shipping items</string>
     <string name="no_shipped_items">No shipped items</string>
     <string name="no_canceled_items">No canceled items</string>
+
+    <string name="admob_app_id">
+ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_banner_id">
+ca-app-pub-3940256099942544/9214589741</string>
+    <string name="admob_native_id">
+    ca-app-pub-3940256099942544/2247696110</string>
 </resources>

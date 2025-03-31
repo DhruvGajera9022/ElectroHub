@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -37,6 +38,12 @@ import com.example.swiftmart.LoginActivity;
 import com.example.swiftmart.MainActivity;
 import com.example.swiftmart.R;
 import com.example.swiftmart.WelcomeActivity;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.NativeAd;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -59,6 +66,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class AccountFragment extends Fragment {
+
+
+
     private ImageButton btnEditProfile, btnLanguage, btnOrderHistory, btnWishlist, btnAboutUs, btnPrivacyPolicy, btnDeleteUser, profileRateUsBtn, btnAddress, btnShare;
     private AppCompatButton btnLogout;
     private LinearLayout llWishlist, llEditProfile, llOrderHistory, llAboutUs, llPrivacyPolicy,llLanguage, llDeleteUser, llRateUs,llsavedaddress, llShare;
@@ -68,6 +78,7 @@ public class AccountFragment extends Fragment {
     private FirebaseAuth mAuth;
     private ProgressBar accountFragmentProgressBar;
     private AlertDialog dialog;
+    private InterstitialAd mInterstitialAd;
 
     public AccountFragment() {
 
@@ -137,6 +148,8 @@ public class AccountFragment extends Fragment {
         handleUserLogout();
 
         return view;
+
+
     }
 
     // Redirect to login screen
@@ -186,8 +199,10 @@ public class AccountFragment extends Fragment {
         llEditProfile.setOnClickListener(v -> {
             if (mAuth.getCurrentUser() == null) {
                 redirectToLogin();
+                mInterstitialAd.show(getActivity());
                 return;
             }
+            
             Intent intent = new Intent(getContext(), Edit_profile_Activity.class);
             startActivity(intent);
         });
