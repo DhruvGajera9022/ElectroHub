@@ -178,10 +178,33 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
             startActivity(intent);
         });
 
-        confirmAddressDeliver.setOnClickListener(v -> initiatePayment());
+        confirmAddressDeliver.setOnClickListener(v -> {
+            // Show bottom sheet dialog
+            PaymentOptionsBottomSheetFragment paymentOptionsFragment = new PaymentOptionsBottomSheetFragment();
+            paymentOptionsFragment.setOnPaymentOptionSelectedListener(new PaymentOptionsBottomSheetFragment.OnPaymentOptionSelectedListener() {
+                @Override
+                public void onPaymentOptionSelected(boolean isOnlinePayment) {
+                    if (isOnlinePayment) {
+                        // User selected online payment, proceed with handlePayment method
+                        handlePayment();
+                    } else {
+                        // User selected cash on delivery, proceed with handleCashOnDelivery method
+                        handleCashOnDelivery();
+                    }
+                }
+            });
+            paymentOptionsFragment.show(getSupportFragmentManager(), "paymentOptions");
+        });
     }
 
-    private void initiatePayment() {
+    private void handleCashOnDelivery() {
+        // Proceed with order creation and other necessary actions
+        updateProductQuantities();
+        createOrdersCOD("", "COD");  // Example: Use "COD" or a similar identifier for cash on delivery orders
+        clearCart();
+    }
+
+    private void handlePayment() {
         try {
             JSONObject options = new JSONObject();
             options.put("name", getString(R.string.app_name));
@@ -205,7 +228,7 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
 
     public void onPaymentSuccess(String razorpayPaymentID) {
         updateProductQuantities();
-        createOrders(razorpayPaymentID);
+        createOrders(razorpayPaymentID, "ONLINE");
         clearCart();
         finish();
     }
@@ -231,7 +254,7 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
         }
     }
 
-    private void createOrders(String paymentID) {
+    private void createOrders(String paymentID, String paymentMethod) {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss a");
@@ -252,6 +275,7 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
             orderMap.put("category", product.getCategory());
             orderMap.put("company", product.getCompany());
             orderMap.put("paymentID", paymentID);
+            orderMap.put("paymentMethod", paymentMethod);
             orderMap.put("oid", oid);
             orderMap.put("aid", addressID);
             orderMap.put("quantity", product.getQty());
@@ -266,6 +290,50 @@ public class ConfirmAddressActivity2 extends AppCompatActivity {
 
             db.collection("Orders").document(oid).set(orderMap)
                     .addOnSuccessListener(aVoid -> Log.d("Order", "Order created: " + product.getName()))
+                    .addOnFailureListener(e -> Log.e("Order", "Error creating order", e));
+        }
+    }
+
+    private void createOrdersCOD(String paymentID, String paymentMethod) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss a");
+
+        String orderDate = dateFormat.format(calendar.getTime());
+        String orderTime = timeFormat.format(calendar.getTime());
+
+        for (CartModel product : cartProducts) {
+            String oid = db.collection("Orders").document().getId();
+            double totalAmount = Double.parseDouble(product.getPrice()) * Integer.parseInt(product.getQty());
+
+            Map<String, Object> orderMap = new HashMap<>();
+            orderMap.put("uid", uid);
+            orderMap.put("pid", product.getPid());
+            orderMap.put("name", product.getName());
+            orderMap.put("price", product.getPrice());
+            orderMap.put("description", product.getDescription());
+            orderMap.put("category", product.getCategory());
+            orderMap.put("company", product.getCompany());
+            orderMap.put("paymentID", paymentID);
+            orderMap.put("paymentMethod", paymentMethod);
+            orderMap.put("oid", oid);
+            orderMap.put("aid", addressID);
+            orderMap.put("quantity", product.getQty());
+            orderMap.put("imgurls", product.getImgurls());
+            orderMap.put("orderDate", orderDate);
+            orderMap.put("orderTime", orderTime);
+            orderMap.put("shippingDate", "");
+            orderMap.put("shippedDate", "");
+            orderMap.put("canceledDate", "");
+            orderMap.put("totalAmount", String.valueOf(totalAmount));
+            orderMap.put("status", "Pending");
+
+            db.collection("Orders").document(oid).set(orderMap)
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("Order", "Order created: " + product.getName());
+                        startActivity(new Intent(ConfirmAddressActivity2.this, OrderConfirmActivity.class));
+                        finish();
+                    })
                     .addOnFailureListener(e -> Log.e("Order", "Error creating order", e));
         }
     }

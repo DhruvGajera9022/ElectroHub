@@ -202,13 +202,10 @@ public class ConfirmAddressActivity extends AppCompatActivity {
     }
 
     private void handleCashOnDelivery() {
-        // Handle cash on delivery process here
-        CustomToast.showToast(ConfirmAddressActivity.this, "Cash on delivery selected");
         // Proceed with order creation and other necessary actions
         updateQuantity();
         createNewOrderCOD("COD");  // Example: Use "COD" or a similar identifier for cash on delivery orders
     }
-
 
 
     private void getProductData() {
@@ -416,6 +413,7 @@ public class ConfirmAddressActivity extends AppCompatActivity {
                 .document(oid)
                 .set(orderMap)
                 .addOnSuccessListener(aVoid -> {
+                    startActivity(new Intent(ConfirmAddressActivity.this, OrderConfirmActivity.class));
                     finish();
                 });
     }
