@@ -30,6 +30,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE.md'
+        exclude 'META-INF/NOTICE.md'
+    }
 }
 
 dependencies {
@@ -88,6 +93,11 @@ dependencies {
     // For payment
     implementation("com.razorpay:checkout:1.6.23")
 
+    // For Google add
     implementation 'com.google.android.gms:play-services-ads:22.6.0'
+
+    //send email
+    implementation("com.sun.mail:android-mail:1.6.7")
+    implementation("com.sun.mail:android-activation:1.6.7")
 
 }

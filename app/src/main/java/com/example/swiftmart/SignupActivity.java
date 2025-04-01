@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -186,7 +187,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     // handle sign up button click
-    private void handleSignUpButtonClick(){
+    private void handleSignUpButtonClick() {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,86 +197,123 @@ public class SignupActivity extends AppCompatActivity {
                 String txtConfirmPassword = signUpConfirmPasswordInput.getText().toString().trim();
                 boolean isValid = true;
 
-                if(txtUsername.isEmpty()){
+                // Input validations
+                if (txtUsername.isEmpty()) {
                     signUpUserNameInput.setError("Please provide your username");
                     signUpUserNameInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
 
-                if(txtEmail.isEmpty()){
+                if (txtEmail.isEmpty()) {
                     signUpEmailInput.setError("Please provide your email");
                     signUpEmailInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
 
-                if(txtPassword.isEmpty()){
+                if (txtPassword.isEmpty()) {
                     signUpPasswordInput.setError("Please provide your password");
                     signUpPasswordInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
 
-                if(txtConfirmPassword.isEmpty()){
+                if (txtConfirmPassword.isEmpty()) {
                     signUpConfirmPasswordInput.setError("Please provide confirm password");
                     signUpConfirmPasswordInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
 
-                if(!txtPassword.equals(txtConfirmPassword)){
-                    signUpConfirmPasswordInput.setError("Password not match");
+                if (!txtPassword.equals(txtConfirmPassword)) {
+                    signUpConfirmPasswordInput.setError("Passwords do not match");
                     signUpConfirmPasswordInput.setBackgroundResource(R.drawable.rounded_edit_text_error);
                     isValid = false;
                 }
 
-                if (isValid) {
-                    progress();
-                    mAuth.createUserWithEmailAndPassword(txtEmail, txtPassword)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        FirebaseUser user = task.getResult().getUser();
-
-                                        if (user != null) {
-                                            String userID = user.getUid();
-                                            DocumentReference documentReference = firestore.collection("Users").document(userID);
-
-                                            Map<String, Object> userMap = new HashMap<>();
-                                            userMap.put("Username", txtUsername);
-                                            userMap.put("Email", txtEmail);
-                                            userMap.put("UserId", userID);
-
-                                            documentReference.set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    startActivity(new Intent(SignupActivity.this, Language_Activity.class));
-                                                    CustomToast.showToast(SignupActivity.this, "Account created");
-                                                    finish();
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    CustomToast.showToast(SignupActivity.this, "Failed to save user data");
-                                                }
-                                            });
-                                        }
-                                    } else {
-                                        CustomToast.showToast(SignupActivity.this, "Signup failed");
-                                    }
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    signUpButton.setVisibility(View.VISIBLE);
-                                    signUpProgressBar.setVisibility(View.GONE);
-                                    CustomToast.showToast(SignupActivity.this, "Signup failed");
-                                }
-                            });
+                if (!isValid) {
+                    return;
                 }
 
+                // Check if email already exists in Firestore
+                progress(); // Show progress bar
+                firestore.collection("Users")
+                        .whereEqualTo("Email", txtEmail)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                    // Email already exists
+                                    signUpButton.setVisibility(View.VISIBLE);
+                                    signUpProgressBar.setVisibility(View.GONE);
+                                    signUpEmailInput.setError("Email is already registered");
+                                    CustomToast.showToast(SignupActivity.this, "Email already exists. Please use a different email.");
+                                } else {
+                                    // Email is not found, proceed with signup
+                                    registerUser(txtEmail, txtPassword, txtUsername);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                signUpButton.setVisibility(View.VISIBLE);
+                                signUpProgressBar.setVisibility(View.GONE);
+                                CustomToast.showToast(SignupActivity.this, "Failed to check email availability");
+                            }
+                        });
             }
         });
     }
+
+    // Register the user
+    private void registerUser(String email, String password, String username) {
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = task.getResult().getUser();
+                            if (user != null) {
+                                String userID = user.getUid();
+                                DocumentReference documentReference = firestore.collection("Users").document(userID);
+
+                                Map<String, Object> userMap = new HashMap<>();
+                                userMap.put("Username", username);
+                                userMap.put("Email", email);
+                                userMap.put("UserId", userID);
+
+                                documentReference.set(userMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                startActivity(new Intent(SignupActivity.this, Language_Activity.class));
+                                                CustomToast.showToast(SignupActivity.this, "Account created");
+                                                finish();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                CustomToast.showToast(SignupActivity.this, "Failed to save user data");
+                                            }
+                                        });
+                            }
+                        } else {
+                            signUpButton.setVisibility(View.VISIBLE);
+                            signUpProgressBar.setVisibility(View.GONE);
+                            CustomToast.showToast(SignupActivity.this, "Signup failed");
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        signUpButton.setVisibility(View.VISIBLE);
+                        signUpProgressBar.setVisibility(View.GONE);
+                        CustomToast.showToast(SignupActivity.this, "Signup failed");
+                    }
+                });
+    }
+
 
     // handle google button click
     private void handleGoogleButton(){
