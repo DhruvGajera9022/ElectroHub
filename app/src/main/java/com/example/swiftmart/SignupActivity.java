@@ -1,11 +1,13 @@
 package com.example.swiftmart;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
@@ -20,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.swiftmart.Account.Language_Activity;
+import com.example.swiftmart.EmailService.OTPManager;
+import com.example.swiftmart.EmailService.SendEmailTask;
 import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -228,38 +232,11 @@ public class SignupActivity extends AppCompatActivity {
                     isValid = false;
                 }
 
-                if (!isValid) {
-                    return;
+                if (isValid) {
+                    // Check if email already exists in Firestore
+                    progress(); // Show progress bar
+                    registerUser(txtEmail, txtPassword, txtUsername);
                 }
-
-                // Check if email already exists in Firestore
-                progress(); // Show progress bar
-                firestore.collection("Users")
-                        .whereEqualTo("Email", txtEmail)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                    // Email already exists
-                                    signUpButton.setVisibility(View.VISIBLE);
-                                    signUpProgressBar.setVisibility(View.GONE);
-                                    signUpEmailInput.setError("Email is already registered");
-                                    CustomToast.showToast(SignupActivity.this, "Email already exists. Please use a different email.");
-                                } else {
-                                    // Email is not found, proceed with signup
-                                    registerUser(txtEmail, txtPassword, txtUsername);
-                                }
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                signUpButton.setVisibility(View.VISIBLE);
-                                signUpProgressBar.setVisibility(View.GONE);
-                                CustomToast.showToast(SignupActivity.this, "Failed to check email availability");
-                            }
-                        });
             }
         });
     }
@@ -274,44 +251,119 @@ public class SignupActivity extends AppCompatActivity {
                             FirebaseUser user = task.getResult().getUser();
                             if (user != null) {
                                 String userID = user.getUid();
-                                DocumentReference documentReference = firestore.collection("Users").document(userID);
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                DocumentReference documentReference = db.collection("Users").document(userID);
 
                                 Map<String, Object> userMap = new HashMap<>();
                                 userMap.put("Username", username);
                                 userMap.put("Email", email);
                                 userMap.put("UserId", userID);
+                                userMap.put("isValidEmail", false);
 
-                                documentReference.set(userMap)
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                startActivity(new Intent(SignupActivity.this, Language_Activity.class));
-                                                CustomToast.showToast(SignupActivity.this, "Account created");
-                                                finish();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                CustomToast.showToast(SignupActivity.this, "Failed to save user data");
-                                            }
-                                        });
+                                // Get context and send mail
+                                Context context = getApplicationContext();
+                                sendMail(email, context);
+
+                                final OtpVerificationDialog[] otpVerificationDialog = new OtpVerificationDialog[1];
+
+                                // Create and show OTP verification dialog
+                                otpVerificationDialog[0] = new OtpVerificationDialog(SignupActivity.this, email, new OtpVerificationDialog.onOTPsubmit() {
+                                    @Override
+                                    public void onSubmit(String otp) {
+
+                                        boolean isOtpValid = OTPManager.validateOTP(context, otp);
+
+                                        if (isOtpValid) {
+                                            // OTP is valid, update isValidate to true
+                                            userMap.put("isValidate", true); // Set isValidate to true
+
+                                            // Save user data to Firestore
+                                            documentReference.set(userMap)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            CustomToast.showToast(SignupActivity.this, "Account created successfully");
+                                                            startActivity(new Intent(SignupActivity.this, Language_Activity.class));
+                                                            otpVerificationDialog[0].dismiss(); // Ensure null check
+                                                            finish();
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            signUpButton.setVisibility(View.VISIBLE);
+                                                            signUpProgressBar.setVisibility(View.GONE);
+                                                            CustomToast.showToast(SignupActivity.this, "Failed to save user data: " + e.getMessage());
+                                                        }
+                                                    });
+                                        } else {
+                                            // OTP is invalid, set isValidate to false
+                                            userMap.put("isValidate", false); // Set isValidate to false
+
+                                            documentReference.set(userMap)
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            Toast.makeText(context, "Invalid or expired OTP!", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            CustomToast.showToast(SignupActivity.this, "Failed to update OTP validation status: " + e.getMessage());
+                                                        }
+                                                    });
+                                        }
+                                    }
+                                });
+
+                                otpVerificationDialog[0].show(); // Show OTP dialog here
                             }
                         } else {
                             signUpButton.setVisibility(View.VISIBLE);
                             signUpProgressBar.setVisibility(View.GONE);
-                            CustomToast.showToast(SignupActivity.this, "Signup failed");
+
+                            // Get the specific Firebase error message
+                            String errorMessage = "Signup failed";
+                            if (task.getException() != null) {
+                                errorMessage = task.getException().getMessage();
+
+                                // Provide more user-friendly messages for common errors
+                                if (errorMessage.contains("email address is already in use")) {
+                                    errorMessage = "Email is already registered";
+                                } else if (errorMessage.contains("password is invalid")) {
+                                    errorMessage = "Password must be at least 6 characters";
+                                } else if (errorMessage.contains("badly formatted")) {
+                                    errorMessage = "Please enter a valid email address";
+                                }
+                            }
+                            CustomToast.showToast(SignupActivity.this, errorMessage);
+                            Log.d("SignUP", "createUserWithEmail:failure", task.getException());
                         }
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        signUpButton.setVisibility(View.VISIBLE);
-                        signUpProgressBar.setVisibility(View.GONE);
-                        CustomToast.showToast(SignupActivity.this, "Signup failed");
-                    }
                 });
+    }
+
+    private void sendMail(String email, Context context) {
+        try {
+            String recipientEmail = email;
+            String otp = OTPManager.generateOTP();
+
+            // Save OTP with a longer expiration time (5 minutes)
+            OTPManager.saveOTP(context, otp, System.currentTimeMillis() + (5 * 60 * 1000));
+
+            String subject = "Your OTP Code";
+            String messageBody = "Your OTP for authentication is: " + otp;
+
+            SendEmailTask sendEmailTask = new SendEmailTask(recipientEmail, subject, messageBody);
+            sendEmailTask.execute();
+
+            // Log success
+            Log.d("SendMail", "Email sending initiated for: " + email);
+        } catch (Exception e) {
+            Log.e("SendMail", "Error in sendMail method: " + e.getMessage(), e);
+            throw e; // Re-throw to be caught by the calling method
+        }
     }
 
 
