@@ -178,14 +178,38 @@ public class ConfirmAddressActivity extends AppCompatActivity {
         });
     }
 
-    private void handleDeliverClick(){
+    private void handleDeliverClick() {
         confirmAddressDeliver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handlePayment();
+                // Show bottom sheet dialog
+                PaymentOptionsBottomSheetFragment paymentOptionsFragment = new PaymentOptionsBottomSheetFragment();
+                paymentOptionsFragment.setOnPaymentOptionSelectedListener(new PaymentOptionsBottomSheetFragment.OnPaymentOptionSelectedListener() {
+                    @Override
+                    public void onPaymentOptionSelected(boolean isOnlinePayment) {
+                        if (isOnlinePayment) {
+                            // User selected online payment, proceed with handlePayment method
+                            handlePayment();
+                        } else {
+                            // User selected cash on delivery, proceed with handleCashOnDelivery method
+                            handleCashOnDelivery();
+                        }
+                    }
+                });
+                paymentOptionsFragment.show(getSupportFragmentManager(), "paymentOptions");
             }
         });
     }
+
+    private void handleCashOnDelivery() {
+        // Handle cash on delivery process here
+        CustomToast.showToast(ConfirmAddressActivity.this, "Cash on delivery selected");
+        // Proceed with order creation and other necessary actions
+        updateQuantity();
+        createNewOrderCOD("COD");  // Example: Use "COD" or a similar identifier for cash on delivery orders
+    }
+
+
 
     private void getProductData() {
         db.collection("Products").document(productID)
@@ -266,7 +290,7 @@ public class ConfirmAddressActivity extends AppCompatActivity {
 
     public void onPaymentSuccess(String razorpayPaymentID) {
         updateQuantity();
-        createNewOrder(razorpayPaymentID);
+        createNewOrder(razorpayPaymentID, "ONLINE");
     }
 
     void updateQuantity() {
@@ -314,7 +338,7 @@ public class ConfirmAddressActivity extends AppCompatActivity {
         });
     }
 
-    private void createNewOrder(String paymentID) {
+    private void createNewOrder(String paymentID, String paymentMethod) {
 
         Calendar calForDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
@@ -334,6 +358,48 @@ public class ConfirmAddressActivity extends AppCompatActivity {
         orderMap.put("category", productCategory);
         orderMap.put("company", productCompany);
         orderMap.put("paymentID", paymentID);
+        orderMap.put("paymentMethod", paymentMethod);
+        orderMap.put("oid", oid);
+        orderMap.put("aid", addressID);
+        orderMap.put("quantity", "1");
+        orderMap.put("imgurls", currentImageUrls);
+        orderMap.put("orderDate", saveCurrentDate);
+        orderMap.put("orderTime", saveCurrentTime);
+        orderMap.put("shippingDate", "");
+        orderMap.put("shippedDate", "");
+        orderMap.put("canceledDate", "");
+        orderMap.put("totalAmount", totalAmount.toString());
+        orderMap.put("status", "Pending");
+
+        db.collection("Orders")
+                .document(oid)
+                .set(orderMap)
+                .addOnSuccessListener(aVoid -> {
+                    finish();
+                });
+    }
+
+    private void createNewOrderCOD(String paymentMethod) {
+
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        String saveCurrentDate = currentDate.format(calForDate.getTime());
+        String saveCurrentTime = currentTime.format(calForDate.getTime());
+
+        String oid = db.collection("Orders").document().getId();
+        totalAmount = Double.parseDouble(productPrice) * 1;
+
+        Map<String, Object> orderMap = new HashMap<>();
+        orderMap.put("uid", uid);
+        orderMap.put("pid", productID);
+        orderMap.put("name", productName);
+        orderMap.put("price", productPrice);
+        orderMap.put("description", productDescription);
+        orderMap.put("category", productCategory);
+        orderMap.put("company", productCompany);
+        orderMap.put("paymentID", "");
+        orderMap.put("paymentMethod", paymentMethod);
         orderMap.put("oid", oid);
         orderMap.put("aid", addressID);
         orderMap.put("quantity", "1");
