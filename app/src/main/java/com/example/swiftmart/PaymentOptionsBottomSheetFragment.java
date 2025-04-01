@@ -31,6 +31,22 @@ public class PaymentOptionsBottomSheetFragment extends DialogFragment {
 		onlinePaymentRadioButton = view.findViewById(R.id.online_payment_radio_button);
 		cashOnDeliveryRadioButton = view.findViewById(R.id.cash_on_delivery_radio_button);
 
+		onlinePaymentRadioButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onlinePaymentRadioButton.setChecked(true);
+				cashOnDeliveryRadioButton.setChecked(false);
+			}
+		});
+
+		cashOnDeliveryRadioButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				cashOnDeliveryRadioButton.setChecked(true);
+				onlinePaymentRadioButton.setChecked(false);
+			}
+		});
+
 		// Set default option to online payment
 		onlinePaymentRadioButton.setChecked(true);
 
