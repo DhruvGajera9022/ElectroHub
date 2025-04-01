@@ -37,6 +37,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -195,25 +196,37 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                                        // Email exists, proceed with Firebase Authentication
-                                        mAuth.signInWithEmailAndPassword(txtEmail, txtPassword)
-                                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                                    @Override
-                                                    public void onSuccess(AuthResult authResult) {
-                                                        Intent intent = new Intent(LoginActivity.this, Language_Activity.class);
-                                                        CustomToast.showToast(LoginActivity.this, "Login successful");
-                                                        startActivity(intent);
-                                                        finish();
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        signInButton.setVisibility(View.VISIBLE);
-                                                        signInProgressBar.setVisibility(View.GONE);
-                                                        CustomToast.showToast(LoginActivity.this, "Incorrect password");
-                                                    }
-                                                });
+
+                                        // User found, now check if they are validated
+                                        DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
+                                        boolean isValidEmail = documentSnapshot.getBoolean("isValidEmail") ? documentSnapshot.getBoolean("isValidEmail") : false;
+
+                                        if (isValidEmail) {
+                                            // Email is validated, proceed with Firebase Authentication
+                                            mAuth.signInWithEmailAndPassword(txtEmail, txtPassword)
+                                                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                                                        @Override
+                                                        public void onSuccess(AuthResult authResult) {
+                                                            Intent intent = new Intent(LoginActivity.this, Language_Activity.class);
+                                                            CustomToast.showToast(LoginActivity.this, "Login successful");
+                                                            startActivity(intent);
+                                                            finish();
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            signInButton.setVisibility(View.VISIBLE);
+                                                            signInProgressBar.setVisibility(View.GONE);
+                                                            CustomToast.showToast(LoginActivity.this, "Incorrect password");
+                                                        }
+                                                    });
+                                        } else {
+                                            // Email not validated, show message to verify email
+                                            signInButton.setVisibility(View.VISIBLE);
+                                            signInProgressBar.setVisibility(View.GONE);
+                                            CustomToast.showToast(LoginActivity.this, "Your email is not verified. Please check your inbox for the OTP.");
+                                        }
                                     } else {
                                         // Email not found, redirect to sign-up page
                                         CustomToast.showToast(LoginActivity.this, "User not found. Redirecting to sign-up...");
