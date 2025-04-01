@@ -68,4 +68,7 @@
 
     <color name="teal_700">#008080</color>
 
+    <color name="primary_black">#222f3f</color>
+    <color name="primary_yellow">#eb9f43</color>
+
 </resources>

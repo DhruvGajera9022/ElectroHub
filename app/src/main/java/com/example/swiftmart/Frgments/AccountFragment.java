@@ -1,6 +1,5 @@
 package com.example.swiftmart.Frgments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -10,14 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,34 +31,18 @@ import com.example.swiftmart.Account.OrdersActivity;
 import com.example.swiftmart.Account.PrivacyPolicyActivity;
 import com.example.swiftmart.Account.WishlistActivity;
 import com.example.swiftmart.LoginActivity;
-import com.example.swiftmart.MainActivity;
 import com.example.swiftmart.R;
+import com.example.swiftmart.RateUsDialog;
+import com.example.swiftmart.Utils.CustomToast;
 import com.example.swiftmart.WelcomeActivity;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.formats.NativeAd;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class AccountFragment extends Fragment {
@@ -316,9 +296,22 @@ public class AccountFragment extends Fragment {
         btnPrivacyPolicy.setOnClickListener(v -> startActivity(new Intent(getContext(), PrivacyPolicyActivity.class)));
     }
 
-    // TODO handle rate us click
+    // handle rate us click
     private void handleRateUsClick(){
-        // This doesn't require user authentication
+        llRateUs.setOnClickListener(v -> openRateUsDialog());
+        profileRateUsBtn.setOnClickListener(v -> openRateUsDialog());
+    }
+
+    private void openRateUsDialog(){
+        //show rating dialog
+        RateUsDialog rateUsDialog = new RateUsDialog(getContext());
+        rateUsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(getResources().getColor(android.R.color.transparent)));
+        rateUsDialog.setCancelable(false);
+        rateUsDialog.show();
+    }
+
+    private void checkIfRatingSubmitted() {
+
     }
 
     private void handleShareAppClick() {

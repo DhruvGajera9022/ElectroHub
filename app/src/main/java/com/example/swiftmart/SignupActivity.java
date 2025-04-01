@@ -275,7 +275,7 @@ public class SignupActivity extends AppCompatActivity {
 
                                         if (isOtpValid) {
                                             // OTP is valid, update isValidate to true
-                                            userMap.put("isValidate", true); // Set isValidate to true
+                                            userMap.put("isValidEmail", true); // Set isValidate to true
 
                                             // Save user data to Firestore
                                             documentReference.set(userMap)

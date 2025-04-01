@@ -28,4 +28,13 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+
+    <style name="MyRatingBar" parent="Widget.AppCompat.RatingBar">
+
+        <!--        non selected star color-->
+        <item name="colorControlNormal">@color/home</item>
+
+        <!--        selected star color-->
+        <item name="colorControlActivated">@color/home_20</item>
+    </style>
 </resources>
