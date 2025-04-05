@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,9 +26,6 @@ import com.example.swiftmart.Utils.CustomToast;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.initialization.InitializationStatus;
-import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -45,16 +44,28 @@ import java.util.concurrent.Executors;
 
 public class Edit_profile_Activity extends AppCompatActivity {
 
-    private String uid;
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
+    private String uid;
+
     private TextInputEditText txtEditProfileName, txtEditProfileNumber, txtEditProfileEmail;
-    private ImageView editProfileSelectImage, userImage, cart, backBtn;
+    private ImageView editProfileSelectImage, userImage, backBtn;
     private TextView toolBarTitle;
     private AppCompatButton editProfileBtn;
+    private ProgressBar editProfileProgressBar;
+
     private Uri imgUpdateUri;
     private boolean isImageSelected = false;
-    private ProgressBar editProfileProgressBar;
+
+    private final ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
+                    imgUpdateUri = uri;
+                    userImage.setImageURI(uri);
+                    isImageSelected = true;
+                }
+            });
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -62,6 +73,15 @@ public class Edit_profile_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        initViews();
+        setupToolbar();
+        loadUserData();
+        setupListeners();
+        setupAds();
+        setStatusBarColor(R.color.home);
+    }
+
+    private void initViews() {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         uid = mAuth.getCurrentUser().getUid();
@@ -70,85 +90,73 @@ public class Edit_profile_Activity extends AppCompatActivity {
         txtEditProfileNumber = findViewById(R.id.txtEditProfileNumber);
         txtEditProfileEmail = findViewById(R.id.txtEditProfileEmail);
         editProfileSelectImage = findViewById(R.id.editProfileSelectImage);
-        editProfileBtn = findViewById(R.id.editProfileBtn);
         userImage = findViewById(R.id.userImage);
-        editProfileProgressBar = findViewById(R.id.editProfileProgressBar);
-
+        editProfileBtn = findViewById(R.id.editProfileBtn);
         backBtn = findViewById(R.id.backBtn);
         toolBarTitle = findViewById(R.id.toolBarTitle);
+        editProfileProgressBar = findViewById(R.id.editProfileProgressBar);
+    }
 
-        getUserData();
-
+    private void setupToolbar() {
         toolBarTitle.setText(R.string.edit_profile);
         backBtn.setOnClickListener(v -> onBackPressed());
-
-        handleEditProfileSelectImageClick();
-        handleEditProfileBtnClick();
-
-        setStatusBarColor(R.color.home);
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
-            @Override
-            public void onInitializationComplete(InitializationStatus initializationStatus) {
-
-            }
-        });
-
-        AdView mAdView;
-        mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    private void navigateToCartFragment() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("showFragment", "cart");
-        startActivity(intent);
-        finish();
-    }
-
-    private void getUserData() {
-        DocumentReference reference = db.collection("Users").document(uid);
-
-        reference.addSnapshotListener((value, error) -> {
-            if (value != null && value.exists()) {
-                txtEditProfileName.setText(value.getString("Username"));
-                txtEditProfileEmail.setText(value.getString("Email"));
-                txtEditProfileNumber.setText(value.getString("Number"));
-                String imageUrl = value.getString("Image");
-                if (imageUrl != null && !imageUrl.isEmpty()) {
-                    Picasso.get().load(imageUrl).into(userImage);
-                }
+    private void setupListeners() {
+        editProfileSelectImage.setOnClickListener(v -> imagePickerLauncher.launch("image/*"));
+        editProfileBtn.setOnClickListener(v -> {
+            if (validateInputs()) {
+                updateUserData();
             }
         });
     }
 
-    private void handleEditProfileSelectImageClick() {
-        editProfileSelectImage.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(intent, 100);
-        });
+    private boolean validateInputs() {
+        String name = txtEditProfileName.getText() != null ? txtEditProfileName.getText().toString().trim() : "";
+        String email = txtEditProfileEmail.getText() != null ? txtEditProfileEmail.getText().toString().trim() : "";
+        String number = txtEditProfileNumber.getText() != null ? txtEditProfileNumber.getText().toString().trim() : "";
+
+        if (name.isEmpty()) {
+            txtEditProfileName.setError("Name is required");
+            return false;
+        }
+        if (email.isEmpty() || !email.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$")) {
+            txtEditProfileEmail.setError("Valid email is required");
+            return false;
+        }
+        if (number.isEmpty() || !number.matches("^[0-9]{10}$")) {
+            txtEditProfileNumber.setError("Valid 10-digit number is required");
+            return false;
+        }
+        return true;
     }
 
-    private void handleEditProfileBtnClick() {
-        editProfileBtn.setOnClickListener(v -> updateUserData());
+    private void loadUserData() {
+        db.collection("Users").document(uid)
+                .addSnapshotListener((value, error) -> {
+                    if (value != null && value.exists()) {
+                        txtEditProfileName.setText(value.getString("Username"));
+                        txtEditProfileEmail.setText(value.getString("Email"));
+                        txtEditProfileNumber.setText(value.getString("Number"));
+
+                        String imageUrl = value.getString("Image");
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+                            Picasso.get().load(imageUrl).into(userImage);
+                        }
+                    }
+                });
     }
 
     private void updateUserData() {
-        if (isImageSelected) {
-            uploadImageAndSaveData();
+        toggleLoading(true);
+        if (isImageSelected && imgUpdateUri != null) {
+            uploadImageToCloudinary();
         } else {
             saveUserData(null);
         }
     }
 
-    private void uploadImageAndSaveData() {
+    private void uploadImageToCloudinary() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd_HH:mm:ss", Locale.UK);
         String timestamp = format.format(new Date());
 
@@ -158,46 +166,22 @@ public class Edit_profile_Activity extends AppCompatActivity {
         config.put("api_secret", "C9mFzlUvIQCzbzumNK7C0hz1gHo");
         Cloudinary cloudinary = new Cloudinary(config);
 
-        // Show progress bar and disable button at the start
-        runOnUiThread(() -> {
-            editProfileProgressBar.setVisibility(View.VISIBLE);
-            editProfileBtn.setVisibility(View.GONE);
-        });
-
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            if (imgUpdateUri != null) {
-                try (InputStream inputStream = getContentResolver().openInputStream(imgUpdateUri)) {
-                    if (inputStream != null) {
-                        Map<String, Object> uploadResult = cloudinary.uploader().upload(inputStream, ObjectUtils.asMap(
-                                "folder", "user_profiles/" + timestamp,
-                                "public_id", "profile_image_" + System.currentTimeMillis()
-                        ));
-                        String imageUrl = (String) uploadResult.get("secure_url");
-                        // Save user data and reset progress
-                        runOnUiThread(() -> {
-                            saveUserData(imageUrl);
-                            editProfileProgressBar.setVisibility(View.GONE);
-                            editProfileBtn.setVisibility(View.VISIBLE);
-                        });
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    runOnUiThread(() -> {
-                        runOnUiThread(() -> {
-                            CustomToast.showToast(Edit_profile_Activity.this, "Error uploading image");
-                            editProfileProgressBar.setVisibility(View.GONE);
-                            editProfileBtn.setVisibility(View.VISIBLE);
-                        });
-                    });
+            try (InputStream inputStream = getContentResolver().openInputStream(imgUpdateUri)) {
+                if (inputStream != null) {
+                    Map<String, Object> uploadResult = cloudinary.uploader().upload(inputStream, ObjectUtils.asMap(
+                            "folder", "user_profiles/" + timestamp,
+                            "public_id", "profile_image_" + System.currentTimeMillis()
+                    ));
+                    String imageUrl = (String) uploadResult.get("secure_url");
+                    runOnUiThread(() -> saveUserData(imageUrl));
                 }
-            } else {
+            } catch (IOException e) {
+                e.printStackTrace();
                 runOnUiThread(() -> {
-                    runOnUiThread(() -> {
-                        CustomToast.showToast(Edit_profile_Activity.this,"No image selected");
-                        editProfileProgressBar.setVisibility(View.GONE);
-                        editProfileBtn.setVisibility(View.VISIBLE);
-                    });
+                    CustomToast.showToast(Edit_profile_Activity.this, "Image upload failed");
+                    toggleLoading(false);
                 });
             }
         });
@@ -211,43 +195,30 @@ public class Edit_profile_Activity extends AppCompatActivity {
         if (imageUrl != null) {
             userData.put("Image", imageUrl);
         }
-        progress();
+
         db.collection("Users").document(uid)
                 .update(userData)
                 .addOnSuccessListener(unused -> {
-                    CustomToast.showToast(Edit_profile_Activity.this,"Profile updated successfully");
-                    editProfileBtn.setVisibility(View.VISIBLE);
-                    editProfileProgressBar.setVisibility(View.GONE);
+                    CustomToast.showToast(Edit_profile_Activity.this, "Profile updated successfully");
+                    toggleLoading(false);
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        editProfileBtn.setVisibility(View.VISIBLE);
-                        editProfileProgressBar.setVisibility(View.GONE);
-                        CustomToast.showToast(Edit_profile_Activity.this, "Error updating profile");
-                    }
+                .addOnFailureListener(e -> {
+                    CustomToast.showToast(Edit_profile_Activity.this, "Failed to update profile");
+                    toggleLoading(false);
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imgUpdateUri = data.getData();
-            userImage.setImageURI(imgUpdateUri);
-            isImageSelected = true;
-        }
+    private void toggleLoading(boolean isLoading) {
+        editProfileProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        editProfileBtn.setVisibility(isLoading ? View.GONE : View.VISIBLE);
     }
 
-    // handle progress bar
-    public void progress(){
-        if (editProfileBtn.isPressed()){
-            editProfileBtn.setVisibility(View.GONE);
-            editProfileProgressBar.setVisibility(View.VISIBLE);
-        }else {
-            editProfileBtn.setVisibility(View.VISIBLE);
-            editProfileProgressBar.setVisibility(View.GONE);
-        }
+    private void setupAds() {
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     private void setStatusBarColor(int colorResource) {
